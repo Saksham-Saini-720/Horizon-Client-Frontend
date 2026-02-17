@@ -1,31 +1,31 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-// ─── Route → Title Map ────────────────────────────────────────────────────────
-
+const HIDE_BACK   = ["/saved", "/inquiries", "/tours", "/profile"];
 const ROUTE_TITLES = {
-  "/":           "Explore",
-  "/saved":      "Saved",
-  "/inquiries":  "Inquiries",
-  "/tours":      "Tours",
-  "/profile":    "Profile",
-  "/login":      "Login",
-  "/register":   "Register",
+  "/search":    "Search",
+  "/saved":     "Saved",
+  "/inquiries": "Inquiries",
+  "/tours":     "Tours",
+  "/profile":   "Profile",
+  "/login":     "Login",
+  "/register":  "Register",
 };
-
-// In routes pe back button nahi dikhega (main tabs)
-const HIDE_BACK = ["/", "/saved", "/inquiries", "/tours", "/profile"];
 
 // ─── HorizonLogo ──────────────────────────────────────────────────────────────
 
-export const HorizonLogo = () => (
+export const HorizonLogo = ({ size = 40 }) => (
   <div
-    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer hover:scale-105 transition-transform"
+    className="rounded-2xl flex items-center justify-center flex-shrink-0 cursor-pointer"
     style={{
+      width: size, height: size,
       background: "linear-gradient(145deg, #F5B731 0%, #E8A020 100%)",
-      boxShadow: "0 2px 8px rgba(232,160,32,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
+      boxShadow: "0 2px 8px rgba(232,160,32,0.35)",
     }}
   >
-    <span className="font-serif text-lg font-bold text-[#1C2A3A] select-none leading-none">
+    <span
+      className="font-serif font-bold text-[#1C2A3A] select-none leading-none"
+      style={{ fontSize: size * 0.42 }}
+    >
       H
     </span>
   </div>
@@ -36,20 +36,26 @@ export const HorizonLogo = () => (
 const Navbar = () => {
   const location = useLocation();
   const navigate  = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const title   = ROUTE_TITLES[location.pathname] ?? "Horizon";
-  const showBack = !HIDE_BACK.includes(location.pathname);
+  // Home page — ExplorePage khud sticky header render karega
+  if (location.pathname === "/") return null;
+
+  const showBack  = !HIDE_BACK.includes(location.pathname);
+  const query     = searchParams.get("q");
+  const baseTitle = ROUTE_TITLES[location.pathname] ?? "Horizon";
+  const title     = location.pathname === "/search" && query
+    ? `"${query}"`
+    : baseTitle;
 
   return (
-    <header className="flex items-center justify-between px-5 h-16 bg-[#FAFAF8] border-b border-[#EEEDE8] sticky top-0 z-50 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-
-      {/* Left: optional back button + title */}
+    <header className="flex items-center justify-between px-5 h-16 bg-white border-b border-gray-100 sticky top-0 z-50 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
       <div className="flex items-center gap-3 flex-1">
         {showBack && (
           <button
             onClick={() => navigate(-1)}
             aria-label="Go back"
-            className="w-9 h-9 rounded-xl bg-[#F0EFE9] flex items-center justify-center flex-shrink-0 outline-none border-none cursor-pointer hover:bg-[#E4E2DB] active:scale-95 transition-all"
+            className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center outline-none border-none cursor-pointer hover:bg-gray-200 active:scale-95 transition-all"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="#1C2A3A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -57,15 +63,11 @@ const Navbar = () => {
             </svg>
           </button>
         )}
-
-        <h1 className="text-[17px] font-bold text-[#1C2A3A] tracking-tight m-0">
+        <h1 className="text-[17px] font-bold text-[#1C2A3A] tracking-tight m-0 truncate font-['DM_Sans',sans-serif]">
           {title}
         </h1>
       </div>
-
-      {/* Right: logo */}
-      <HorizonLogo />
-
+      <HorizonLogo size={40} />
     </header>
   );
 };

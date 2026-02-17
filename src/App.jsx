@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // All pages lazy loaded
 const HomePage = lazy(() => import("./routes/public/HomePage"));
-// const SearchPage = lazy(() => import("./routes/public/SearchPage"));
+const SearchPage = lazy(() => import("./routes/public/SearchPage"));
 // const PropertyDetailPage = lazy(() => import("./routes/public/PropertyDetailPage"));
 const LoginPage = lazy(() => import("./routes/public/LoginPage"));
 const RegisterPage = lazy(() => import("./routes/public/RegisterPage"));
@@ -22,7 +22,7 @@ export default function App() {
       {/* <Suspense fallback={<PageLoader />}>   ← wraps all routes */}
         <Routes>
           <Route path="/" element={<HomePage />} >
-            {/* <Route path="/search" element={<SearchPage />} /> */}
+            <Route path="/search" element={<SearchPage />} />
             {/* <Route path="/property/:id" element={<PropertyDetailPage />} /> */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
