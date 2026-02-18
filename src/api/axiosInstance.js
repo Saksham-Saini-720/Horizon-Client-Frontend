@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
   },
 });
 
-// 🔐 ===== REQUEST INTERCEPTOR =====
+// ===== REQUEST INTERCEPTOR =====
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
@@ -26,7 +26,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 🔄 ===== RESPONSE INTERCEPTOR (AUTO REFRESH) =====
+// ===== RESPONSE INTERCEPTOR (AUTO REFRESH) =====
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -44,7 +44,7 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ❌ only handle 401
+    // only handle 401
     if (
       error.response?.status === 401 &&
       !originalRequest._retry
@@ -57,7 +57,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      // 🧠 agar already refresh ho raha hai
+      // agar already refresh ho raha hai
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -79,13 +79,13 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = res.data?.data?.accessToken;
         const newRefreshToken = res.data?.data?.refreshToken;
 
-        // ✅ update storage
+        // update storage
         localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
 
         processQueue(null, newAccessToken);
 
-        // 🔁 retry original request
+        // retry original request
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (err) {

@@ -1,92 +1,264 @@
 
-import { useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { setTokens } from "../../utils/token";
 import { loginUser, sendOtp, verifyOtp } from "../../api/authApi";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
+
+// ─── Spinner ──────────────────────────────────────────────────────────────────
+
+const Spinner = () => (
+  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2.5">
+    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+  </svg>
+);
+
+// ─── Error Banner ─────────────────────────────────────────────────────────────
+
+const ErrorBanner = ({ message }) => (
+  <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
+    <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {message}
+  </div>
+);
+
+// ─── Submit Button ────────────────────────────────────────────────────────────
+
+const SubmitBtn = ({ isLoading, label, loadingLabel }) => (
+  <button
+    type="submit"
+    disabled={isLoading}
+    className="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl disabled:opacity-60 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+  >
+    {isLoading && <Spinner />}
+    {isLoading ? loadingLabel : label}
+  </button>
+);
+
+// ─── Email Form ───────────────────────────────────────────────────────────────
+// useRef — type karte waqt LoginPage re-render nahi hoga
+
+const EmailForm = ({ onSuccess, onError, isLoading, setIsLoading }) => {
+  const emailRef    = useRef(null);
+  const passwordRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    onError("");
+
+    const email    = emailRef.current?.value.trim() ?? "";
+    const password = passwordRef.current?.value ?? "";
+
+    if (!email || !password) {
+      onError("Please enter email and password.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await loginUser({ email, password, device: "web" });
+      console.log(res)
+      setTokens(res.accessToken, res.refreshToken);
+      localStorage.setItem("user", JSON.stringify(res.user));
+      onSuccess();
+      // navigate("/")
+    } catch (err) {
+      const msg = typeof err === "string" ? err : err?.message ?? "";
+      onError(msg || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onSuccess, onError, setIsLoading]);
+
+  return (
+    <form onSubmit={handleSubmit} noValidate>
+
+      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+        Email Address
+      </label>
+      <input
+        ref={emailRef}
+        type="email"
+        defaultValue=""
+        placeholder="john@example.com"
+        required
+        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-gray-800 transition-colors mb-3"
+      />
+
+      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+        Password
+      </label>
+      <input
+        ref={passwordRef}
+        type="password"
+        defaultValue=""
+        placeholder="••••••••"
+        required
+        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-gray-800 transition-colors mb-2"
+      />
+
+      <div className="flex justify-end mb-5">
+        <button
+          type="button"
+          onClick={() => navigate("/forgot-password")}
+          className="text-xs text-amber-600 hover:underline"
+        >
+          Forgot password?
+        </button>
+      </div>
+
+      <SubmitBtn isLoading={isLoading} label="Log In" loadingLabel="Logging in..." />
+    </form>
+  );
+};
+
+// ─── Phone / OTP Form ─────────────────────────────────────────────────────────
+
+const PhoneForm = ({ onSuccess, onError, isLoading, setIsLoading }) => {
+  const phoneRef = useRef(null);
+  const otpRef   = useRef(null);
+  // const navigate = useNavigate()
+
+  // otpSent sirf yeh form re-render karta hai, LoginPage nahi
+  const [otpSent, setOtpSent] = useState(false);
+
+  // ── Step 1: Send OTP ──────────────────────────────────────────
+
+  const handleSendOtp = useCallback(async (e) => {
+    e.preventDefault();
+    onError("");
+
+    const phone = phoneRef.current?.value.trim() ?? "";
+    if (!phone) { onError("Please enter your phone number."); return; }
+
+    setIsLoading(true);
+    try {
+      await sendOtp({ phone });
+      setOtpSent(true);
+    } catch (err) {
+      const msg = typeof err === "string" ? err : err?.message ?? "";
+      onError(msg || "Failed to send OTP. Try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onError, setIsLoading]);
+
+  // ── Step 2: Verify OTP ────────────────────────────────────────
+
+  const handleVerifyOtp = useCallback(async (e) => {
+    e.preventDefault();
+    onError("");
+
+    const phone = phoneRef.current?.value.trim() ?? "";
+    const otp   = otpRef.current?.value.trim() ?? "";
+
+    if (otp.length !== 6) { onError("Enter the 6-digit OTP."); return; }
+
+    setIsLoading(true);
+    try {
+      const res = await verifyOtp({ phone, otp });
+      setTokens(res.accessToken, res.refreshToken);
+      localStorage.setItem("user", JSON.stringify(res.user));
+      onSuccess();
+    } catch (err) {
+      const msg = typeof err === "string" ? err : err?.message ?? "";
+      onError(msg || "Invalid OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [onSuccess, onError, setIsLoading]);
+
+  // ── Enter OTP phone number ────────────────────────────────────
+
+  if (!otpSent) {
+    return (
+      <form onSubmit={handleSendOtp} noValidate>
+        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+          Phone Number
+        </label>
+        <input
+          ref={phoneRef}
+          type="tel"
+          defaultValue=""
+          placeholder="+260 97X XXX XXX"
+          required
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-gray-800 transition-colors mb-5"
+        />
+        <SubmitBtn isLoading={isLoading} label="Send OTP →" loadingLabel="Sending..." />
+      </form>
+    );
+  }
+
+  // ── Verify OTP ────────────────────────────────────────────────
+
+  return (
+    <form onSubmit={handleVerifyOtp} noValidate>
+      <p className="text-sm text-gray-600 mb-4">
+        OTP sent to{" "}
+        <span className="font-semibold">{phoneRef.current?.value}</span>
+      </p>
+
+      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+        Enter OTP
+      </label>
+      <input
+        ref={otpRef}
+        type="text"
+        defaultValue=""
+        placeholder="• • • • • •"
+        maxLength={6}
+        required
+        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 outline-none focus:border-gray-800 transition-colors mb-5 tracking-[0.5em] text-center font-bold"
+      />
+
+      <SubmitBtn isLoading={isLoading} label="Verify OTP" loadingLabel="Verifying..." />
+
+      <button
+        type="button"
+        onClick={() => { setOtpSent(false); onError(""); }}
+        className="w-full text-center text-sm text-gray-500 mt-3 hover:text-gray-700 transition-colors"
+      >
+        ← Change number
+      </button>
+    </form>
+  );
+};
+
+// ─── LoginPage ────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("LoginPage location:", location);
-  const from = location.state?.from?.pathname || "/";
+  const from     = location.state?.from?.pathname || "/";
 
+  // Minimal state — only these 3 cause LoginPage re-renders
   const [activeTab, setActiveTab] = useState("email"); // "email" | "phone"
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError]         = useState("");
 
-  // Email form state
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const handleSuccess = useCallback(() => {
+    navigate(from, { replace: true });
+  }, [navigate, from]);
 
-  // Phone form state
-  const [phone, setPhone] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-
-  // ── Email Login ────────────────────────────────────────────────
-  const handleEmailLogin = async (e) => {
-    e.preventDefault();
+  const handleTabSwitch = useCallback((tab) => {
+    setActiveTab(tab);
     setError("");
-    setIsLoading(true);
+  }, []);
 
-    try {
-      const res = await loginUser({
-        email,
-        password,
-        device : "web"
-      })
-
-      // Save tokens
-      setTokens(res.data.accessToken, res.data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      navigate(from, { replace: true });
-
-    } catch (err) {
-      setError(err || "Login failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ── Send OTP ───────────────────────────────────────────────────
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    try {
-      await sendOtp({ phone });
-
-      setOtpSent(true);
-
-    } catch (err) {
-      setError(err ? err : "Failed to send OTP");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // ── Verify OTP ─────────────────────────────────────────────────
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    try {
-      const res = await verifyOtp({ phone, otp });
-
-      setTokens(res.data.accessToken, res.data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      navigate(from, { replace: true });
-
-    } catch (err) {
-      setError(err  ? err : "Invalid OTP");
-    } finally {
-      setIsLoading(false);
-    }
+  // Shared props for both forms
+  const formProps = {
+    onSuccess:    handleSuccess,
+    onError:      setError,
+    isLoading,
+    setIsLoading,
   };
 
   return (
@@ -99,10 +271,11 @@ export default function LoginPage() {
           Access your saved properties, inquiries, and more.
         </p>
 
-        {/* Google Button */}
+        {/* Google OAuth */}
         <button
+          type="button"
           onClick={() => window.location.href = `${API_BASE}/auth/google`}
-          className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 mb-5"
+          className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-5"
         >
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -122,140 +295,37 @@ export default function LoginPage() {
 
         {/* Tabs */}
         <div className="flex bg-gray-100 rounded-xl p-1 mb-5">
-          <button
-            onClick={() => { setActiveTab("phone"); setError(""); setOtpSent(false); }}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${
-              activeTab === "phone" ? "bg-white shadow text-gray-800" : "text-gray-500"
-            }`}
-          >
-            📞 Phone
-          </button>
-          <button
-            onClick={() => { setActiveTab("email"); setError(""); }}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${
-              activeTab === "email" ? "bg-white shadow text-gray-800" : "text-gray-500"
-            }`}
-          >
-            ✉️ Email
-          </button>
+          {[
+            { id: "phone", label: "📞 Phone" },
+            { id: "email", label: "✉️ Email" },
+          ].map(({ id, label }) => (
+            <button
+              key={id}
+              onClick={() => handleTabSwitch(id)}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all
+                ${activeTab === id
+                  ? "bg-white shadow text-gray-800"
+                  : "text-gray-500 hover:text-gray-700"
+                }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
-            {error}
-          </div>
-        )}
+        {/* Error Banner */}
+        {error && <ErrorBanner message={error} />}
 
-        {/* ── Phone Tab ── */}
-        {activeTab === "phone" && (
-          !otpSent ? (
-            <form onSubmit={handleSendOtp}>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+260 97X XXX XXX"
-                required
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800 mb-5"
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl disabled:opacity-60"
-              >
-                {isLoading ? "Sending..." : "Send OTP →"}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOtp}>
-              <p className="text-sm text-gray-600 mb-4">
-                OTP sent to <span className="font-semibold">{phone}</span>
-              </p>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Enter OTP
-              </label>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter 6-digit OTP"
-                maxLength={6}
-                required
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800 mb-5 tracking-widest text-center font-bold"
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl disabled:opacity-60"
-              >
-                {isLoading ? "Verifying..." : "Verify OTP"}
-              </button>
-              <button
-                type="button"
-                onClick={() => { setOtpSent(false); setOtp(""); }}
-                className="w-full text-center text-sm text-gray-500 mt-3"
-              >
-                ← Change number
-              </button>
-            </form>
-          )
-        )}
-
-        {/* ── Email Tab ── */}
-        {activeTab === "email" && (
-          <form onSubmit={handleEmailLogin}>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="john@example.com"
-              required
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800 mb-3"
-            />
-
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800 mb-2"
-            />
-
-            <div className="flex justify-end mb-5">
-              <button
-                type="button"
-                onClick={() => navigate("/forgot-password")}
-                className="text-xs text-amber-600 hover:underline"
-              >
-                Forgot password?
-              </button>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl disabled:opacity-60"
-            >
-              {isLoading ? "Logging in..." : "Log In"}
-            </button>
-          </form>
-        )}
+        {/* Active Form */}
+        {activeTab === "email"
+          ? <EmailForm key="email" {...formProps} />
+          : <PhoneForm key="phone" {...formProps} />
+        }
 
         {/* Terms */}
         <p className="text-xs text-center text-gray-400 mt-5">
           By continuing, you agree to our{" "}
-          <a href="/terms" className="text-amber-600 hover:underline">Terms</a>{" "}
+          <a href="/terms"   className="text-amber-600 hover:underline">Terms</a>{" "}
           and{" "}
           <a href="/privacy" className="text-amber-600 hover:underline">Privacy Policy</a>
         </p>

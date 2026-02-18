@@ -1,5 +1,4 @@
-// src/store/authStore.js
-// Zustand store for auth state — used by LoginPage + ProtectedRoute
+
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

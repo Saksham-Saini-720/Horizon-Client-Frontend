@@ -1,69 +1,146 @@
 
-import { useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../../api/authApi";
+import { setTokens } from "../../utils/token";
+
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
+
+// ─── Field-level validators ───────────────────────────────────────────────────
+
+const VALIDATORS = {
+  firstName: (v) => !v.trim()                    ? "First name required"          : null,
+  lastName:  (v) => !v.trim()                    ? "Last name required"           : null,
+  email:     (v) => !/\S+@\S+\.\S+/.test(v)     ? "Enter a valid email"          : null,
+  password:  (v) => v.length < 8                 ? "Min 8 characters required"    : null,
+  phone:     (v) => v && !/^\+?[\d\s\-]{7,15}$/.test(v)
+                                                 ? "Enter a valid phone number"   : null,
+};
+
+// ─── Input Field Component ────────────────────────────────────────────────────
+// Uncontrolled — ref se value lena, re-render zero during typing
+
+const Field = ({ label, name, inputRef, type = "text", placeholder, required, hint, maxLength }) => {
+  const [fieldError, setFieldError] = useState("");
+
+  // Validate only on blur (not on every keystroke)
+  const handleBlur = useCallback(() => {
+    const value = inputRef.current?.value ?? "";
+    const error = VALIDATORS[name]?.(value) ?? null;
+    setFieldError(error ?? "");
+  }, [name, inputRef]);
+
+  // Clear field error when user starts typing again
+  const handleFocus = useCallback(() => setFieldError(""), []);
+
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+        {label}{" "}
+        {!required && <span className="text-gray-400 font-normal">(optional)</span>}
+      </label>
+      <input
+        ref={inputRef}
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        required={required}
+        maxLength={maxLength}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
+        defaultValue=""      // ← uncontrolled (no value/onChange = no re-render on type)
+        className={`w-full border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400
+          outline-none transition-colors
+          ${fieldError
+            ? "border-red-300 bg-red-50 focus:border-red-400"
+            : "border-gray-200 focus:border-gray-800"
+          }`}
+      />
+      {fieldError && (
+        <p className="text-xs text-red-500 mt-1">{fieldError}</p>
+      )}
+      {hint && !fieldError && (
+        <p className="text-xs text-gray-400 mt-1">{hint}</p>
+      )}
+    </div>
+  );
+};
+
+// ─── RegisterPage ─────────────────────────────────────────────────────────────
 
 export default function RegisterPage() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    phone: "",
-  });
+  // Refs — form values read only on submit, zero re-renders while typing
+  const firstNameRef = useRef(null);
+  const lastNameRef  = useRef(null);
+  const emailRef     = useRef(null);
+  const passwordRef  = useRef(null);
+  const phoneRef     = useRef(null);
 
+  // Only these 2 states cause re-renders (submit + API error)
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError]         = useState("");
 
-  // Handle input change
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(""); // clear error on type
-  };
+  // ── Submit ────────────────────────────────────────────────────────────────
 
-  // Handle form submit
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setError("");
 
-  if (formData.password.length < 8) {
-    setError("Password must be at least 8 characters.");
-    return;
-  }
+    // Read values from refs
+    const values = {
+      firstName: firstNameRef.current?.value.trim() ?? "",
+      lastName:  lastNameRef.current?.value.trim()  ?? "",
+      email:     emailRef.current?.value.trim()     ?? "",
+      password:  passwordRef.current?.value         ?? "",
+      phone:     phoneRef.current?.value.trim()     ?? "",
+    };
 
-  setIsLoading(true);
+    // Validate all fields before API call
+    const errors = Object.entries(VALIDATORS)
+      .map(([key, validate]) => validate(values[key]))
+      .filter(Boolean);
 
-  try {
-    const res = await registerUser({
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      password: formData.password,
-      phone: formData.phone || undefined,
-    });
-
-    setTokens(res.data.accessToken, res.data.refreshToken);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-
-    navigate("/");
-  } catch (err) {
-    if (typeof err === "string") {
-      if (err.toLowerCase().includes("already exists")) {
-        setError("Email already registered. Please login.");
-      } else {
-        setError(err);
-      }
-    } else {
-      setError("Registration failed.");
+    if (errors.length) {
+      setError(errors[0]); // pehla error dikhao
+      return;
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
+
+    setIsLoading(true);
+
+    try {
+      const res = await registerUser({
+        firstName: values.firstName,
+        lastName:  values.lastName,
+        email:     values.email,
+        password:  values.password,
+        phone:     values.phone || undefined,
+      });
+
+      // Tokens aur user save karo
+      setTokens(res.accessToken, res.refreshToken);
+      localStorage.setItem("user", JSON.stringify(res.user));
+
+      navigate("/");
+
+    } catch (err) {
+      // authApi normalized error — string ya object
+      const msg = typeof err === "string" ? err : err?.message ?? "";
+
+      if (msg.toLowerCase().includes("already exists")) {
+        setError("This email is already registered. Please login.");
+      } else if (msg.toLowerCase().includes("validation")) {
+        setError("Please check all fields and try again.");
+      } else {
+        setError(msg || "Registration failed. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [navigate]);
+
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -71,15 +148,13 @@ export default function RegisterPage() {
 
         {/* Header */}
         <h2 className="text-2xl font-bold text-gray-900 mb-1">Create an account</h2>
-        <p className="text-sm text-gray-500 mb-6">
-          Join Horizon Properties today.
-        </p>
+        <p className="text-sm text-gray-500 mb-6">Join Horizon Properties today.</p>
 
-        {/* Google Button */}
+        {/* Google OAuth */}
         <button
           type="button"
           onClick={() => window.location.href = `${API_BASE}/auth/google`}
-          className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 mb-5"
+          className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-5"
         >
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -97,104 +172,48 @@ export default function RegisterPage() {
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* Error */}
+        {/* Global API error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
+          <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
+            <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
             {error}
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
+        {/* Form — onSubmit pe re-render, type pe nahi */}
+        <form onSubmit={handleSubmit} noValidate>
 
           {/* First + Last Name */}
           <div className="flex gap-3 mb-3">
-            <div className="flex-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                First Name
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                placeholder="John"
-                required
-                maxLength={50}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                placeholder="Doe"
-                required
-                maxLength={50}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800"
-              />
-            </div>
+            <Field label="First Name" name="firstName" inputRef={firstNameRef} placeholder="John"   required maxLength={50} />
+            <Field label="Last Name"  name="lastName"  inputRef={lastNameRef}  placeholder="Doe"    required maxLength={50} />
           </div>
 
-          {/* Email */}
           <div className="mb-3">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="john@example.com"
-              required
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800"
-            />
+            <Field label="Email Address" name="email"    inputRef={emailRef}    type="email"    placeholder="john@example.com"  required />
           </div>
 
-          {/* Password */}
           <div className="mb-3">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Min 8 characters"
-              required
-              minLength={8}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800"
-            />
+            <Field label="Password"      name="password" inputRef={passwordRef} type="password" placeholder="Min 8 characters"  required hint="Use letters, numbers & symbols" />
           </div>
 
-          {/* Phone (optional) */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Phone <span className="text-gray-400 font-normal">(optional)</span>
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="+260 97X XXX XXX"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-gray-800"
-            />
+            <Field label="Phone" name="phone" inputRef={phoneRef} type="tel" placeholder="+260 97X XXX XXX" />
           </div>
 
           {/* Submit */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+            className="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl disabled:opacity-60 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
           >
+            {isLoading && (
+              <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+              </svg>
+            )}
             {isLoading ? "Creating account..." : "Create Account"}
           </button>
 
@@ -203,17 +222,14 @@ export default function RegisterPage() {
         {/* Terms */}
         <p className="text-xs text-center text-gray-400 mt-4">
           By continuing, you agree to our{" "}
-          <a href="/terms" className="text-amber-600 hover:underline">Terms</a>{" "}
-          and{" "}
+          <a href="/terms"   className="text-amber-600 hover:underline">Terms</a> and{" "}
           <a href="/privacy" className="text-amber-600 hover:underline">Privacy Policy</a>
         </p>
 
         {/* Login link */}
         <p className="text-sm text-center text-gray-500 mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-gray-900 font-semibold hover:underline">
-            Log in
-          </Link>
+          <Link to="/login" className="text-gray-900 font-semibold hover:underline">Log in</Link>
         </p>
 
       </div>

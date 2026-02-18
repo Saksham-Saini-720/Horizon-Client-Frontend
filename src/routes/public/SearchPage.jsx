@@ -1,151 +1,140 @@
-// src/routes/public/SearchPage.jsx
-import { useSearchParams } from "react-router-dom";
-import SearchBar from "../../components/layouts/SearchBar"
-// ─── Mock Property Data ───────────────────────────────────────────────────────
-// Real API se replace karna jab ready ho
 
-const MOCK_PROPERTIES = [
-  { id: 1, title: "Modern Villa", location: "Lusaka, Roma",        price: "K 850,000", beds: 4, baths: 3, area: "320 m²", tag: "For Sale",  bg: "#E8F4F8" },
-  { id: 2, title: "City Apartment", location: "Lusaka, Woodlands", price: "K 12,000/mo", beds: 2, baths: 1, area: "95 m²",  tag: "For Rent",  bg: "#F4F0E8" },
-  { id: 3, title: "Office Space",   location: "Lusaka, CBD",       price: "K 25,000/mo", beds: 0, baths: 2, area: "210 m²", tag: "For Rent",  bg: "#EEF4EE" },
-  { id: 4, title: "Family Home",    location: "Ndola, Northrise",  price: "K 430,000",  beds: 3, baths: 2, area: "180 m²", tag: "For Sale",  bg: "#F8EEF0" },
-  { id: 5, title: "Luxury Penthouse", location: "Lusaka, Kabulonga", price: "K 1,200,000", beds: 5, baths: 4, area: "480 m²", tag: "For Sale", bg: "#F0EEF8" },
-  { id: 6, title: "Studio Flat",    location: "Livingstone, Centre", price: "K 7,500/mo", beds: 1, baths: 1, area: "48 m²", tag: "For Rent",  bg: "#F8F4EE" },
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import useRecentSearches from "../../hooks/useRecentSearches";
+import useSearchSubmit   from "../../hooks/useDebounceSearch";
+import SearchBar         from "../../components/layouts/SearchBar";
+import NewListingCard    from "../../components/explore/NewListingCard";
+import { NewListingCardSkeleton } from "../../components/ui/SkeletonCards";
+
+// ─── Mock Data (replace with API call) ───────────────────────────────────────
+
+const ALL_PROPERTIES = [
+  { id: 1, price: "$850,000",  title: "Modern Executive Villa",        location: "Kabulonga, Lusaka", beds: 5, baths: 4, area: "450 sqm", tag: "For Sale", img: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80" },
+  { id: 2, price: "$4,500/mo", title: "Luxury Penthouse at Roma Park", location: "Roma Park, Lusaka", beds: 3, baths: 2, area: "220 sqm", tag: "For Rent", img: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" },
+  { id: 3, price: "$275,000",  title: "Elegant Townhouse Woodlands",   location: "Woodlands, Lusaka", beds: 3, baths: 2, area: "200 sqm", tag: "For Sale", img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80" },
+  { id: 4, price: "$450,000",  title: "Beachfront Villa Siavonga",     location: "Lake Kariba",       beds: 4, baths: 3, area: "320 sqm", tag: "For Sale", img: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800&q=80" },
+  { id: 5, price: "$1,800/mo", title: "Modern 2-Bed Apartment",        location: "Woodlands, Lusaka", beds: 2, baths: 2, area: "110 sqm", tag: "For Rent", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80" },
+  { id: 6, price: "$320,000",  title: "Spacious Family Home",          location: "Chilenje, Lusaka",  beds: 4, baths: 3, area: "280 sqm", tag: "For Sale", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80" },
+  { id: 7, price: "$195,000",  title: "Starter Home Matero",           location: "Matero, Lusaka",    beds: 3, baths: 1, area: "130 sqm", tag: "For Sale", img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80" },
 ];
 
-// ─── Property Card ────────────────────────────────────────────────────────────
+// ─── Empty State ──────────────────────────────────────────────────────────────
 
-const PropertyCard = ({ title, location, price, beds, baths, area, tag, bg }) => (
-  <div className="bg-white rounded-2xl shadow-sm border border-[#EEEDE8] overflow-hidden hover:shadow-md active:scale-[0.99] transition-all cursor-pointer">
-
-    {/* Image placeholder */}
-    <div className="flex items-center justify-center relative" style={{ background: bg }}>
-      <svg className="w-12 h-1/2 text-gray-300" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
-        <path d="M9 21V12h6v9" />
+const EmptyState = ({ query }) => (
+  <div className="flex flex-col items-center py-20 text-center">
+    <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-4">
+      <svg className="w-8 h-8 text-amber-400" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
       </svg>
-      {/* Tag */}
-      <span className={`absolute top-3 left-3 text-[11px] font-bold px-2.5 py-1 rounded-full
-        ${tag === "For Sale" ? "bg-amber-400 text-[#1C2A3A]" : "bg-[#1C2A3A] text-white"}`}>
-        {tag}
-      </span>
     </div>
-
-    {/* Info */}
-    <div className="px-4 py-3">
-      <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">{title}</p>
-      <p className="text-[12px] text-gray-400 mt-0.5 font-['DM_Sans',sans-serif]">{location}</p>
-
-      {/* Stats */}
-      <div className="flex items-center gap-3 mt-2">
-        {beds > 0 && (
-          <span className="flex items-center gap-1 text-[12px] text-gray-500">
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8" />
-              <path d="M2 15h20" /><path d="M5 15v-3" /><path d="M19 15v-3" />
-            </svg>
-            {beds}
-          </span>
-        )}
-        <span className="flex items-center gap-1 text-[12px] text-gray-500">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 6 C9 4.34 10.34 3 12 3 C13.66 3 15 4.34 15 6 L15 8 L9 8 Z" />
-            <rect x="3" y="8" width="18" height="4" rx="1" />
-            <path d="M5 12v4" /><path d="M19 12v4" />
-          </svg>
-          {baths}
-        </span>
-        <span className="flex items-center gap-1 text-[12px] text-gray-500">
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-          </svg>
-          {area}
-        </span>
-      </div>
-
-      {/* Price */}
-      <p className="text-[16px] font-bold text-amber-500 mt-2 font-['DM_Sans',sans-serif]">{price}</p>
-    </div>
+    <p className="text-[16px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+      No results found
+    </p>
+    <p className="text-[13px] text-gray-400 mt-1 font-['DM_Sans',sans-serif]">
+      {query ? `"${query}" ke liye koi property nahi mili` : "Try a different search"}
+    </p>
   </div>
 );
 
 // ─── SearchPage ───────────────────────────────────────────────────────────────
 
 const SearchPage = () => {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get("q") ?? "";
+  const [searchParams]        = useSearchParams();
+  const query                 = searchParams.get("q") ?? "";
 
-  // Filter mock data by query (replace with real API call)
-  const results = MOCK_PROPERTIES.filter((p) =>
-    query
-      ? p.title.toLowerCase().includes(query.toLowerCase()) ||
-        p.location.toLowerCase().includes(query.toLowerCase())
-      : true
-  );
+  // isLoading: page mount hone par ya query change hone par 1.5s shimmer
+  const [isLoading, setIsLoading] = useState(true);
+
+  const recent               = useRecentSearches();
+  const { submitSearch }     = useSearchSubmit({ onSearch: recent.add });
+
+  // Query badlne par ya mount hone par shimmer dikhao, phir results
+  useEffect(() => {
+    setIsLoading(true);
+
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500); // 1.5 second shimmer
+
+    return () => clearTimeout(timer); // cleanup on query change
+  }, [query]); // ← har naye query par re-run
+
+  // Results filter (real API pe yahan fetch call hogi)
+  const results = ALL_PROPERTIES.filter((p) => {
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return (
+      p.title.toLowerCase().includes(q) ||
+      p.location.toLowerCase().includes(q)
+    );
+  });
 
   return (
-    <div className="min-h-screen bg-[#F7F6F2] pb-6">
+    <div className="min-h-screen bg-[#F7F6F2] pb-28">
 
-      {/* ── Search bar (refine search) ── */}
-      <div className="px-5 pt-4 pb-4 bg-white border-b border-[#EEEDE8]">
-        <SearchBar />
+      {/* ── Sticky search bar ── */}
+      <div className="sticky top-0 z-50 bg-white border-b border-gray-100 px-4 py-3 shadow-sm">
+        <SearchBar
+          initialQuery={query}
+          recentSearches={recent.searches}
+          onSubmit={submitSearch}
+          onRemoveRecent={recent.remove}
+          onClearAllRecent={recent.clearAll}
+        />
       </div>
 
       {/* ── Results header ── */}
-      <div className="flex items-center justify-between px-5 pt-4 pb-2">
+      <div className="flex items-center justify-between px-4 pt-4 pb-2">
         <div>
-          {query
-            ? <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-                Results for <span className="text-amber-500">"{query}"</span>
+          {isLoading ? (
+            // Skeleton for header text
+            <div className="space-y-1.5">
+              <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
+              <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+            </div>
+          ) : (
+            <>
+              <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+                {query
+                  ? <>Results for <span className="text-amber-500">"{query}"</span></>
+                  : "All Properties"
+                }
               </p>
-            : <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-                All Properties
+              <p className="text-[12px] text-gray-400 font-['DM_Sans',sans-serif]">
+                {results.length} properties found
               </p>
-          }
-          <p className="text-[12px] text-gray-400 font-['DM_Sans',sans-serif]">
-            {results.length} properties found
-          </p>
+            </>
+          )}
         </div>
 
-        {/* Filter button (placeholder) */}
-        <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-[#EEEDE8] shadow-sm text-[13px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:border-amber-300 transition-colors">
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="4" y1="6" x2="20" y2="6" />
-            <line x1="8" y1="12" x2="16" y2="12" />
-            <line x1="11" y1="18" x2="13" y2="18" />
+        {/* Filter button */}
+        <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-sm text-[13px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:border-amber-300 transition-colors">
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="4" y1="6" x2="20" y2="6"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+            <line x1="11" y1="18" x2="13" y2="18"/>
           </svg>
           Filter
         </button>
       </div>
 
-      {/* ── Results grid ── */}
-      <div className="px-5">
-        {results.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4">
-            {results.map((p) => (
-              <PropertyCard key={p.id} {...p} />
-            ))}
-          </div>
-        ) : (
-          /* Empty state */
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-amber-400" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.35-4.35" />
-              </svg>
-            </div>
-            <p className="text-[16px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-              No results found
-            </p>
-            <p className="text-[13px] text-gray-400 mt-1 font-['DM_Sans',sans-serif]">
-              Try a different location or property type
-            </p>
-          </div>
-        )}
+      {/* ── Results / Skeleton / Empty ── */}
+      <div className="px-4 flex flex-col gap-4">
+        {isLoading
+          // Shimmer cards
+          ? Array(4).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
+
+          // Real results
+          : results.length > 0
+            ? results.map((p) => <NewListingCard key={p.id} {...p} />)
+
+            // No results
+            : <EmptyState query={query} />
+        }
       </div>
+
     </div>
   );
 };

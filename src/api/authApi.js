@@ -1,10 +1,10 @@
 import { apiPost, apiGet } from "./apiHelper";
 
 export const registerUser = (payload) =>
-  apiPost("/auth/register", payload);
+  apiPost("/api/v1/auth/register", payload);
 
 export const loginUser = (payload) =>
-  apiPost("/auth/login", payload);
+  apiPost("/api/v1/auth/login", payload);
 
 export const logoutUser = (refreshToken) =>
   apiPost("/auth/logout", { refreshToken });
