@@ -1,16 +1,17 @@
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { loginUser, sendOtp, verifyOtp } from "../api/authApi";
-import { setTokens } from "../utils/token";
+import { setAuth } from "../store/slices/authSlice";
 
 /**
- * Email login mutation
+ * Email login mutation with Redux
  */
 export function useEmailLoginMutation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const from = location.state?.from?.pathname || "/";
 
   return useMutation({
@@ -19,11 +20,12 @@ export function useEmailLoginMutation() {
     },
 
     onSuccess: (data) => {
-      setTokens(data.accessToken, data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      
-      // Invalidate auth query
-      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      // Dispatch to Redux - automatically syncs to localStorage
+      dispatch(setAuth({
+        user: data.user,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      }));
       
       navigate(from, { replace: true });
     },
@@ -45,12 +47,12 @@ export function useSendOtpMutation() {
 }
 
 /**
- * Verify OTP mutation
+ * Verify OTP mutation with Redux
  */
 export function useVerifyOtpMutation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
   const from = location.state?.from?.pathname || "/";
 
   return useMutation({
@@ -59,11 +61,12 @@ export function useVerifyOtpMutation() {
     },
 
     onSuccess: (data) => {
-      setTokens(data.accessToken, data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      
-      // Invalidate auth query
-      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      // Dispatch to Redux
+      dispatch(setAuth({
+        user: data.user,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      }));
       
       navigate(from, { replace: true });
     },

@@ -1,12 +1,13 @@
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { registerUser } from "../api/authApi";
-import { setTokens } from "../utils/token";
+import { setAuth } from "../store/slices/authSlice";
 
 export default function useRegisterMutation() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   return useMutation({
     mutationFn: async (userData) => {
@@ -15,12 +16,12 @@ export default function useRegisterMutation() {
     },
 
     onSuccess: (data) => {
-      // Save tokens + user
-      setTokens(data.accessToken, data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      // CRITICAL: Invalidate auth query so ProtectedRoute knows user is logged in
-      queryClient.invalidateQueries({ queryKey: ["auth"] });
+      // Dispatch to Redux - automatically syncs to localStorage
+      dispatch(setAuth({
+        user: data.user,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      }));
 
       // Navigate to home
       navigate("/", { replace: true });
