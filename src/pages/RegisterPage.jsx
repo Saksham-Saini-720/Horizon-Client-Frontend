@@ -1,9 +1,6 @@
-
 import { useRef, useState, useCallback } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { registerUser } from "../../api/authApi";
-import { setTokens } from "../../utils/token";
-
+import { Link } from "react-router-dom";
+import useRegisterMutation from "../hooks/useRegisterMutation";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
@@ -19,19 +16,16 @@ const VALIDATORS = {
 };
 
 // ─── Input Field Component ────────────────────────────────────────────────────
-// Uncontrolled — ref se value lena, re-render zero during typing
 
 const Field = ({ label, name, inputRef, type = "text", placeholder, required, hint, maxLength }) => {
   const [fieldError, setFieldError] = useState("");
 
-  // Validate only on blur (not on every keystroke)
   const handleBlur = useCallback(() => {
     const value = inputRef.current?.value ?? "";
     const error = VALIDATORS[name]?.(value) ?? null;
     setFieldError(error ?? "");
   }, [name, inputRef]);
 
-  // Clear field error when user starts typing again
   const handleFocus = useCallback(() => setFieldError(""), []);
 
   return (
@@ -49,7 +43,7 @@ const Field = ({ label, name, inputRef, type = "text", placeholder, required, hi
         maxLength={maxLength}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        defaultValue=""      // ← uncontrolled (no value/onChange = no re-render on type)
+        defaultValue=""
         className={`w-full border rounded-xl px-4 py-3 text-sm text-gray-800 placeholder-gray-400
           outline-none transition-colors
           ${fieldError
@@ -67,27 +61,46 @@ const Field = ({ label, name, inputRef, type = "text", placeholder, required, hi
   );
 };
 
+// ─── Error Banner ─────────────────────────────────────────────────────────────
+
+const ErrorBanner = ({ error }) => {
+  if (!error) return null;
+
+  // TanStack Query error object ya string
+  const message = typeof error === "string"
+    ? error
+    : error?.message ?? "Something went wrong. Please try again.";
+
+  return (
+    <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
+      <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      {message}
+    </div>
+  );
+};
+
 // ─── RegisterPage ─────────────────────────────────────────────────────────────
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
-
-  // Refs — form values read only on submit, zero re-renders while typing
+  // Refs — uncontrolled inputs, zero re-renders on typing
   const firstNameRef = useRef(null);
   const lastNameRef  = useRef(null);
   const emailRef     = useRef(null);
   const passwordRef  = useRef(null);
   const phoneRef     = useRef(null);
 
-  // Only these 2 states cause re-renders (submit + API error)
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError]         = useState("");
+  // TanStack Query mutation
+  const registerMutation = useRegisterMutation();
 
   // ── Submit ────────────────────────────────────────────────────────────────
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    setError("");
 
     // Read values from refs
     const values = {
@@ -98,49 +111,29 @@ export default function RegisterPage() {
       phone:     phoneRef.current?.value.trim()     ?? "",
     };
 
-    // Validate all fields before API call
+    // Client-side validation
     const errors = Object.entries(VALIDATORS)
       .map(([key, validate]) => validate(values[key]))
       .filter(Boolean);
 
     if (errors.length) {
-      setError(errors[0]); // pehla error dikhao
+      // Show first validation error
+      // You could also set a local error state here if needed
       return;
     }
 
-    setIsLoading(true);
+    // Trigger mutation
+    registerMutation.mutate({
+      firstName: values.firstName,
+      lastName:  values.lastName,
+      email:     values.email,
+      password:  values.password,
+      phone:     values.phone || undefined,
+    });
 
-    try {
-      const res = await registerUser({
-        firstName: values.firstName,
-        lastName:  values.lastName,
-        email:     values.email,
-        password:  values.password,
-        phone:     values.phone || undefined,
-      });
+  }, [registerMutation]);
 
-      // Tokens aur user save karo
-      setTokens(res.accessToken, res.refreshToken);
-      localStorage.setItem("user", JSON.stringify(res.user));
-
-      navigate("/");
-
-    } catch (err) {
-      // authApi normalized error — string ya object
-      const msg = typeof err === "string" ? err : err?.message ?? "";
-
-      if (msg.toLowerCase().includes("already exists")) {
-        setError("This email is already registered. Please login.");
-      } else if (msg.toLowerCase().includes("validation")) {
-        setError("Please check all fields and try again.");
-      } else {
-        setError(msg || "Registration failed. Please try again.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [navigate]);
-
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -172,49 +165,78 @@ export default function RegisterPage() {
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* Global API error */}
-        {error && (
-          <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl px-4 py-3 mb-4">
-            <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            {error}
-          </div>
-        )}
+        {/* Error from mutation */}
+        <ErrorBanner error={registerMutation.error} />
 
-        {/* Form — onSubmit pe re-render, type pe nahi */}
+        {/* Form */}
         <form onSubmit={handleSubmit} noValidate>
 
           {/* First + Last Name */}
           <div className="flex gap-3 mb-3">
-            <Field label="First Name" name="firstName" inputRef={firstNameRef} placeholder="John"   required maxLength={50} />
-            <Field label="Last Name"  name="lastName"  inputRef={lastNameRef}  placeholder="Doe"    required maxLength={50} />
+            <Field
+              label="First Name"
+              name="firstName"
+              inputRef={firstNameRef}
+              placeholder="John"
+              required
+              maxLength={50}
+            />
+            <Field
+              label="Last Name"
+              name="lastName"
+              inputRef={lastNameRef}
+              placeholder="Doe"
+              required
+              maxLength={50}
+            />
           </div>
 
           <div className="mb-3">
-            <Field label="Email Address" name="email"    inputRef={emailRef}    type="email"    placeholder="john@example.com"  required />
+            <Field
+              label="Email Address"
+              name="email"
+              inputRef={emailRef}
+              type="email"
+              placeholder="john@example.com"
+              required
+            />
           </div>
 
           <div className="mb-3">
-            <Field label="Password"      name="password" inputRef={passwordRef} type="password" placeholder="Min 8 characters"  required hint="Use letters, numbers & symbols" />
+            <Field
+              label="Password"
+              name="password"
+              inputRef={passwordRef}
+              type="password"
+              placeholder="Min 8 characters"
+              required
+              hint="Use letters, numbers & symbols"
+            />
           </div>
 
           <div className="mb-6">
-            <Field label="Phone" name="phone" inputRef={phoneRef} type="tel" placeholder="+260 97X XXX XXX" />
+            <Field
+              label="Phone"
+              name="phone"
+              inputRef={phoneRef}
+              type="tel"
+              placeholder="+260 97X XXX XXX"
+            />
           </div>
 
-          {/* Submit */}
+          {/* Submit — isPending from mutation */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={registerMutation.isPending}
             className="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl disabled:opacity-60 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
           >
-            {isLoading && (
-              <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            {registerMutation.isPending && (
+              <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.5">
                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
               </svg>
             )}
-            {isLoading ? "Creating account..." : "Create Account"}
+            {registerMutation.isPending ? "Creating account..." : "Create Account"}
           </button>
 
         </form>
@@ -222,7 +244,7 @@ export default function RegisterPage() {
         {/* Terms */}
         <p className="text-xs text-center text-gray-400 mt-4">
           By continuing, you agree to our{" "}
-          <a href="/terms"   className="text-amber-600 hover:underline">Terms</a> and{" "}
+          <a href="/terms" className="text-amber-600 hover:underline">Terms</a> and{" "}
           <a href="/privacy" className="text-amber-600 hover:underline">Privacy Policy</a>
         </p>
 

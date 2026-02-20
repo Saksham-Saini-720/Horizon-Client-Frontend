@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 
 const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll }) => {

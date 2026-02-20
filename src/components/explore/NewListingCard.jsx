@@ -29,11 +29,11 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
   return (
     <div
       onClick={handleClick}
-      className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 active:scale-[0.99] transition-transform cursor-pointer"
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg active:scale-[0.99] transition-all cursor-pointer group"
     >
       {/* Image */}
-      <div className="relative h-52 bg-gray-100 overflow-hidden">
-        <PropertyImage src={img} alt={title} className="w-full h-full object-cover" />
+      <div className="relative h-56 bg-gray-100 overflow-hidden">
+        <PropertyImage src={img} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 
         {/* For Sale / For Rent tag */}
         <span className={`absolute top-3 left-3 text-[12px] font-bold px-3 py-1 rounded-full font-['DM_Sans',sans-serif]
