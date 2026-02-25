@@ -8,6 +8,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 
 import ErrorBoundary from "./components/ErrorBoundary";
+import LoadingScreen from "./components/ui/LoadingScreen";
 import { store, persistor } from "./store/index";
 import App from "./App";
 import "./index.css";
@@ -25,14 +26,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// ─── Loading Component (for PersistGate) ──────────────────────────────────────
-
-const PersistLoading = () => (
-  <div className="min-h-screen bg-[#F7F6F2] flex items-center justify-center">
-    <div className="w-12 h-12 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin" />
-  </div>
-);
-
 // ─── Root Render ──────────────────────────────────────────────────────────────
 
 createRoot(document.getElementById("root")).render(
@@ -41,10 +34,12 @@ createRoot(document.getElementById("root")).render(
       {/* Redux Store */}
       <Provider store={store}>
         {/* Redux Persist - waits for rehydration */}
-        <PersistGate loading={<PersistLoading />} persistor={persistor}>
+        <PersistGate loading={<LoadingScreen/>} persistor={persistor} onBeforeLift={() =>
+          new Promise(resolve => setTimeout(resolve, 1500))
+        }>
           {/* TanStack Query - for server state */}
           <QueryClientProvider client={queryClient}>
-            
+       
             <App />
             
             {/* Toast Notifications */}

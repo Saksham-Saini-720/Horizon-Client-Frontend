@@ -2,9 +2,9 @@
 import { useState, useTransition, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-import useRecentSearches from "../hooks/useRecentSearches";
-import useSearchSubmit   from "../hooks/useDebounceSearch";
-import { useFeaturedProperties, useNewListings } from "../hooks/useProperties";
+import useRecentSearches from "../hooks/searches/useRecentSearches";
+import useSearchSubmit   from "../hooks/utils/useDebounceSearch";
+import { useFeaturedProperties, useNewListings } from "../hooks/properties/useProperties";
 
 import ExploreHeader     from "../components/explore/ExploreHeader";
 import FeaturedCard      from "../components/explore/FeaturedCard";
@@ -127,7 +127,7 @@ const ExplorePage = () => {
               : featuredQuery.isError
                 ? <div className="w-full"><ErrorState message={featuredQuery.error?.message} onRetry={() => featuredQuery.refetch()} /></div>
                 : filteredFeatured.length > 0
-                  ? filteredFeatured.map((p) => <FeaturedCard key={p.id} {...p} />)
+                  ? filteredFeatured.map((p) => <FeaturedCard key={p.id} {...p} onClick={()=> navigate(`/property/${p.id}`)}/>)
                   : <EmptyState />
             }
           </div>
@@ -143,7 +143,7 @@ const ExplorePage = () => {
               : newListingsQuery.isError
                 ? <ErrorState message={newListingsQuery.error?.message} onRetry={() => newListingsQuery.refetch()} />
                 : filteredListings.length > 0
-                  ? filteredListings.map((p) => <NewListingCard key={p.id} {...p} />)
+                  ? filteredListings.map((p) => <NewListingCard onClick={()=> navigate(`/property/${p.id}`)} key={p.id} {...p} />)
                   : <EmptyState />
             }
           </div>

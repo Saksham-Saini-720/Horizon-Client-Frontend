@@ -2,8 +2,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loginUser, sendOtp, verifyOtp } from "../api/authApi";
-import { setAuth } from "../store/slices/authSlice";
+import { loginUser, sendOtp, verifyOtp } from "../../api/authApi";
+import { setAuth } from "../../store/slices/authSlice";
+
 
 /**
  * Email login mutation with Redux
@@ -16,7 +17,8 @@ export function useEmailLoginMutation() {
 
   return useMutation({
     mutationFn: async ({ email, password }) => {
-      return await loginUser({ email, password, device: "web" });
+      const response  = await loginUser({ email, password, device: "web", portal: "client" });
+      return response.data;
     },
 
     onSuccess: (data) => {

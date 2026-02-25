@@ -1,6 +1,6 @@
 
 import { useRef, useState, useCallback } from "react";
-import { useEmailLoginMutation, useSendOtpMutation, useVerifyOtpMutation } from "../hooks/useLoginMutations";
+import { useEmailLoginMutation, useSendOtpMutation, useVerifyOtpMutation } from "../hooks/auth/useLoginMutations";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 

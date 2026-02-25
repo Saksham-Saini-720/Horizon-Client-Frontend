@@ -1,8 +1,8 @@
 
 import { useSearchParams } from "react-router-dom";
-import useRecentSearches from "../hooks/useRecentSearches";
-import useSearchSubmit   from "../hooks/useDebounceSearch";
-import { useSearchProperties } from "../hooks/useProperties";
+import useRecentSearches from "../hooks/searches/useRecentSearches";
+import useSearchSubmit   from "../hooks/utils/useDebounceSearch";
+import { useSearchProperties } from "../hooks/properties/useProperties";
 import SearchBar         from "../components/layouts/SearchBar";
 import NewListingCard    from "../components/explore/NewListingCard";
 import { NewListingCardSkeleton } from "../components/ui/SkeletonCards";

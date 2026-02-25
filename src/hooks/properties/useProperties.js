@@ -1,4 +1,4 @@
-// src/hooks/queries/useProperties.js
+
 import { useQuery } from "@tanstack/react-query";
 // import { getFeaturedProperties, getNewListings } from "../../api/propertyApi";
 

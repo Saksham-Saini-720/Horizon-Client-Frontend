@@ -1,12 +1,12 @@
-// src/components/saved/SavedPropertyCard.jsx
+
 import { memo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSaved } from "../../hooks/utils/useRedux"; // ← Redux hook
 import PropertyImage from "../ui/PropertyImage";
-import useSavedProperties from "../../hooks/useSavedProperties";
 
 const SavedPropertyCard = memo(({ property }) => {
   const navigate = useNavigate();
-  const { removeSaved } = useSavedProperties();
+  const { removeSaved } = useSaved(); // ← Redux instead of Context
 
   const { id, price, title, location, beds, baths, area, tag, img } = property;
 
@@ -24,7 +24,7 @@ const SavedPropertyCard = memo(({ property }) => {
       onClick={handleClick}
       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg active:scale-[0.99] transition-all cursor-pointer group"
     >
-      {/* ── Large Image (same height as in screenshot) ── */}
+      {/* ── Large Image ── */}
       <div className="relative h-56 bg-gray-100 overflow-hidden">
         <PropertyImage 
           src={img} 
@@ -52,7 +52,7 @@ const SavedPropertyCard = memo(({ property }) => {
         </button>
       </div>
 
-      {/* ── Info Section (matches screenshot layout) ── */}
+      {/* ── Info Section ── */}
       <div className="px-5 pt-4 pb-5">
         
         {/* Price */}

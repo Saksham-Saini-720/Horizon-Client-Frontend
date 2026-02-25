@@ -1,10 +1,10 @@
 import { apiPost, apiGet } from "./apiHelper";
 
 export const registerUser = (payload) =>
-  apiPost("/api/v1/auth/register", payload);
+  apiPost("/auth/register", payload);
 
-export const loginUser = (payload) =>
-  apiPost("/api/v1/auth/login", payload);
+export const loginUser = (payload, ) =>
+  apiPost("/auth/login", payload);
 
 export const logoutUser = (refreshToken) =>
   apiPost("/auth/logout", { refreshToken });
@@ -26,6 +26,12 @@ export const sendOtp = (payload) =>
 
 export const verifyOtp = (payload) =>
   apiPost("/auth/verify-otp", payload);
+
+export const verifyEmail = (payload) =>
+  apiPost("/auth/verify-email", payload);
+
+export const resendVerification = () =>
+  apiPost("/auth/resend-verification");
 
 export const fetchProfile = async () => {
   // 🔁 replace with real API

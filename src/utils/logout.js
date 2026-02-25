@@ -1,6 +1,5 @@
-// src/utils/logout.js
-import { clearTokens } from "./token";
 
+import { clearTokens } from "./token";
 /**
  * Logout user - clear tokens, user data, and auth cache
  * @param {QueryClient} queryClient - TanStack Query client instance

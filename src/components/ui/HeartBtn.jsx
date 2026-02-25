@@ -1,6 +1,6 @@
 
 import { useCallback, memo } from "react";
-import { useSaved } from "../../hooks/useRedux";
+import { useSaved } from "../../hooks/utils/useRedux";
 
 const HeartBtn = memo(({ size = "sm", propertyId }) => {
   const { isSaved, toggleSaved } = useSaved();

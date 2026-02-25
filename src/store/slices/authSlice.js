@@ -2,19 +2,72 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getTokens, setTokens as saveTokens, clearTokens } from '../../utils/token';
 
+// ─── Mock User for Development ─────────────────────────────────────────────────
+
+const MOCK_USER = {
+  id: '1',
+  firstName: 'Harshit',
+  lastName: 'Kumar',
+  email: 'harshit@horizon.com',
+  phone: '+91 98765 43210',
+  avatar: null,
+  bio: 'Property enthusiast looking for the perfect home in Chandigarh.',
+  createdAt: '2024-01-15T10:30:00Z',
+  emailVerified: true,
+  isPremium: false,
+};
+
 // ─── Initial State ─────────────────────────────────────────────────────────────
 
 const getInitialState = () => {
-  const { accessToken } = getTokens();
-  const userStr = localStorage.getItem('user');
-  
   try {
-    const user = userStr ? JSON.parse(userStr) : null;
+    // Get tokens
+    const { accessToken } = getTokens();
+    
+    // Get user from localStorage
+    const userStr = localStorage.getItem('user');
+    let user = null;
+    
+    if (userStr) {
+      try {
+        user = JSON.parse(userStr);
+        // console.log('📦 Loaded user from localStorage:', user);
+      } catch (e) {
+        // console.error('❌ Failed to parse user from localStorage:', e);
+        localStorage.removeItem('user'); // Clear bad data
+      }
+    }
+    
+    // Development mode: Auto-add mock user if none exists
+    if (import.meta.env.DEV) {
+      if (!user || !user.email) {
+        // console.log('🔧 Development mode: Loading mock user data');
+        user = MOCK_USER;
+        localStorage.setItem('user', JSON.stringify(MOCK_USER));
+        
+        // Also set a mock token if missing
+        if (!accessToken) {
+          // console.log('🔧 Development mode: Setting mock tokens');
+          saveTokens('mock-access-token', 'mock-refresh-token');
+        }
+      }
+    }
+    
+    const isAuthenticated = !!(accessToken && user && user.email);
+    
+    // console.log('🔐 Auth State Initialized:', { 
+    //   hasToken: !!accessToken, 
+    //   hasUser: !!user, 
+    //   userEmail: user?.email,
+    //   isAuthenticated 
+    // });
+    
     return {
       user,
-      isAuthenticated: !!accessToken && !!user,
+      isAuthenticated,
     };
-  } catch {
+  } catch (error) {
+    // console.error('❌ Error initializing auth state:', error);
     return {
       user: null,
       isAuthenticated: false,
@@ -32,6 +85,8 @@ const authSlice = createSlice({
     setAuth: (state, action) => {
       const { user, accessToken, refreshToken } = action.payload;
       
+      // console.log('✅ setAuth called with:', { user, accessToken });
+      
       state.user = user;
       state.isAuthenticated = true;
       
@@ -42,6 +97,8 @@ const authSlice = createSlice({
     
     // Logout
     clearAuth: (state) => {
+      // console.log('🚪 Logging out - clearing auth state');
+      
       state.user = null;
       state.isAuthenticated = false;
       
@@ -53,6 +110,8 @@ const authSlice = createSlice({
     // Update user profile
     updateUser: (state, action) => {
       if (state.user) {
+        // console.log('📝 Updating user:', action.payload);
+        
         state.user = { ...state.user, ...action.payload };
         localStorage.setItem('user', JSON.stringify(state.user));
       }

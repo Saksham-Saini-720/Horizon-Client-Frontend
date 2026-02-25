@@ -1,15 +1,51 @@
-// src/routes/protected/SavedPage.jsx
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useSavedProperties from "../hooks/useSavedProperties";
-import { useSavedPropertiesData } from "../hooks/useProperties";
+import { useAuth, useSaved } from "../hooks/utils/useRedux";
+import { useSavedPropertiesData } from "../hooks/properties/useProperties";
 import SavedPropertyCard from "../components/ui/SavedPropertyCard";
 import { NewListingCardSkeleton } from "../components/ui/SkeletonCards";
 
-// ─── Empty State ──────────────────────────────────────────────────────────────
+// ─── Not Logged In State ──────────────────────────────────────────────────────
 
-const EmptyState = () => {
+const NotLoggedInState = () => {
   const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen bg-[#F7F6F2] flex flex-col items-center justify-center px-4 pb-28">
+      {/* Icon */}
+      <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
+        <svg className="w-12 h-12 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+
+      {/* Heading */}
+      <h2 className="text-[24px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2">
+        No saved properties
+      </h2>
+
+      {/* Description */}
+      <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center max-w-xs mb-8">
+        Log in to save your favorite properties
+      </p>
+
+      {/* Login Button */}
+      <button
+        onClick={() => navigate("/login")}
+        className="px-8 py-3.5 rounded-xl bg-[#1C2A3A] text-white text-[15px] font-semibold font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] active:scale-95 transition-all shadow-lg"
+      >
+        Log In
+      </button>
+    </div>
+  );
+};
+
+// ─── Empty Saved (Logged In, No Properties) ───────────────────────────────────
+
+const EmptySaved = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
       <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center mb-6">
@@ -75,10 +111,18 @@ const FilterChip = ({ active, onClick, children }) => (
 // ─── SavedPage ────────────────────────────────────────────────────────────────
 
 const SavedPage = () => {
-  const { savedIds, clearAll, count } = useSavedProperties();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { savedIds, clearAll, count } = useSaved();
   const savedQuery = useSavedPropertiesData(savedIds);
+  
   const [filter, setFilter] = useState("all");
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+
+  // Show not logged in state
+  if (!isAuthenticated) {
+    return <NotLoggedInState />;
+  }
 
   const filteredData = savedQuery.data?.filter((p) => {
     if (filter === "all") return true;
@@ -90,7 +134,7 @@ const SavedPage = () => {
   return (
     <div className="min-h-screen bg-[#F7F6F2] pb-28">
 
-      {/* ── Simple Header (Title + Count + Clear All) ── */}
+      {/* ── Header (Title + Count + Clear All) ── */}
       <div className="bg-white border-b border-gray-100 px-5 pt-5 pb-4 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -131,7 +175,7 @@ const SavedPage = () => {
       {/* ── Content ── */}
       <div className="px-4 pt-5">
         {count === 0 ? (
-          <EmptyState />
+          <EmptySaved />
         ) : savedQuery.isLoading ? (
           <div className="space-y-4">
             {Array(2).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)}

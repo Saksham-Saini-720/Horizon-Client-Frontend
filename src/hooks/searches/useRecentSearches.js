@@ -1,4 +1,4 @@
-// src/hooks/useRecentSearches.js
+
 import { useState, useCallback } from "react";
 
 const STORAGE_KEY = "recentSearches";

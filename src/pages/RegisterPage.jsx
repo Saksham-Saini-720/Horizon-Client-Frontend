@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import useRegisterMutation from "../hooks/useRegisterMutation";
+import useRegisterMutation from "../hooks/auth/useRegisterMutation";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/v1";
 
@@ -136,7 +136,7 @@ export default function RegisterPage() {
   // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 mb-14">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
 
         {/* Header */}
