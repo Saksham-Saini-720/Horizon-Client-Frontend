@@ -8,7 +8,7 @@ export default function useSearchSubmit({ onSearch }) {
   const submitSearch = useCallback((q) => {
     const trimmed = q.trim();
     if (!trimmed) return;
-    onSearch?.(trimmed);                                  // recent mein save
+    onSearch?.(trimmed);                                  
     navigate(`/search?q=${encodeURIComponent(trimmed)}`);
   }, [navigate, onSearch]);
 

@@ -1,4 +1,4 @@
-// src/components/property/PropertyHeader.jsx
+
 import { memo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSaved } from "../../hooks/utils/useRedux";

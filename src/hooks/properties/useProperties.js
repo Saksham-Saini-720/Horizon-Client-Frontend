@@ -1,6 +1,4 @@
-
 import { useQuery } from "@tanstack/react-query";
-// import { getFeaturedProperties, getNewListings } from "../../api/propertyApi";
 
 // ─── Query Keys (for cache management) ────────────────────────────────────────
 
@@ -37,7 +35,7 @@ const mockNewListingsApi = async () => {
 
 // ─── Featured Properties Query ────────────────────────────────────────────────
 
-export function useFeaturedProperties() {
+export function useFeaturedProperties(options = {}) {
   return useQuery({
     queryKey: propertyKeys.featured(),
     queryFn: mockFeaturedApi,
@@ -48,12 +46,14 @@ export function useFeaturedProperties() {
     gcTime: 1000 * 60 * 30,       // 30 min cache
     refetchOnMount: false,        // Don't refetch if data exists
     refetchOnWindowFocus: false,  // Don't refetch on focus
+    
+    ...options, // ← ADDED: Allow passing enabled: false and other options
   });
 }
 
 // ─── New Listings Query ───────────────────────────────────────────────────────
 
-export function useNewListings() {
+export function useNewListings(options = {}) {
   return useQuery({
     queryKey: propertyKeys.new(),
     queryFn: mockNewListingsApi,
@@ -64,6 +64,8 @@ export function useNewListings() {
     gcTime: 1000 * 60 * 30,       // 30 min cache
     refetchOnMount: false,        // Don't refetch if data exists
     refetchOnWindowFocus: false,  // Don't refetch on focus
+    
+    ...options, // ← ADDED: Allow passing enabled: false and other options
   });
 }
 

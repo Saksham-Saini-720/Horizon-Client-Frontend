@@ -2,21 +2,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getTokens, setTokens as saveTokens, clearTokens } from '../../utils/token';
 
-// ─── Mock User for Development ─────────────────────────────────────────────────
-
-const MOCK_USER = {
-  id: '1',
-  firstName: 'Harshit',
-  lastName: 'Kumar',
-  email: 'harshit@horizon.com',
-  phone: '+91 98765 43210',
-  avatar: null,
-  bio: 'Property enthusiast looking for the perfect home in Chandigarh.',
-  createdAt: '2024-01-15T10:30:00Z',
-  emailVerified: true,
-  isPremium: false,
-};
-
 // ─── Initial State ─────────────────────────────────────────────────────────────
 
 const getInitialState = () => {
@@ -31,9 +16,7 @@ const getInitialState = () => {
     if (userStr) {
       try {
         user = JSON.parse(userStr);
-        // console.log('📦 Loaded user from localStorage:', user);
       } catch (e) {
-        // console.error('❌ Failed to parse user from localStorage:', e);
         localStorage.removeItem('user'); // Clear bad data
       }
     }

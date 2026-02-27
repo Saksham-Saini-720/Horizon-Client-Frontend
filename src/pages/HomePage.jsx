@@ -4,11 +4,6 @@ import Footer from "../components/layouts/Footer";
 import Navbar from "../components/layouts/Navbar";
 import PropertyDetailPage from "./PropertyDetailPage";
 
-/**
- * HomePage - Base layout wrapper
- * All routes render inside via <Outlet />
- * Navbar and Footer persist across all pages
- */
 const HomePage = () => {
 
   const location = useLocation()

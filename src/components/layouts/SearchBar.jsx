@@ -15,9 +15,9 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
           {label}
         </p>
         {!query && (
-          // Clear all sirf recent list pe dikhao, suggestions pe nahi
+  
           <button
-            onMouseDown={(e) => e.preventDefault()} // blur rokta hai
+            onMouseDown={(e) => e.preventDefault()} 
             onClick={onClearAll}
             className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-['DM_Sans',sans-serif]"
           >
@@ -33,18 +33,18 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
         {items.map((term) => (
           <div
             key={term}
-            onMouseDown={(e) => e.preventDefault()} // ← ROOT FIX: blur rok ke click fire karo
+            onMouseDown={(e) => e.preventDefault()}
             className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 active:bg-gray-100 transition-colors cursor-pointer group"
           >
             {/* Icon */}
             <div className="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
               {query ? (
-                // Suggestions ke liye search icon
+                
                 <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                 </svg>
               ) : (
-                // Recent ke liye clock icon
+                
                 <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                 </svg>
@@ -83,7 +83,6 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
               </svg>
             </button>
 
-            {/* ✕ Remove (sirf recent pe, suggestions pe nahi) */}
             {!query && (
               <button
                 onClick={(e) => { e.stopPropagation(); onRemove(term); }}
@@ -124,15 +123,13 @@ const SearchBar = memo(({
   const inputRef             = useRef(null);
   const [query, setQuery]    = useState(initialQuery);
   const [isFocused, setFocused] = useState(false);
-
-  // Suggestions: recent searches jo query se match karti hain
+  
   const suggestions = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return recentSearches.filter((s) => s.toLowerCase().includes(q));
   }, [query, recentSearches]);
 
-  // Kya dikhana hai dropdown mein?
   const dropdownItems  = query.trim() ? suggestions : recentSearches;
   const dropdownLabel  = query.trim() ? "Suggestions" : "Recent Searches";
   const showDropdown   = isFocused && dropdownItems.length > 0;

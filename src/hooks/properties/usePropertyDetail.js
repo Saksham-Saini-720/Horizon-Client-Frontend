@@ -1,4 +1,4 @@
-// src/hooks/queries/usePropertyDetail.js
+
 import { useQuery } from "@tanstack/react-query";
 
 // Mock API - replace with real endpoint

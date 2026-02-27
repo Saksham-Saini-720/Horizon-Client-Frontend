@@ -1,4 +1,4 @@
-// src/components/property/PropertyAmenities.jsx
+
 import { memo } from "react";
 
 const AmenityChip = memo(({ label }) => (

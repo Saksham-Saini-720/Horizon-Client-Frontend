@@ -4,10 +4,7 @@ import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
-
-import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingScreen from "./components/ui/LoadingScreen";
 import { store, persistor } from "./store/index";
 import App from "./App";
@@ -30,7 +27,6 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ErrorBoundary>
       {/* Redux Store */}
       <Provider store={store}>
         {/* Redux Persist - waits for rehydration */}
@@ -56,14 +52,9 @@ createRoot(document.getElementById("root")).render(
                   fontFamily: 'DM Sans, sans-serif',
                 },
               }}
-            />
-            
-            {/* DevTools (only in development) */}
-            {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-            
+            />            
           </QueryClientProvider>
         </PersistGate>
       </Provider>
-    </ErrorBoundary>
   </StrictMode>
 );

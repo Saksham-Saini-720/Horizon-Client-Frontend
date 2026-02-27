@@ -57,7 +57,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      // agar already refresh ho raha hai
+      // if refresh in progress, queue the request
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

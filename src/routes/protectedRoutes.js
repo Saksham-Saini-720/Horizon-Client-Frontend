@@ -33,7 +33,6 @@ const protectedRoutes = [
     element: ProfilePage,
     title: "Profile",
   },
-  // Uncomment when ready:
   // {
   //   path: "messages",
   //   element: MessagesPage,

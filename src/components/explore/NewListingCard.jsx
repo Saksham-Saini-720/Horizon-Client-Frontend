@@ -15,7 +15,6 @@ const SpecItem = ({ label, children }) => (
   </span>
 );
 
-// ─────────────────────────────────────────────────────────────────────────────
 
 const NewListingCard = memo(({ id, price, title, location, beds, baths, area, tag, img }) => {
   const navigate = useNavigate();
@@ -32,7 +31,7 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg active:scale-[0.99] transition-all cursor-pointer group"
     >
       {/* Image */}
-      <div className="relative h-56 bg-gray-100 overflow-hidden">
+      <div className="relative bg-gray-100 overflow-hidden h-full">
         <PropertyImage src={img} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 
         {/* For Sale / For Rent tag */}

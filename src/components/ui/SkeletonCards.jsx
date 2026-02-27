@@ -1,7 +1,4 @@
 
-// ─── Shimmer base ─────────────────────────────────────────────────────────────
-// Sab skeletons isko use karte hain
-
 const ShimmerBox = ({ className }) => (
   <div className={`bg-gray-200 animate-pulse rounded ${className}`} />
 );

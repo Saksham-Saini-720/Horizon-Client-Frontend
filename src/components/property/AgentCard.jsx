@@ -1,4 +1,4 @@
-// src/components/property/AgentCard.jsx
+
 import { memo } from "react";
 
 const AgentCard = memo(({ agent }) => {
@@ -39,18 +39,3 @@ const AgentCard = memo(({ agent }) => {
 export default AgentCard;
 
 
-// yrr ek gadbad ho hogyi h 
-
-
-
-// humne login ka page bna diya h 
-
-
-
-// but login ka modal bnana tha esa 
-
-
-
-// hrr protected route pr click krte hi ye login modal open hona chahiye 
-
-// login to continue

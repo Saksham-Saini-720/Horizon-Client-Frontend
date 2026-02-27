@@ -1,4 +1,4 @@
-// src/components/property/PropertyDetailSkeleton.jsx
+
 import { memo } from "react";
 
 const PropertyDetailSkeleton = memo(() => {

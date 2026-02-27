@@ -15,5 +15,5 @@ export function logout(queryClient) {
   queryClient.invalidateQueries({ queryKey: ["auth"] });
   
   // Optional: Clear all queries
-  // queryClient.clear();
+  queryClient.clear();
 }

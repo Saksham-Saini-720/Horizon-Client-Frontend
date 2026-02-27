@@ -2,6 +2,11 @@
 import { memo, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useVerifyEmail from "../hooks/auth/useVerifyEmail";
+import  SuccessState  from "../components/states/SuccessState";
+import Card from "../components/ui/Card";
+import Icon from "../components/ui/Icon";
+import Spinner from "../components/ui/Spinner";
+
 
 // ─── Verifying State ──────────────────────────────────────────────────────────
 
@@ -12,9 +17,7 @@ const VerifyingState = memo(() => (
       {/* Animated Icon */}
       <div className="mb-6 flex justify-center">
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg animate-pulse">
-          <svg className="w-12 h-12 text-white animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-          </svg>
+          <Spinner size="lg" color="white" />
         </div>
       </div>
 
@@ -27,69 +30,21 @@ const VerifyingState = memo(() => (
       <p className="text-[15px] text-gray-600 font-['DM_Sans',sans-serif]">
         Please wait while we verify your email address...
       </p>
-
-    </div>
-  </div>
-));
-
-// ─── Success State ────────────────────────────────────────────────────────────
-
-const SuccessState = memo(() => (
-  <div className="min-h-screen bg-gradient-to-br from-amber-50 via-[#F7F6F2] to-amber-50 flex items-center justify-center px-4">
-    <div className="w-full max-w-md">
-      
-      {/* Card */}
-      <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
-        
-        {/* Success Icon */}
-        <div className="mb-6 flex justify-center">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center shadow-lg animate-in zoom-in-50 duration-300">
-            <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-        </div>
-
-        {/* Heading */}
-        <h1 className="text-[26px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-3">
-          Email Verified!
-        </h1>
-
-        {/* Message */}
-        <p className="text-[15px] text-gray-600 font-['DM_Sans',sans-serif] mb-6">
-          Your email has been successfully verified. You'll be redirected to the home page shortly.
-        </p>
-
-        {/* Loading Indicator */}
-        <div className="flex items-center justify-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: '0s' }} />
-          <div className="w-2 h-2 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: '0.2s' }} />
-          <div className="w-2 h-2 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: '0.4s' }} />
-        </div>
-
-      </div>
-
     </div>
   </div>
 ));
 
 // ─── Error State ──────────────────────────────────────────────────────────────
 
-const ErrorState = memo(({ onRetry, onGoHome }) => (
+const VerificationError = memo(({ onRetry, onGoHome }) => (
   <div className="min-h-screen bg-gradient-to-br from-amber-50 via-[#F7F6F2] to-amber-50 flex items-center justify-center px-4">
-    <div className="w-full max-w-md">
-      
-      {/* Card */}
-      <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+    <Card className="w-full max-w-md">
+      <div className="text-center">
         
         {/* Error Icon */}
         <div className="mb-6 flex justify-center">
           <div className="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center">
-            <svg className="w-12 h-12 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="15" y1="9" x2="9" y2="15"/>
-              <line x1="9" y1="9" x2="15" y2="15"/>
-            </svg>
+            <Icon name="close" size={48} className="text-red-500" strokeWidth={2} />
           </div>
         </div>
 
@@ -128,10 +83,8 @@ const ErrorState = memo(({ onRetry, onGoHome }) => (
             Contact Support
           </a>
         </p>
-
       </div>
-
-    </div>
+    </Card>
   </div>
 ));
 
@@ -145,14 +98,11 @@ const VerifyEmailPage = memo(() => {
   // Auto-verify on mount
   useEffect(() => {
     if (!token) {
-      // No token in URL - redirect to home
       navigate("/");
       return;
     }
-
-    // Call verification API
     verifyMutation.mutate(token);
-  }, [token, navigate]); // Only run once on mount
+  }, [token, navigate]);
 
   const handleRetry = () => {
     if (token) {
@@ -170,11 +120,21 @@ const VerifyEmailPage = memo(() => {
   }
 
   if (verifyMutation.isSuccess) {
-    return <SuccessState />;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-[#F7F6F2] to-amber-50 flex items-center justify-center px-4">
+        <Card className="w-full max-w-md">
+          <SuccessState
+            title="Email Verified!"
+            message="Your email has been successfully verified. You'll be redirected to the home page shortly."
+            showRedirectIndicator={true}
+          />
+        </Card>
+      </div>
+    );
   }
 
   if (verifyMutation.isError) {
-    return <ErrorState onRetry={handleRetry} onGoHome={handleGoHome} />;
+    return <VerificationError onRetry={handleRetry} onGoHome={handleGoHome} />;
   }
 
   // Initial state (should not be visible due to useEffect)

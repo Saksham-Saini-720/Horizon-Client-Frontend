@@ -38,7 +38,6 @@ const Navbar = () => {
   const navigate  = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Home page — ExplorePage khud sticky header render karega
   if (location.pathname === "/") return null;
 
   const showBack  = !HIDE_BACK.includes(location.pathname);

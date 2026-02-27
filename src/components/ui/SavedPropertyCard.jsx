@@ -25,7 +25,7 @@ const SavedPropertyCard = memo(({ property }) => {
       className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg active:scale-[0.99] transition-all cursor-pointer group"
     >
       {/* ── Large Image ── */}
-      <div className="relative h-56 bg-gray-100 overflow-hidden">
+      <div className="relative h-full bg-gray-100 overflow-hidden">
         <PropertyImage 
           src={img} 
           alt={title} 

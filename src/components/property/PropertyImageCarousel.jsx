@@ -21,7 +21,7 @@ const PropertyImageCarousel = memo(({ images = [] }) => {
   };
 
   return (
-    <div className="relative w-full h-[400px] bg-gray-900 overflow-hidden">
+    <div className="relative w-full h-full bg-gray-900 overflow-hidden">
       {/* Images */}
       <div 
         className="flex h-full transition-transform duration-300 ease-out"

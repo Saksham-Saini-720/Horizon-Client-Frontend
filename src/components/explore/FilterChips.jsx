@@ -29,7 +29,6 @@ const FILTERS = [
   },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
 
 const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => (
   <div className={`flex items-center gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide transition-opacity duration-150 ${dimmed ? "opacity-60" : "opacity-100"}`}>

@@ -1,4 +1,4 @@
-// src/components/property/PropertyDescription.jsx
+
 import { memo } from "react";
 
 const PropertyDescription = memo(({ description }) => {

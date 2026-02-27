@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 const STORAGE_KEY = "recentSearches";
 const MAX_RECENT  = 5;
 
-// localStorage se safely read karo
 const loadFromStorage = () => {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
