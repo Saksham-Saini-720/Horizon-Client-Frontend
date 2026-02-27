@@ -1,6 +1,7 @@
 
-import { useRef, useState, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useRef, useState, useCallback, useEffect } from "react";
+import { Link, useNavigate, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useEmailLoginMutation, useSendOtpMutation, useVerifyOtpMutation } from "../hooks/auth/useLoginMutations";
 import ValidatedInput from "../components/forms/ValidatedInput";
 import ErrorBanner from "../components/forms/ErrorBanner";
@@ -174,6 +175,10 @@ const PhoneForm = ({ sendOtpMutation, verifyOtpMutation }) => {
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState("email");
+  
+  // Check if already authenticated
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const user = useSelector((state) => state.auth.user);
 
   const emailLoginMutation = useEmailLoginMutation();
   const sendOtpMutation = useSendOtpMutation();
@@ -189,6 +194,11 @@ export default function LoginPage() {
     sendOtpMutation.reset();
     verifyOtpMutation.reset();
   }, [emailLoginMutation, sendOtpMutation, verifyOtpMutation]);
+
+  // ✅ REDIRECT IF ALREADY LOGGED IN
+  if (isAuthenticated && user) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 mb-11">

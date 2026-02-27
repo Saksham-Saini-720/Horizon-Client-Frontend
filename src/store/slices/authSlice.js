@@ -2,55 +2,49 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getTokens, setTokens as saveTokens, clearTokens } from '../../utils/token';
 
+// ─── Simple Token Validation (No JWT Checking) ────────────────────────────────
+
+const validateToken = (token) => {
+  // Simple check - just verify token exists and is not empty
+  return !!(token && token.trim().length > 0);
+};
+
 // ─── Initial State ─────────────────────────────────────────────────────────────
 
 const getInitialState = () => {
   try {
-    // Get tokens
-    const { accessToken } = getTokens();
+    console.log('🔄 Initializing auth state...');
+    
+    // Get tokens from your utility
+    const { accessToken, refreshToken } = getTokens();
     
     // Get user from localStorage
     const userStr = localStorage.getItem('user');
-    let user = null;
     
+    let user = null;
     if (userStr) {
       try {
         user = JSON.parse(userStr);
       } catch (e) {
-        localStorage.removeItem('user'); // Clear bad data
+        localStorage.removeItem('user');
       }
     }
     
-    // Development mode: Auto-add mock user if none exists
-    if (import.meta.env.DEV) {
-      if (!user || !user.email) {
-        // console.log('🔧 Development mode: Loading mock user data');
-        user = MOCK_USER;
-        localStorage.setItem('user', JSON.stringify(MOCK_USER));
-        
-        // Also set a mock token if missing
-        if (!accessToken) {
-          // console.log('🔧 Development mode: Setting mock tokens');
-          saveTokens('mock-access-token', 'mock-refresh-token');
-        }
-      }
+    // Simple validation - just check if data exists
+    if (accessToken && validateToken(accessToken) && user && user.email) {
+      return {
+        user,
+        isAuthenticated: true,
+      };
+    } else {      
+      // Don't clear tokens here - they might be valid
+      // Just return logged out state
+      return {
+        user: null,
+        isAuthenticated: false,
+      };
     }
-    
-    const isAuthenticated = !!(accessToken && user && user.email);
-    
-    // console.log('🔐 Auth State Initialized:', { 
-    //   hasToken: !!accessToken, 
-    //   hasUser: !!user, 
-    //   userEmail: user?.email,
-    //   isAuthenticated 
-    // });
-    
-    return {
-      user,
-      isAuthenticated,
-    };
   } catch (error) {
-    // console.error('❌ Error initializing auth state:', error);
     return {
       user: null,
       isAuthenticated: false,
@@ -68,8 +62,6 @@ const authSlice = createSlice({
     setAuth: (state, action) => {
       const { user, accessToken, refreshToken } = action.payload;
       
-      // console.log('✅ setAuth called with:', { user, accessToken });
-      
       state.user = user;
       state.isAuthenticated = true;
       
@@ -80,7 +72,6 @@ const authSlice = createSlice({
     
     // Logout
     clearAuth: (state) => {
-      // console.log('🚪 Logging out - clearing auth state');
       
       state.user = null;
       state.isAuthenticated = false;
@@ -93,16 +84,76 @@ const authSlice = createSlice({
     // Update user profile
     updateUser: (state, action) => {
       if (state.user) {
-        // console.log('📝 Updating user:', action.payload);
-        
         state.user = { ...state.user, ...action.payload };
         localStorage.setItem('user', JSON.stringify(state.user));
+      }
+    },
+
+    // Sync auth state with localStorage
+    syncAuthState: (state) => {
+      try {
+        
+        const { accessToken } = getTokens();
+        const userStr = localStorage.getItem('user');
+        let user = null;
+        
+        if (userStr) {
+          try {
+            user = JSON.parse(userStr);
+          } catch (e) {
+            localStorage.removeItem('user');
+          }
+        }
+        
+        // Check if valid
+        if (!accessToken || !validateToken(accessToken) || !user || !user.email) {
+          
+          // Token missing/invalid - force logout
+          state.user = null;
+          state.isAuthenticated = false;
+          
+          clearTokens();
+          localStorage.removeItem('user');
+        } else {
+          
+          // Valid - sync state
+          state.user = user;
+          state.isAuthenticated = true;
+        }
+      } catch (error) {
+        state.user = null;
+        state.isAuthenticated = false;
+      }
+    },
+    
+    // EMERGENCY: Force login from localStorage (for debugging)
+    forceLoginFromStorage: (state) => {
+      try {
+        
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          const { accessToken } = getTokens();
+          
+          if (user && accessToken) {
+            state.user = user;
+            state.isAuthenticated = true;
+          }
+        }
+      } catch (error) {
+        console.error('Error in forceLoginFromStorage:', error);
       }
     },
   },
 });
 
-export const { setAuth, clearAuth, updateUser } = authSlice.actions;
+export const { 
+  setAuth, 
+  clearAuth, 
+  updateUser, 
+  syncAuthState,
+  forceLoginFromStorage  // NEW - for emergency use
+} = authSlice.actions;
 
 // ─── Selectors ─────────────────────────────────────────────────────────────────
 

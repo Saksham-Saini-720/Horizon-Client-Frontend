@@ -2,6 +2,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import AuthSync from "./components/auth/AuthSync";
 
 // Route configs
 import publicRoutes from "./routes/publicRoutes";
@@ -28,6 +29,9 @@ const PageLoader = () => (
 export default function App() {
   return (
     <BrowserRouter>
+      {/* Global Auth Sync - Detects manual token removal */}
+      <AuthSync />
+      
       <Suspense fallback={<PageLoader />}>
         <Routes>
           
