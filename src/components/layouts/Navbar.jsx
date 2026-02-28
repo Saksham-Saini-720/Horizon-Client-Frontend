@@ -1,4 +1,5 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import logo from "../../assets/icons/logo.png";
 
 const HIDE_BACK   = ["/saved", "/inquiries", "/tours", "/profile"];
 const ROUTE_TITLES = {
@@ -17,17 +18,13 @@ export const HorizonLogo = ({ size = 40 }) => (
   <div
     className="rounded-2xl flex items-center justify-center flex-shrink-0 cursor-pointer"
     style={{
-      width: size, height: size,
+      width: size,
+      height: size,
       background: "linear-gradient(145deg, #F5B731 0%, #E8A020 100%)",
       boxShadow: "0 2px 8px rgba(232,160,32,0.35)",
     }}
   >
-    <span
-      className="font-serif font-bold text-[#1C2A3A] select-none leading-none"
-      style={{ fontSize: size * 0.42 }}
-    >
-      H
-    </span>
+    <img src={logo} alt="logo" className="w-4/5 h-auto object-contain" />
   </div>
 );
 

@@ -13,7 +13,6 @@ const validateToken = (token) => {
 
 const getInitialState = () => {
   try {
-    console.log('🔄 Initializing auth state...');
     
     // Get tokens from your utility
     const { accessToken, refreshToken } = getTokens();
@@ -60,14 +59,18 @@ const authSlice = createSlice({
   reducers: {
     // Login/Register success
     setAuth: (state, action) => {
-      const { user, accessToken, refreshToken } = action.payload;
-      
+      const { accessToken, refreshToken } = action.payload;
+
+      const user = action.payload.user ?? state.user;
+
       state.user = user;
       state.isAuthenticated = true;
-      
-      // Sync to localStorage
+
       saveTokens(accessToken, refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
+
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
     },
     
     // Logout
@@ -141,7 +144,7 @@ const authSlice = createSlice({
           }
         }
       } catch (error) {
-        console.error('Error in forceLoginFromStorage:', error);
+        throw new Error('Failed to force login from storage');
       }
     },
   },

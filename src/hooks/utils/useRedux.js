@@ -3,12 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-// Import action creators directly from slices
+// Import action creators
 import { clearAuth, updateUser } from '../../store/slices/authSlice';
-import { 
-  toggleSaved, 
-  removeSaved, 
-  clearAllSaved 
+import {
+  toggleSaved,
+  removeSaved,
+  clearAllSaved,
+  setNote,
+  deleteNote,
 } from '../../store/slices/savedSlice';
 import {
   setSearchQuery,
@@ -29,7 +31,7 @@ import {
   closeAllModals,
 } from '../../store/slices/uiSlice';
 
-// Import selectors from slices
+// Import selectors
 import {
   selectAuth,
   selectUser,
@@ -39,6 +41,8 @@ import {
   selectSavedIds,
   selectIsSaved,
   selectSavedCount,
+  selectAllNotes,
+  selectPropertyNote,
 } from '../../store/slices/savedSlice';
 import {
   selectFilters,
@@ -58,23 +62,19 @@ import {
 export function useAuth() {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  
-  // Use selectors from authSlice
+
   const user = useSelector(selectUser);
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  
+
   const logout = useCallback(() => {
-    // Clear Redux auth state
     dispatch(clearAuth());
-    
-    // Clear TanStack Query cache
     queryClient.clear();
   }, [dispatch, queryClient]);
-  
+
   const updateProfile = useCallback((data) => {
     dispatch(updateUser(data));
   }, [dispatch]);
-  
+
   return {
     user,
     isAuthenticated,
@@ -87,35 +87,46 @@ export function useAuth() {
 
 export function useSaved() {
   const dispatch = useDispatch();
-  
-  // Use selectors from savedSlice
+
   const savedIds = useSelector(selectSavedIds);
   const count = useSelector(selectSavedCount);
-  
+  const allNotes = useSelector(selectAllNotes);
+
   const toggle = useCallback((propertyId) => {
     dispatch(toggleSaved(propertyId));
   }, [dispatch]);
-  
+
   const remove = useCallback((propertyId) => {
     dispatch(removeSaved(propertyId));
   }, [dispatch]);
-  
+
   const clearAll = useCallback(() => {
     dispatch(clearAllSaved());
   }, [dispatch]);
-  
-  // Selector function - returns boolean
+
   const isSaved = useCallback((propertyId) => {
     return savedIds.includes(propertyId);
   }, [savedIds]);
-  
+
+  // Note actions
+  const saveNote = useCallback((propertyId, note) => {
+    dispatch(setNote({ propertyId, note }));
+  }, [dispatch]);
+
+  const removeNote = useCallback((propertyId) => {
+    dispatch(deleteNote(propertyId));
+  }, [dispatch]);
+
   return {
     savedIds,
     count,
+    allNotes,
     toggleSaved: toggle,
     removeSaved: remove,
     clearAll,
     isSaved,
+    saveNote,
+    removeNote,
   };
 }
 
@@ -123,33 +134,32 @@ export function useSaved() {
 
 export function useFilters() {
   const dispatch = useDispatch();
-  
-  // Use selectors from filtersSlice
+
   const filters = useSelector(selectFilters);
   const searchQuery = useSelector(selectSearchQuery);
   const propertyType = useSelector(selectPropertyType);
   const activeCount = useSelector(selectActiveFiltersCount);
-  
+
   const setQuery = useCallback((query) => {
     dispatch(setSearchQuery(query));
   }, [dispatch]);
-  
+
   const setType = useCallback((type) => {
     dispatch(setPropertyType(type));
   }, [dispatch]);
-  
+
   const setPrices = useCallback((range) => {
     dispatch(setPriceRange(range));
   }, [dispatch]);
-  
+
   const setBeds = useCallback((beds) => {
     dispatch(setBedrooms(beds));
   }, [dispatch]);
-  
+
   const reset = useCallback(() => {
     dispatch(resetFilters());
   }, [dispatch]);
-  
+
   return {
     filters,
     searchQuery,
@@ -167,15 +177,14 @@ export function useFilters() {
 
 export function useUI() {
   const dispatch = useDispatch();
-  
-  // Use selectors from uiSlice
+
   const modals = useSelector((state) => ({
     filter: selectShowFilterModal(state),
     location: selectShowLocationModal(state),
     price: selectShowPriceModal(state),
     bedrooms: selectShowBedroomsModal(state),
   }));
-  
+
   const openModal = useCallback((modalName) => {
     const actionMap = {
       filter: openFilterModal,
@@ -186,7 +195,7 @@ export function useUI() {
     const action = actionMap[modalName];
     if (action) dispatch(action());
   }, [dispatch]);
-  
+
   const closeModal = useCallback((modalName) => {
     const actionMap = {
       filter: closeFilterModal,
@@ -197,11 +206,11 @@ export function useUI() {
     const action = actionMap[modalName];
     if (action) dispatch(action());
   }, [dispatch]);
-  
+
   const closeAll = useCallback(() => {
     dispatch(closeAllModals());
   }, [dispatch]);
-  
+
   return {
     modals,
     openModal,

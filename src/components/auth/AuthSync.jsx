@@ -2,22 +2,29 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { syncAuthState } from "../../store/slices/authSlice";
+import { getTokens } from "../../utils/token";
 
 /**
- * AuthSync - Global component that syncs auth state with localStorage
- * Detects when tokens are manually removed and logs user out
+ * AuthSync Component
  * 
- * Add this to App.jsx to run globally
+ * Handles:
+ * 1. Initial auth state sync from localStorage
+ * 2. Cross-tab synchronization
+ * 3. Logout when both tokens deleted manually
  */
 export default function AuthSync() {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    // Initial sync on mount
-    dispatch(syncAuthState());
+  // ─── Initial Sync on Mount ────────────────────────────────────────────────────
 
-    // Listen for localStorage changes from other tabs
+  useEffect(() => {
+    dispatch(syncAuthState());
+  }, [dispatch]);
+
+  // ─── Cross-Tab Synchronization ────────────────────────────────────────────────
+
+  useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === "accessToken" || e.key === "refreshToken" || e.key === "user") {
         dispatch(syncAuthState());
@@ -25,26 +32,25 @@ export default function AuthSync() {
     };
 
     window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [dispatch]);
 
-    // Poll localStorage every 1 second to detect same-tab changes
+  // ─── Detect Both Tokens Deletion (Logout Trigger) ─────────────────────────────
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Check every second for both tokens deletion
     const interval = setInterval(() => {
-      const token = localStorage.getItem("accessToken");
-      
-      // Token removed but Redux thinks user is logged in
-      if (!token && isAuthenticated) {
-        dispatch(syncAuthState());
-      }
-      
-      // Token exists but Redux thinks user is logged out
-      if (token && !isAuthenticated) {
-        dispatch(syncAuthState());
-      }
-    }, 1000); // Check every second
+      const { accessToken, refreshToken } = getTokens();
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      clearInterval(interval);
-    };
+      // If both tokens missing while authenticated → Force logout
+      if (!accessToken && !refreshToken && isAuthenticated) {
+        dispatch(syncAuthState());
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [dispatch, isAuthenticated]);
 
   return null; // This component doesn't render anything

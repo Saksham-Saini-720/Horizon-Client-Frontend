@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AuthSync from "./components/auth/AuthSync";
+import TokenRefreshManager from "./components/auth/TokenRefreshManager";
 
 // Route configs
 import publicRoutes from "./routes/publicRoutes";
@@ -29,8 +30,9 @@ const PageLoader = () => (
 export default function App() {
   return (
     <BrowserRouter>
-      {/* Global Auth Sync - Detects manual token removal */}
+      {/* Global Auth Management */}
       <AuthSync />
+      <TokenRefreshManager />
       
       <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -42,7 +44,7 @@ export default function App() {
             {publicRoutes.map(({ path, element: Component, title }) => (
               <Route 
                 key={path || "index"} 
-                index={path === ""}  // ← Index route for "/"
+                index={path === ""}
                 path={path || undefined}
                 element={<Component />} 
               />

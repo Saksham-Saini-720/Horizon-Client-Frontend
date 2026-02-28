@@ -12,6 +12,9 @@ export const logoutUser = (refreshToken) =>
 export const getCurrentUser = () =>
   apiGet("/auth/me");
 
+export const refresh = (refreshToken) =>
+  apiPost("/auth/refresh", { refreshToken });
+
 export const forgotPassword = (email) =>
   apiPost("/auth/forgot-password", { email });
 
