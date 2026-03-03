@@ -1,3 +1,4 @@
+
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { 
   persistStore, 
@@ -9,6 +10,7 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
+
 import storage from 'redux-persist/lib/storage';
 
 // Slices
@@ -16,6 +18,7 @@ import authReducer from './slices/authSlice';
 import savedReducer from './slices/savedSlice';
 import filtersReducer from './slices/filtersSlice';
 import uiReducer from './slices/uiSlice';
+import activityReducer from './slices/activitySlice';
 
 // ✅ combineReducers use karo
 const rootReducer = combineReducers({
@@ -23,15 +26,18 @@ const rootReducer = combineReducers({
   saved: savedReducer,
   filters: filtersReducer,
   ui: uiReducer,
+  activity: activityReducer, // ✅ Activity slice added
 });
 
 // ─── Persist Config ─────────────────────────────────
 
+const resolvedStorage = storage.default ?? storage;
+
 const persistConfig = {
   key: 'root',
   version: 1,
-  storage : storage.default,
-  whitelist: ['auth', 'saved', 'filters'],
+  storage: resolvedStorage,
+  whitelist: ['auth', 'saved', 'filters', 'activity'], // ✅ Activity persist hoga
 };
 
 // ✅ persistReducer ko proper reducer do
@@ -51,3 +57,5 @@ export const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+export default store;

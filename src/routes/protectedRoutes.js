@@ -4,7 +4,7 @@ import { lazy } from "react";
 // ─── Lazy loaded components from pages/ ───────────────────────────────────────
 
 const SavedPage = lazy(() => import("../pages/SavedPage"));
-const InquiriesPage = lazy(() => import("../pages/InquiriesPage"));
+const ActivityPage = lazy(() => import("../pages/ActivityPage"));
 // const ToursPage = lazy(() => import("../../pages/ToursPage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
 // const MessagesPage = lazy(() => import("../../pages/MessagesPage"));
@@ -20,7 +20,7 @@ const protectedRoutes = [
   },
   {
     path: "inquiries",
-    element: InquiriesPage,
+    element: ActivityPage,
     title: "My Inquiries",
   },
   // {

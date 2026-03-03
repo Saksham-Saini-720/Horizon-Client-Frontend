@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getTokens, setTokens as saveTokens, clearTokens } from '../../utils/token';
 
-// ─── Simple Token Validation (No JWT Checking) ────────────────────────────────
+// ─── Simple Token Validation ───────────────────────────────────────────────────
 
 const validateToken = (token) => {
   // Simple check - just verify token exists and is not empty
@@ -13,7 +13,6 @@ const validateToken = (token) => {
 
 const getInitialState = () => {
   try {
-    
     // Get tokens from your utility
     const { accessToken, refreshToken } = getTokens();
     
@@ -60,28 +59,34 @@ const authSlice = createSlice({
     // Login/Register success
     setAuth: (state, action) => {
       const { accessToken, refreshToken } = action.payload;
-
       const user = action.payload.user ?? state.user;
 
       state.user = user;
       state.isAuthenticated = true;
 
+      // Save tokens using utility
       saveTokens(accessToken, refreshToken);
 
+      // Save user to localStorage
       if (user) {
         localStorage.setItem('user', JSON.stringify(user));
       }
     },
     
-    // Logout
+    // Logout - Complete cleanup
     clearAuth: (state) => {
-      
+      // Clear Redux state
       state.user = null;
       state.isAuthenticated = false;
       
-      // Clear localStorage
+      // Clear tokens using utility
       clearTokens();
+      
+      // Clear user from localStorage
       localStorage.removeItem('user');
+      
+      // Note: Activity data clearing happens in useLogout hook
+      // via dispatch(clearActivity()) if you have activity slice
     },
     
     // Update user profile
@@ -95,7 +100,6 @@ const authSlice = createSlice({
     // Sync auth state with localStorage
     syncAuthState: (state) => {
       try {
-        
         const { accessToken } = getTokens();
         const userStr = localStorage.getItem('user');
         let user = null;
@@ -110,7 +114,6 @@ const authSlice = createSlice({
         
         // Check if valid
         if (!accessToken || !validateToken(accessToken) || !user || !user.email) {
-          
           // Token missing/invalid - force logout
           state.user = null;
           state.isAuthenticated = false;
@@ -118,7 +121,6 @@ const authSlice = createSlice({
           clearTokens();
           localStorage.removeItem('user');
         } else {
-          
           // Valid - sync state
           state.user = user;
           state.isAuthenticated = true;
@@ -132,7 +134,6 @@ const authSlice = createSlice({
     // EMERGENCY: Force login from localStorage (for debugging)
     forceLoginFromStorage: (state) => {
       try {
-        
         const userStr = localStorage.getItem('user');
         if (userStr) {
           const user = JSON.parse(userStr);
@@ -150,12 +151,14 @@ const authSlice = createSlice({
   },
 });
 
+// ─── Exports ───────────────────────────────────────────────────────────────────
+
 export const { 
   setAuth, 
   clearAuth, 
   updateUser, 
   syncAuthState,
-  forceLoginFromStorage  // NEW - for emergency use
+  forceLoginFromStorage
 } = authSlice.actions;
 
 // ─── Selectors ─────────────────────────────────────────────────────────────────

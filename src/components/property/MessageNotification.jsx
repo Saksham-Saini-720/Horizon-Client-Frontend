@@ -1,4 +1,4 @@
-// src/components/property/MessageNotification.jsx
+
 import { memo, useEffect } from 'react';
 
 /**

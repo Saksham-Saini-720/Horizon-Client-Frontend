@@ -1,4 +1,4 @@
-// src/components/property/TourNotification.jsx
+
 import { memo, useEffect } from 'react';
 
 /**

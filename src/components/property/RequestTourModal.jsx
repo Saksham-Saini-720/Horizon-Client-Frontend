@@ -1,18 +1,24 @@
-// src/components/property/RequestTourModal.jsx
+
 import { memo, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { addTourRequest } from '../../store/slices/activitySlice';
 import ConfirmTourModal from './ConfirmTourModal';
 
 /**
  * RequestTourModal Component
  * Step 1: Visit type, date, time selection
+ * NOW WITH REDUX INTEGRATION
  */
 const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
+  const dispatch = useDispatch();
   const [visitType, setVisitType] = useState('in-person');
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [note, setNote] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
+
+  // console.log(property)
 
   // Next 6 days starting from tomorrow
   const dates = [
@@ -48,11 +54,25 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
     });
   }, []);
 
-  // Handle review
+  // Handle review - THIS NOW SAVES TO REDUX
   const handleReview = useCallback(() => {
     if (!selectedDate || selectedTimes.length === 0) return;
+    
+    // Save to Redux
+    dispatch(addTourRequest({
+      property: {
+        id: property.id,
+        title: property.title,
+        location: property.location,
+        img: property.images[0],
+      },
+      visitType: visitType,
+      selectedTimes: selectedTimes,
+      agent: agent,
+    }));
+    
     setShowConfirm(true);
-  }, [selectedDate, selectedTimes]);
+  }, [selectedDate, selectedTimes, dispatch, property, agent, visitType]);
 
   if (!isOpen) return null;
 

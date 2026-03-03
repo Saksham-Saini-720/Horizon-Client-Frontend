@@ -1,13 +1,17 @@
-// src/components/property/SendMessageModal.jsx
+
 import { memo, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { addInquiry, addMessage } from '../../store/slices/activitySlice';
 import MessageSuccessModal from './MessageSuccessModal';
 import MessageNotification from './MessageNotification';
 
 /**
  * SendMessageModal Component
  * Complete message form - slides from bottom
+ * NOW WITH REDUX INTEGRATION
  */
 const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -49,6 +53,29 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
       return;
     }
 
+    // Save to Redux - Add both inquiry and message
+    dispatch(addInquiry({
+      property: {
+        id: property.id,
+        title: property.title,
+        img: property.images[0],
+        location: property.location,
+        price: property.price,
+        // img: property.img,
+      },
+      message: formData.message,
+      agent: agent,
+    }));
+
+    dispatch(addMessage({
+      agent: agent,
+      property: {
+        id: property.id,
+        title: property.title,
+      },
+      message: formData.message,
+    }));
+
     // Show success modal
     setShowSuccess(true);
     
@@ -70,9 +97,9 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
         message: ''
       });
     }, 2500);
-  }, [formData, onClose]);
+  }, [formData, onClose, dispatch, agent, property]);
 
-  // if (!isOpen) return null;
+  if (!isOpen) return null;
 
   // Show success modal
   if (showSuccess) {
@@ -92,22 +119,13 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
     <>
       {/* Backdrop */}
       <div
-      className={`
-        fixed inset-0 bg-black/50 backdrop-blur-sm z-40
-        transition-opacity duration-200
-        ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-      `}
-      onClick={onClose}
-    />
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in duration-300"
+        onClick={onClose}
+      />
 
       {/* Modal - Full width, slides from bottom */}
       <div
-        className={`
-            fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 
-            max-h-[90vh] overflow-y-auto
-            transform transition-transform duration-300 ease-out
-            ${isOpen ? 'translate-y-0' : 'translate-y-full'}
-          `}
+        className="fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom duration-300"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -239,7 +257,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Full Name"
+                placeholder="John Mwamba"
                 required
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors"
               />
@@ -253,7 +271,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="+260...."
+                placeholder="+260 977 888 999"
                 required
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors"
               />
@@ -270,7 +288,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="you@gmail.com"
+              placeholder="john.mwamba@email.com"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors"
             />
           </div>
@@ -284,7 +302,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
               name="message"
               value={formData.message}
               onChange={handleChange}
-              placeholder="Is this property still available?...."
+              placeholder="Is this property still available?&#10;Can I schedule a viewing?&#10;What are the payment terms?"
               required
               rows={5}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 resize-none transition-colors"

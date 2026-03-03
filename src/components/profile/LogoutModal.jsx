@@ -1,21 +1,32 @@
 
 import { memo } from "react";
 
+/**
+ * LogoutModal Component
+ * Confirmation modal for logout action with loading state
+ */
 const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
   if (!isOpen) return null;
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
       onClick={onCancel}
     >
       <div 
-        className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200"
+        className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Icon */}
-        <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mb-4 mx-auto">
-          <svg className="w-7 h-7 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-4 mx-auto">
+          <svg 
+            className="w-8 h-8 text-red-500" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round"
+          >
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
             <polyline points="16 17 21 12 16 7"/>
             <line x1="21" y1="12" x2="9" y2="12"/>
@@ -23,11 +34,11 @@ const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
         </div>
 
         {/* Content */}
-        <h3 className="text-[20px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2 text-center">
+        <h3 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2 text-center">
           Log Out
         </h3>
         
-        <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center mb-6">
+        <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center mb-6 leading-relaxed">
           Are you sure you want to log out? You'll need to log in again to access your account.
         </p>
 
@@ -36,21 +47,49 @@ const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-50"
+            className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-3 rounded-xl bg-red-500 text-white text-[15px] font-semibold font-['DM_Sans',sans-serif] hover:bg-red-600 active:scale-95 transition-all shadow-lg shadow-red-500/30 disabled:opacity-50"
+            className="flex-1 px-4 py-3.5 rounded-xl bg-red-500 text-white text-[15px] font-semibold font-['DM_Sans',sans-serif] hover:bg-red-600 active:scale-95 transition-all shadow-lg shadow-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isLoading ? "Logging out..." : "Log Out"}
+            {isLoading ? (
+              <>
+                {/* Spinner */}
+                <svg 
+                  className="animate-spin h-4 w-4" 
+                  viewBox="0 0 24 24"
+                >
+                  <circle 
+                    className="opacity-25" 
+                    cx="12" 
+                    cy="12" 
+                    r="10" 
+                    stroke="currentColor" 
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path 
+                    className="opacity-75" 
+                    fill="currentColor" 
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Logging out...
+              </>
+            ) : (
+              "Log Out"
+            )}
           </button>
         </div>
       </div>
     </div>
   );
 });
+
+LogoutModal.displayName = 'LogoutModal';
 
 export default LogoutModal;

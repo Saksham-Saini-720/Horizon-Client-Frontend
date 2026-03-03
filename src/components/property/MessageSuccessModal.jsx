@@ -1,4 +1,4 @@
-// src/components/property/MessageSuccessModal.jsx
+
 import { memo } from 'react';
 
 /**

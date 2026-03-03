@@ -1,4 +1,4 @@
-// src/components/property/ConfirmTourModal.jsx
+
 import { memo, useState, useCallback } from 'react';
 import TourSuccessModal from './TourSuccessModal';
 
@@ -29,10 +29,21 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in duration-200" />
+      <div
+        className={`
+          fixed inset-0 bg-black/50 backdrop-blur-sm z-40
+          transition-opacity duration-200
+          opacity-100
+        `}
+      />
 
       {/* Modal */}
-      <div className="fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
+      <div className={`
+        fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50
+        max-h-[90vh] overflow-y-auto
+        transform transition-transform duration-300 ease-out
+        translate-y-0
+      `}>
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">

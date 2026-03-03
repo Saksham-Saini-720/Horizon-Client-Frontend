@@ -3,10 +3,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearAuth } from "../../store/slices/authSlice";
+import { clearActivity } from "../../store/slices/activitySlice"; 
 import { logoutUser } from "../../api/authApi";
 import { getTokens } from "../../utils/token";
 import toast from "react-hot-toast";
 
+/**
+ * useLogout Hook
+ * Handles logout with API call and complete state cleanup
+ */
 export default function useLogout() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,12 +25,17 @@ export default function useLogout() {
         throw new Error("No refresh token found");
       }
       
+      // Call logout API
       return await logoutUser(refreshToken);
     },
 
     onSuccess: () => {
-      // Clear Redux state
+      // Clear Redux auth state
       dispatch(clearAuth());
+      
+      // Clear activity state (if you have it)
+      // Uncomment if you have activity slice:
+      // dispatch(clearActivity());
       
       // Clear TanStack Query cache
       queryClient.clear();
@@ -33,27 +43,34 @@ export default function useLogout() {
       // Show success message
       toast.success("Logged out successfully");
       
-      // Navigate to login
-      navigate("/login");
+      // Navigate to login (replace: true prevents going back)
+      navigate("/login", { replace: true });
     },
 
     onError: (error) => {
-      // Even if API fails, still logout locally
-      console.error("Logout API error:", error);
       
-      // Clear Redux state anyway
+      // Clear Redux auth state anyway
       dispatch(clearAuth());
+      
+      // Clear activity state (if you have it)
+      // Uncomment if you have activity slice:
+      // dispatch(clearActivity());
       
       // Clear TanStack Query cache
       queryClient.clear();
       
       // Navigate to login
-      navigate("/login");
+      navigate("/login", { replace: true });
       
       // Show warning toast
       toast("Logged out (API error occurred)", {
         icon: "⚠️",
       });
+    },
+
+    onSettled: () => {
+      // This runs whether success or error
+      // Additional cleanup can go here if needed
     },
   });
 }

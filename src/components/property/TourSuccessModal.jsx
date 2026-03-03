@@ -1,4 +1,4 @@
-// src/components/property/TourSuccessModal.jsx
+
 import { memo, useState, useEffect } from 'react';
 import TourNotification from './TourNotification';
 
@@ -8,23 +8,43 @@ import TourNotification from './TourNotification';
  */
 const TourSuccessModal = memo(({ onClose, property, agent, visitType, selectedTimes }) => {
   const [showNotification, setShowNotification] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+    
 
   // Show notification after modal appears
   useEffect(() => {
-    const timer = setTimeout(() => {
+  // Slight delay so animation triggers properly
+    const openTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 10);
+
+    const notifyTimer = setTimeout(() => {
       setShowNotification(true);
     }, 400);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(openTimer);
+      clearTimeout(notifyTimer);
+    };
   }, []);
 
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in duration-200" />
+      <div
+        className={`
+          fixed inset-0 bg-black/50 backdrop-blur-sm z-40
+          transition-opacity duration-200
+          ${isVisible ? 'opacity-100' : 'opacity-0'}
+        `}
+      />
 
       {/* Modal */}
-      <div className="fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 animate-in slide-in-from-bottom duration-300">
+      <div className={`
+        fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50
+        transform transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]
+        ${isVisible ? 'translate-y-0' : 'translate-y-full'}
+      `}>
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">

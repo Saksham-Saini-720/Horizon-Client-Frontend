@@ -112,7 +112,7 @@ const PropertyDetailPage = () => {
       <AgentCard agent={property.agent} />
 
       {/* Action Buttons (Fixed at bottom) */}
-      <PropertyActions agent={property.agent} />
+      <PropertyActions agent={property.agent} property={property}/>
     </div>
   );
 };

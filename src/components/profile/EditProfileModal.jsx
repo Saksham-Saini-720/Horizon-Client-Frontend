@@ -1,264 +1,212 @@
 
-import { memo, useState, useEffect, useCallback, useRef } from "react";
-import useUpdateProfile from "../../hooks/profile/useUpdateProfile";
+import { memo, useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../store/slices/authSlice';
+import toast from 'react-hot-toast';
 
+/**
+ * EditProfileModal Component
+ * Modal for editing user profile information
+ */
 const EditProfileModal = memo(({ isOpen, onClose, user }) => {
-  // Use refs to store current values - NO re-renders on change
-  const firstNameRef = useRef(null);
-  const lastNameRef = useRef(null);
-  const emailRef = useRef(null);
-  const phoneRef = useRef(null);
-  const bioRef = useRef(null);
-  
-  const [errors, setErrors] = useState({});
-  const updateMutation = useUpdateProfile();
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    phone: user?.phone || '',
+    email: user?.email || ''
+  });
 
-  // Initialize refs when modal opens
-  useEffect(() => {
-    if (isOpen && user) {
-      if (firstNameRef.current) firstNameRef.current.value = user.firstName || "";
-      if (lastNameRef.current) lastNameRef.current.value = user.lastName || "";
-      if (emailRef.current) emailRef.current.value = user.email || "";
-      if (phoneRef.current) phoneRef.current.value = user.phone || "";
-      if (bioRef.current) bioRef.current.value = user.bio || "";
-      setErrors({});
-    }
-  }, [isOpen, user]);
-
-  const validate = useCallback(() => {
-    const newErrors = {};
-    const firstName = firstNameRef.current?.value || "";
-    const lastName = lastNameRef.current?.value || "";
-    const email = emailRef.current?.value || "";
-    const phone = phoneRef.current?.value || "";
-
-    if (!firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-
-    if (!lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Email is invalid";
-    }
-
-    if (phone && !/^\+?[\d\s\-]{7,15}$/.test(phone)) {
-      newErrors.phone = "Phone number is invalid";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  const handleSubmit = useCallback((e) => {
+  const handleSave = useCallback((e) => {
     e.preventDefault();
     
-    if (!validate()) return;
+    // Update user in Redux
+    dispatch(updateUser(formData));
+    
+    // Show success toast
+    toast.success('Profile updated successfully');
+    
+    // Close modal
+    onClose();
+  }, [formData, dispatch, onClose]);
 
-    const formData = {
-      firstName: firstNameRef.current?.value || "",
-      lastName: lastNameRef.current?.value || "",
-      email: emailRef.current?.value || "",
-      phone: phoneRef.current?.value || "",
-      bio: bioRef.current?.value || "",
-    };
-
-    updateMutation.mutate(formData, {
-      onSuccess: () => {
-        onClose();
-      },
+  const handleCancel = useCallback(() => {
+    // Reset form to original values
+    setFormData({
+      name: user?.name || '',
+      phone: user?.phone || '',
+      email: user?.email || ''
     });
-  }, [validate, updateMutation, onClose]);
+    
+    // Close modal
+    onClose();
+  }, [user, onClose]);
 
-  // Clear error for field on change - NO state update for value
-  const handleFieldChange = useCallback((fieldName) => {
-    if (errors[fieldName]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[fieldName];
-        return newErrors;
-      });
-    }
-  }, [errors]);
-
-  const handleClose = useCallback(() => {
-    if (!updateMutation.isPending) {
-      onClose();
-    }
-  }, [onClose, updateMutation.isPending]);
-
+  // IMPORTANT: Return null if not open
   if (!isOpen) return null;
 
-  // console.log('🔍 Rendering EditProfileModal with user:', user);
-
   return (
-    <div 
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 animate-in fade-in duration-200"
-      onClick={handleClose}
-    >
-      <div 
-        className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom sm:zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
-          <h2 className="text-[20px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-            Edit Profile
-          </h2>
-          <button
-            onClick={handleClose}
-            disabled={updateMutation.isPending}
-            className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors disabled:opacity-50"
-          >
-            <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
-          </button>
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-in fade-in duration-200"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+        <div
+          className="bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto pointer-events-auto animate-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="px-6 pt-6 pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+                  Edit Profile
+                </h2>
+                <p className="text-[13px] text-gray-500 font-['DM_Sans',sans-serif] mt-1">
+                  Update your personal information
+                </p>
+              </div>
+              <button
+                onClick={onClose}
+                className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors"
+                aria-label="Close"
+              >
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSave} className="px-6 py-6 space-y-5">
+            {/* Name */}
+            <div>
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                required
+              />
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                Phone
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                required
+              />
+              <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-2">
+                Changing phone may require verification
+              </p>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                required
+              />
+              <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-2">
+                Changing email may require verification
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[#1C2A3A] font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-gray-50 transition-all active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-[#1C2A3A] text-white font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] transition-all shadow-lg active:scale-95"
+              >
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Save Changes
+              </button>
+            </div>
+          </form>
         </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          
-          {/* First Name */}
-          <div>
-            <label htmlFor="firstName" className="block text-[13px] font-semibold text-gray-700 mb-1.5 font-['DM_Sans',sans-serif]">
-              First Name *
-            </label>
-            <input
-              ref={firstNameRef}
-              id="firstName"
-              type="text"
-              onChange={() => handleFieldChange('firstName')}
-              className={`w-full px-4 py-3 rounded-xl border ${
-                errors.firstName ? 'border-red-500' : 'border-gray-200'
-              } focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all font-['DM_Sans',sans-serif]`}
-              placeholder="John"
-            />
-            {errors.firstName && (
-              <p className="text-[12px] text-red-500 mt-1 font-['DM_Sans',sans-serif]">
-                {errors.firstName}
-              </p>
-            )}
-          </div>
-
-          {/* Last Name */}
-          <div>
-            <label htmlFor="lastName" className="block text-[13px] font-semibold text-gray-700 mb-1.5 font-['DM_Sans',sans-serif]">
-              Last Name *
-            </label>
-            <input
-              ref={lastNameRef}
-              id="lastName"
-              type="text"
-              onChange={() => handleFieldChange('lastName')}
-              className={`w-full px-4 py-3 rounded-xl border ${
-                errors.lastName ? 'border-red-500' : 'border-gray-200'
-              } focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all font-['DM_Sans',sans-serif]`}
-              placeholder="Doe"
-            />
-            {errors.lastName && (
-              <p className="text-[12px] text-red-500 mt-1 font-['DM_Sans',sans-serif]">
-                {errors.lastName}
-              </p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-[13px] font-semibold text-gray-700 mb-1.5 font-['DM_Sans',sans-serif]">
-              Email *
-            </label>
-            <input
-              ref={emailRef}
-              id="email"
-              type="email"
-              onChange={() => handleFieldChange('email')}
-              className={`w-full px-4 py-3 rounded-xl border ${
-                errors.email ? 'border-red-500' : 'border-gray-200'
-              } focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all font-['DM_Sans',sans-serif]`}
-              placeholder="john@example.com"
-            />
-            {errors.email && (
-              <p className="text-[12px] text-red-500 mt-1 font-['DM_Sans',sans-serif]">
-                {errors.email}
-              </p>
-            )}
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label htmlFor="phone" className="block text-[13px] font-semibold text-gray-700 mb-1.5 font-['DM_Sans',sans-serif]">
-              Phone
-            </label>
-            <input
-              ref={phoneRef}
-              id="phone"
-              type="tel"
-              onChange={() => handleFieldChange('phone')}
-              className={`w-full px-4 py-3 rounded-xl border ${
-                errors.phone ? 'border-red-500' : 'border-gray-200'
-              } focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all font-['DM_Sans',sans-serif]`}
-              placeholder="+1 234 567 8900"
-            />
-            {errors.phone && (
-              <p className="text-[12px] text-red-500 mt-1 font-['DM_Sans',sans-serif]">
-                {errors.phone}
-              </p>
-            )}
-          </div>
-
-          {/* Bio */}
-          <div>
-            <label htmlFor="bio" className="block text-[13px] font-semibold text-gray-700 mb-1.5 font-['DM_Sans',sans-serif]">
-              Bio
-            </label>
-            <textarea
-              ref={bioRef}
-              id="bio"
-              rows={3}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all resize-none font-['DM_Sans',sans-serif]"
-              placeholder="Tell us about yourself..."
-              maxLength={200}
-            />
-            <p className="text-[12px] text-gray-400 mt-1 text-right font-['DM_Sans',sans-serif]">
-              {bioRef.current?.value.length || 0}/200
-            </p>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={handleClose}
-              disabled={updateMutation.isPending}
-              className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={updateMutation.isPending}
-              className="flex-1 px-4 py-3 rounded-xl text-[15px] font-semibold text-white font-['DM_Sans',sans-serif] hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 shadow-lg"
-              style={{ background: "linear-gradient(135deg, #F5B731, #E8A020)" }}
-            >
-              {updateMutation.isPending ? (
-                <span className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Saving...
-                </span>
-              ) : (
-                "Save Changes"
-              )}
-            </button>
-          </div>
-        </form>
       </div>
-    </div>
+    </>
   );
 });
+
+EditProfileModal.displayName = 'EditProfileModal';
 
 export default EditProfileModal;
