@@ -1,8 +1,8 @@
-
+// src/pages/PropertyDetailPage.jsx
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import usePropertyDetail from "../hooks/properties/usePropertyDetail";
-import Button  from "../components/ui/Button";
+import Button from "../components/ui/Button";
 import PropertyImageCarousel from "../components/property/PropertyImageCarousel";
 import PropertyHeader from "../components/property/PropertyHeader";
 import PropertyInfo from "../components/property/PropertyInfo";
@@ -16,7 +16,7 @@ import PropertyDetailSkeleton from "../components/property/PropertyDetailSkeleto
 // ─── Error State Component ────────────────────────────────────────────────────
 
 const PropertyNotFound = ({ onRetry, onGoBack }) => (
-  <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
+  <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 pb-28">
     <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mb-4">
       <svg
         className="w-8 h-8 text-red-500"
@@ -36,7 +36,7 @@ const PropertyNotFound = ({ onRetry, onGoBack }) => (
       Property Not Found
     </h2>
 
-    <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center mb-6">
+    <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center mb-6 max-w-sm">
       The property you're looking for doesn't exist or has been removed.
     </p>
 
@@ -56,24 +56,24 @@ const PropertyNotFound = ({ onRetry, onGoBack }) => (
 const PropertyDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: property, isLoading, isError, refetch } = usePropertyDetail(id);
+  const { data: property, isLoading, isError, error, refetch } = usePropertyDetail(id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [id]);
 
   // Loading state
   if (isLoading) {
     return (
-      <>
-        <PropertyHeader propertyId={id} />
+      <div className="min-h-screen bg-white">
         <PropertyDetailSkeleton />
-      </>
+      </div>
     );
   }
 
   // Error state
   if (isError || !property) {
+    console.error('Property fetch error:', error);
     return (
       <PropertyNotFound
         onRetry={refetch}
@@ -86,7 +86,7 @@ const PropertyDetailPage = () => {
   return (
     <div className="min-h-screen bg-white pb-24">
       {/* Image Carousel with Header Overlay */}
-      <div className="relative">
+      <div className="relative h-[400px]">
         <PropertyImageCarousel images={property.images} />
         <PropertyHeader propertyId={id} />
       </div>
@@ -103,16 +103,22 @@ const PropertyDetailPage = () => {
       />
 
       {/* Description */}
-      <PropertyDescription description={property.description} />
+      {property.description && (
+        <PropertyDescription description={property.description} />
+      )}
 
       {/* Amenities */}
-      <PropertyAmenities amenities={property.amenities} />
+      {property.amenities && property.amenities.length > 0 && (
+        <PropertyAmenities amenities={property.amenities} />
+      )}
 
       {/* Agent Card */}
-      <AgentCard agent={property.agent} />
+      {property.agent && (
+        <AgentCard agent={property.agent} />
+      )}
 
       {/* Action Buttons (Fixed at bottom) */}
-      <PropertyActions agent={property.agent} property={property}/>
+      <PropertyActions agent={property.agent} property={property} />
     </div>
   );
 };

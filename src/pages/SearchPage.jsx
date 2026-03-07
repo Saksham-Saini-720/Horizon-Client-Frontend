@@ -1,24 +1,30 @@
-
+// src/pages/SearchPage.jsx
+import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
 import { useSearchProperties, useFeaturedProperties, useNewListings } from "../hooks/properties/useProperties";
 import EmptyState from "../components/states/EmptyState";
 import ErrorState from "../components/states/ErrorState";
-import SearchBar from "../components/layouts/SearchBar";
+import SearchHeader from "../components/search/SearchHeader";
 import NewListingCard from "../components/explore/NewListingCard";
 import { NewListingCardSkeleton } from "../components/ui/SkeletonCards";
 
-// ─── SearchPage ───────────────────────────────────────────────────────────────
-
+/**
+ * SearchPage Component
+ * Complete search page matching Lovable app UI exactly
+ */
 const SearchPage = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   
   // Get query parameters
   const query = searchParams.get("q") ?? "";
   const isFeatured = searchParams.get("featured") === "true";
   const isNew = searchParams.get("new") === "true";
+  
+  // Active tab state
+  const [activeTab, setActiveTab] = useState("buy");
 
   const recent = useRecentSearches();
   const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
@@ -35,64 +41,121 @@ const SearchPage = () => {
       ? newListingsQuery 
       : searchQuery;
 
-  // Determine page title
-  const getPageTitle = () => {
-    if (isFeatured) return "Featured Properties";
-    if (isNew) return "New Listings";
-    if (query) return `Results for "${query}"`;
-    return "All Properties";
+  // Handle search
+  const handleSearch = (newQuery) => {
+    setSearchParams({ q: newQuery });
+    submitSearch(newQuery);
+  };
+
+  // Handle clear search
+  const handleClearSearch = () => {
+    setSearchParams({});
+    navigate('/search');
+  };
+
+  // Handle tab change
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    // Here you can add logic to filter by buy/rent
   };
 
   return (
     <div className="min-h-screen bg-[#F7F6F2] pb-28">
       
-      {/* Sticky Search Bar */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-100 px-4 py-3 shadow-sm">
-        <SearchBar
-          initialQuery={query}
-          recentSearches={recent.searches}
-          onSubmit={submitSearch}
-          onRemoveRecent={recent.remove}
-          onClearAllRecent={recent.clearAll}
-        />
+      {/* Header with Search Bar */}
+      <SearchHeader
+        query={query}
+        onSearch={handleSearch}
+        onClearSearch={handleClearSearch}
+        onBack={() => navigate(-1)}
+        recentSearches={recent.searches}
+        onRemoveRecent={recent.remove}
+        onClearAllRecent={recent.clearAll}
+      />
+
+      {/* Controls Row: Buy, Rent, Filters + Sort, Map, Grid */}
+      <div className="bg-white border-b border-gray-100 px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Left: Buy, Rent, Filters */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => handleTabChange('buy')}
+              className={`px-4 py-2 rounded-lg text-[14px] font-semibold font-['DM_Sans',sans-serif] transition-colors ${
+                activeTab === 'buy'
+                  ? 'bg-[#1C2A3A] text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Buy
+            </button>
+            <button
+              onClick={() => handleTabChange('rent')}
+              className={`px-4 py-2 rounded-lg text-[14px] font-semibold font-['DM_Sans',sans-serif] transition-colors ${
+                activeTab === 'rent'
+                  ? 'bg-[#1C2A3A] text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              Rent
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-[14px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] hover:border-gray-300 transition-colors">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+                <line x1="11" y1="18" x2="13" y2="18" />
+              </svg>
+              Filters
+            </button>
+          </div>
+
+          {/* Right: Sort, Map Icon, Grid Icon */}
+          <div className="flex items-center gap-2">
+            {/* Sort Dropdown */}
+            <select className="px-3 py-2 rounded-lg border border-gray-200 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] bg-white focus:outline-none focus:border-gray-300">
+              <option>Newest First</option>
+              <option>Price: Low to High</option>
+              <option>Price: High to Low</option>
+            </select>
+            
+            {/* Map Icon (3 lines) - Navigate to Map */}
+            <button
+              onClick={() => navigate('/map')}
+              className="p-2 rounded-lg bg-[#1C2A3A] text-white hover:bg-[#2A3A4A] transition-colors"
+              aria-label="Map view"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+
+            {/* Grid Icon */}
+            <button
+              className="p-2 rounded-lg bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors"
+              aria-label="Grid view"
+              onClick={() => navigate('/map')}
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Results Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-2">
-        <div>
-          {activeQuery.isLoading ? (
-            <div className="space-y-1.5">
-              <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
-              <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
-            </div>
-          ) : (
-            <>
-              <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-                {getPageTitle()}
-              </p>
-              <p className="text-[12px] text-gray-400 font-['DM_Sans',sans-serif]">
-                {activeQuery.data?.length ?? 0} properties found
-              </p>
-            </>
-          )}
-        </div>
-
-        {/* Filter Button */}
-        <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-gray-200 shadow-sm text-[13px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:border-amber-300 transition-colors">
-          <svg
-            className="w-4 h-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          >
-            <line x1="4" y1="6" x2="20" y2="6" />
-            <line x1="8" y1="12" x2="16" y2="12" />
-            <line x1="11" y1="18" x2="13" y2="18" />
-          </svg>
-          Filter
-        </button>
+      {/* Property Count */}
+      <div className="px-4 pt-4 pb-2">
+        {activeQuery.isLoading ? (
+          <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+        ) : (
+          <p className="text-[14px] text-gray-600 font-['DM_Sans',sans-serif]">
+            {activeQuery.data?.length ?? 0} properties
+          </p>
+        )}
       </div>
 
       {/* Results */}
@@ -116,15 +179,21 @@ const SearchPage = () => {
         ) : (
           <EmptyState
             icon="search"
-            title="No results found"
+            title="No properties found"
             message={
-              isFeatured 
-                ? "No featured properties available right now"
-                : isNew
-                  ? "No new listings available right now"
-                  : query 
-                    ? `No properties match "${query}"`
-                    : "Try a different search"
+              query 
+                ? `Try adjusting your filters or search for a different location.`
+                : "Try a different search"
+            }
+            action={
+              query ? (
+                <button
+                  onClick={handleClearSearch}
+                  className="mt-4 px-6 py-3 rounded-xl bg-white border-2 border-gray-200 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:bg-gray-50 transition-all"
+                >
+                  Clear Filters
+                </button>
+              ) : null
             }
           />
         )}

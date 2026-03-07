@@ -1,16 +1,13 @@
-
+// src/components/property/RequestTourModal.jsx - UPDATED
 import { memo, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { addTourRequest } from '../../store/slices/activitySlice';
 import ConfirmTourModal from './ConfirmTourModal';
 
 /**
  * RequestTourModal Component
  * Step 1: Visit type, date, time selection
- * NOW WITH REDUX INTEGRATION
+ * UPDATED: Removed Redux dispatch (now handled by API hook in ConfirmTourModal)
  */
 const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
-  const dispatch = useDispatch();
   const [visitType, setVisitType] = useState('in-person');
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimes, setSelectedTimes] = useState([]);
@@ -18,17 +15,27 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
-  // console.log(property)
+  // Generate next 6 days starting from tomorrow
+  const generateDates = () => {
+    const dates = [];
+    const today = new Date();
+    
+    for (let i = 1; i <= 6; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      
+      dates.push({
+        day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        date: date.getDate(),
+        month: date.toLocaleDateString('en-US', { month: 'short' }),
+        fullDate: date,
+      });
+    }
+    
+    return dates;
+  };
 
-  // Next 6 days starting from tomorrow
-  const dates = [
-    { day: 'Mon', date: 2, month: 'Mar' },
-    { day: 'Tue', date: 3, month: 'Mar' },
-    { day: 'Wed', date: 4, month: 'Mar' },
-    { day: 'Thu', date: 5, month: 'Mar' },
-    { day: 'Fri', date: 6, month: 'Mar' },
-    { day: 'Sat', date: 7, month: 'Mar' },
-  ];
+  const dates = generateDates();
 
   // Time slots
   const timeSlots = [
@@ -54,25 +61,11 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
     });
   }, []);
 
-  // Handle review - THIS NOW SAVES TO REDUX
+  // Handle review - Just move to confirm modal
   const handleReview = useCallback(() => {
     if (!selectedDate || selectedTimes.length === 0) return;
-    
-    // Save to Redux
-    dispatch(addTourRequest({
-      property: {
-        id: property.id,
-        title: property.title,
-        location: property.location,
-        img: property.images[0],
-      },
-      visitType: visitType,
-      selectedTimes: selectedTimes,
-      agent: agent,
-    }));
-    
     setShowConfirm(true);
-  }, [selectedDate, selectedTimes, dispatch, property, agent, visitType]);
+  }, [selectedDate, selectedTimes]);
 
   if (!isOpen) return null;
 
@@ -254,8 +247,12 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
               onChange={(e) => setNote(e.target.value)}
               placeholder="Any specific areas you'd like to see, accessibility needs, etc."
               rows={3}
+              maxLength={500}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 resize-none"
             />
+            <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-1">
+              {note.length}/500 characters
+            </p>
           </div>
 
           {/* Info */}

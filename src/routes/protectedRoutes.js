@@ -7,6 +7,7 @@ const SavedPage = lazy(() => import("../pages/SavedPage"));
 const ActivityPage = lazy(() => import("../pages/ActivityPage"));
 // const ToursPage = lazy(() => import("../../pages/ToursPage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
+const MapPage = lazy(() => import("../pages/MapPage"));
 // const MessagesPage = lazy(() => import("../../pages/MessagesPage"));
 // const MessageThreadPage = lazy(() => import("../../pages/MessageThreadPage"));
 
@@ -22,6 +23,11 @@ const protectedRoutes = [
     path: "inquiries",
     element: ActivityPage,
     title: "My Inquiries",
+  },
+  {
+    path: "map",
+    element: MapPage,
+    title: "Map View",
   },
   // {
   //   path: "tours",

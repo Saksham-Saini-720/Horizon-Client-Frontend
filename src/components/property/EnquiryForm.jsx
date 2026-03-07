@@ -1,33 +1,29 @@
-// src/components/property/SendMessageModal.jsx
+// src/components/property/EnquiryForm.jsx
 import { memo, useState, useCallback } from 'react';
 import { useSubmitEnquiry } from '../../hooks/enquiries/useSubmitEnquiry';
 import { validateEnquiryForm, formatPhoneToE164, sanitizeEnquiryData } from '../../utils/enquiryValidation';
-import MessageSuccessModal from './MessageSuccessModal';
-import MessageNotification from './MessageNotification';
 
 /**
- * SendMessageModal Component
- * Complete message form with API integration
- * NOW WITH REAL API CALL + VALIDATION
+ * EnquiryForm Component
+ * Property enquiry form with validation
+ * Slides from bottom on mobile, modal on desktop
  */
-const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
+const EnquiryForm = memo(({ isOpen, onClose, property, agent }) => {
   const submitMutation = useSubmitEnquiry();
   const [formData, setFormData] = useState({
     name: '',
-    phone: '',
     email: '',
+    phone: '',
     message: ''
   });
   const [errors, setErrors] = useState({});
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
 
-  // Quick message chips
+  // Quick message suggestions
   const quickMessages = [
-    'Is this property still available?',
+    'I am interested in this property. Please contact me.',
     'Can I schedule a viewing?',
     'What are the payment terms?',
-    'Are there any additional costs?'
+    'Is this property still available?'
   ];
 
   // Handle quick message click
@@ -49,11 +45,11 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
     }
   }, [errors]);
 
-  // Handle send with API integration
-  const handleSend = useCallback((e) => {
+  // Handle submit
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     
-    // Validate form (API compliant)
+    // Validate form
     const validation = validateEnquiryForm(formData);
     
     if (!validation.isValid) {
@@ -69,7 +65,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
       sanitizedData.phone = formatPhoneToE164(sanitizedData.phone);
     }
 
-    // Submit enquiry via API
+    // Submit enquiry
     submitMutation.mutate({
       propertyId: property.id,
       data: sanitizedData,
@@ -83,47 +79,24 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
       agent: agent,
     }, {
       onSuccess: () => {
-        // Show success modal
-        setShowSuccess(true);
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          message: ''
+        });
+        setErrors({});
         
-        // Show notification after delay
+        // Close modal after 2 seconds
         setTimeout(() => {
-          setShowNotification(true);
-        }, 400);
-
-        // Close modals after 2.5 seconds
-        setTimeout(() => {
-          setShowSuccess(false);
           onClose();
-          
-          // Reset form
-          setFormData({
-            name: '',
-            phone: '',
-            email: '',
-            message: ''
-          });
-          setErrors({});
-        }, 2500);
+        }, 2000);
       }
     });
   }, [formData, property, agent, submitMutation, onClose]);
 
   if (!isOpen) return null;
-
-  // Show success modal
-  if (showSuccess) {
-    return (
-      <>
-        <MessageSuccessModal agent={agent} />
-        <MessageNotification
-          show={showNotification}
-          onClose={() => setShowNotification(false)}
-          agent={agent}
-        />
-      </>
-    );
-  }
 
   return (
     <>
@@ -133,7 +106,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
         onClick={onClose}
       />
 
-      {/* Modal - Full width, slides from bottom */}
+      {/* Modal */}
       <div
         className="fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom duration-300"
         onClick={(e) => e.stopPropagation()}
@@ -142,7 +115,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-              Send Message
+              Enquire About Property
             </h2>
             <button
               onClick={onClose}
@@ -163,57 +136,14 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
             </button>
           </div>
 
-          {/* Agent Info */}
-          <div className="flex items-center gap-3">
-            {/* Agent Photo */}
-            <div className="w-14 h-14 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
-              {agent?.photo ? (
-                <img
-                  src={agent.photo}
-                  alt={agent.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-400 to-amber-600 text-white text-[20px] font-bold font-['DM_Sans',sans-serif]">
-                  {agent?.name?.charAt(0) || 'G'}
-                </div>
-              )}
-            </div>
-
-            {/* Agent Details */}
-            <div className="flex-1">
-              <h3 className="text-[16px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-0.5">
-                {agent?.name || 'Grace Tembo'}
-              </h3>
-              
-              {/* Rating */}
-              <div className="flex items-center gap-1.5">
-                <svg
-                  className="w-4 h-4 text-amber-400 fill-current"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                </svg>
-                <span className="text-[13px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-                  {agent?.rating || '4.7'}
-                </span>
-                <span className="text-[13px] text-gray-400 font-['DM_Sans',sans-serif]">
-                  • {agent?.reviews || '64'} reviews
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Property Info */}
-        <div className="px-6 py-4">
+          {/* Property Info */}
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
             {/* Property Image */}
             <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
-              {(property?.images?.[0] || property?.img) ? (
+              {property?.img || property?.images?.[0] ? (
                 <img
-                  src={property?.images?.[0] || property?.img}
-                  alt={property.title}
+                  src={property?.img || property?.images?.[0]}
+                  alt={property?.title}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -224,20 +154,20 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
             {/* Property Details */}
             <div className="flex-1 min-w-0">
               <h4 className="text-[14px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] line-clamp-1 mb-1">
-                {property?.title || 'Elegant Townhouse in Woodlands'}
+                {property?.title}
               </h4>
               <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif] mb-1">
-                {property?.location || 'Woodlands, Lusaka'}
+                {property?.location}
               </p>
               <p className="text-[14px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
-                {property?.price || '$275,000'}
+                {property?.price}
               </p>
             </div>
           </div>
         </div>
 
         {/* Quick Messages */}
-        <div className="px-6 pb-4">
+        <div className="px-6 pt-4 pb-2">
           <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif] mb-3">
             Quick messages
           </p>
@@ -256,94 +186,97 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSend} className="px-6 pb-6 space-y-4">
-          {/* Name & Phone */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
-                Your Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="John Mwamba"
-                required
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  errors.name ? 'border-red-500' : 'border-gray-200'
-                } text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors`}
-              />
-              {errors.name && (
-                <p className="text-[11px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
-                  {errors.name}
-                </p>
-              )}
-            </div>
-            <div>
-              <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
-                Phone <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+260977888999"
-                required
-                className={`w-full px-4 py-3 rounded-xl border ${
-                  errors.phone ? 'border-red-500' : 'border-gray-200'
-                } text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors`}
-              />
-              {errors.phone && (
-                <p className="text-[11px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
-                  {errors.phone}
-                </p>
-              )}
-            </div>
+        <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4">
+          {/* Name */}
+          <div>
+            <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+              Full Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Sarah Ahmad"
+              required
+              className={`w-full px-4 py-3 rounded-xl border ${
+                errors.name ? 'border-red-500' : 'border-gray-200'
+              } text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors`}
+            />
+            {errors.name && (
+              <p className="text-[12px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
+                {errors.name}
+              </p>
+            )}
           </div>
 
           {/* Email */}
           <div>
             <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
-              Email <span className="text-red-500">*</span>
+              Email Address <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="john.mwamba@email.com"
+              placeholder="sarah.ahmad@email.com"
               required
               className={`w-full px-4 py-3 rounded-xl border ${
                 errors.email ? 'border-red-500' : 'border-gray-200'
               } text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors`}
             />
             {errors.email && (
-              <p className="text-[11px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
+              <p className="text-[12px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
                 {errors.email}
               </p>
             )}
           </div>
 
+          {/* Phone */}
+          <div>
+            <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+              Phone Number <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="+260977888999"
+              required
+              className={`w-full px-4 py-3 rounded-xl border ${
+                errors.phone ? 'border-red-500' : 'border-gray-200'
+              } text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 transition-colors`}
+            />
+            {errors.phone && (
+              <p className="text-[12px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
+                {errors.phone}
+              </p>
+            )}
+            <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-1">
+              Format: +[country code][number] (e.g., +260977888999)
+            </p>
+          </div>
+
           {/* Message */}
           <div>
             <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
-              Message <span className="text-gray-400">(max 500 chars)</span>
+              Message <span className="text-gray-400">(Optional, max 500 chars)</span>
             </label>
             <textarea
               name="message"
               value={formData.message}
               onChange={handleChange}
-              placeholder="Is this property still available?&#10;Can I schedule a viewing?&#10;What are the payment terms?"
-              rows={5}
+              placeholder="I am interested in this property. Please provide more details..."
+              rows={4}
               maxLength={500}
               className={`w-full px-4 py-3 rounded-xl border ${
                 errors.message ? 'border-red-500' : 'border-gray-200'
               } text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 resize-none transition-colors`}
             />
             {errors.message && (
-              <p className="text-[11px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
+              <p className="text-[12px] text-red-500 font-['DM_Sans',sans-serif] mt-1">
                 {errors.message}
               </p>
             )}
@@ -352,7 +285,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
             </p>
           </div>
 
-          {/* Send Button */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={submitMutation.isPending}
@@ -394,14 +327,14 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
                   <line x1="22" y1="2" x2="11" y2="13" />
                   <polygon points="22 2 15 22 11 13 2 9 22 2" />
                 </svg>
-                Send Message
+                Submit Enquiry
               </>
             )}
           </button>
 
           {/* Terms */}
           <p className="text-[11px] text-center text-gray-400 font-['DM_Sans',sans-serif]">
-            By sending, you agree to our Terms of Service
+            By submitting, you agree to our Terms of Service
           </p>
         </form>
       </div>
@@ -409,6 +342,6 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
   );
 });
 
-SendMessageModal.displayName = 'SendMessageModal';
+EnquiryForm.displayName = 'EnquiryForm';
 
-export default SendMessageModal;
+export default EnquiryForm;

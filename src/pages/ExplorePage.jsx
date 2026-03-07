@@ -1,9 +1,9 @@
-
-import { useState, useTransition, useMemo, useCallback } from "react";
+// src/pages/ExplorePage.jsx
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
-import { useFeaturedProperties, useNewListings } from "../hooks/properties/useProperties";
+import { useFeaturedPropertiesFiltered, useNewListingsFiltered } from "../hooks/properties/usePropertiesWithFilters";
 import EmptyState from "../components/states/EmptyState";
 import ErrorState from "../components/states/ErrorState";
 import ExploreHeader from "../components/explore/ExploreHeader";
@@ -12,40 +12,106 @@ import NewListingCard from "../components/explore/NewListingCard";
 import SectionHeader from "../components/explore/SectionHeader";
 import { FeaturedCardSkeleton, NewListingCardSkeleton } from "../components/ui/SkeletonCards";
 
-// ─── ExplorePage ──────────────────────────────────────────────────────────────
+// Filter Modals
+import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
+import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
+import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState(null);
-  const [isPending, startTransition] = useTransition();
+  
+  // Filter state
+  const [filters, setFilters] = useState({
+    purpose: null, // 'sale' or 'rent'
+    minPrice: undefined,
+    maxPrice: undefined,
+    bedrooms: undefined,
+    bathrooms: undefined,
+    type: undefined,
+    amenities: undefined,
+  });
+
+  // Modal states
+  const [activeModal, setActiveModal] = useState(null); // 'price', 'bedrooms', 'filters'
 
   const recent = useRecentSearches();
   const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
 
-  const featuredQuery = useFeaturedProperties();
-  const newListingsQuery = useNewListings();
+  // Build filter object for API
+  const apiFilters = useMemo(() => {
+    const cleanFilters = {};
+    if (filters.purpose) cleanFilters.purpose = filters.purpose;
+    if (filters.minPrice) cleanFilters.minPrice = filters.minPrice;
+    if (filters.maxPrice) cleanFilters.maxPrice = filters.maxPrice;
+    if (filters.bedrooms) cleanFilters.bedrooms = filters.bedrooms;
+    if (filters.bathrooms) cleanFilters.bathrooms = filters.bathrooms;
+    if (filters.type) cleanFilters.type = filters.type;
+    if (filters.amenities && filters.amenities.length > 0) {
+      cleanFilters.amenities = filters.amenities;
+    }
+    return cleanFilters;
+  }, [filters]);
 
+  // Fetch data with filters
+  const featuredQuery = useFeaturedPropertiesFiltered(apiFilters);
+  const newListingsQuery = useNewListingsFiltered(apiFilters);
+
+  // Filter chip handlers
   const handleFilterToggle = useCallback((id) => {
-    startTransition(() => setActiveFilter((prev) => (prev === id ? null : id)));
+    if (id === 'buy') {
+      setFilters(prev => ({
+        ...prev,
+        purpose: prev.purpose === 'sale' ? null : 'sale'
+      }));
+    } else if (id === 'rent') {
+      setFilters(prev => ({
+        ...prev,
+        purpose: prev.purpose === 'rent' ? null : 'rent'
+      }));
+    } else if (id === 'price') {
+      setActiveModal('price');
+    } else if (id === 'bedrooms') {
+      setActiveModal('bedrooms');
+    } else if (id === 'nearme') {
+      // Navigate to map page with GPS
+      navigate('/map?nearme=true');
+    } else if (id === 'filters') {
+      setActiveModal('filters');
+    }
+  }, [navigate]);
+
+  // Get active filter for chips
+  const activeFilter = useMemo(() => {
+    if (filters.purpose === 'sale') return 'buy';
+    if (filters.purpose === 'rent') return 'rent';
+    return null;
+  }, [filters.purpose]);
+
+  // Apply filter handlers
+  const handlePriceApply = useCallback((priceFilters) => {
+    setFilters(prev => ({
+      ...prev,
+      minPrice: priceFilters.minPrice,
+      maxPrice: priceFilters.maxPrice,
+    }));
   }, []);
 
-  // Client-side filtering
-  const filteredFeatured = useMemo(() => {
-    const data = featuredQuery.data ?? [];
-    if (activeFilter === "rent") return data.filter((p) => p.price.includes("/mo"));
-    if (activeFilter === "buy") return data.filter((p) => !p.price.includes("/mo"));
-    return data;
-  }, [featuredQuery.data, activeFilter]);
+  const handleBedroomsApply = useCallback((bedroomsFilter) => {
+    setFilters(prev => ({
+      ...prev,
+      bedrooms: bedroomsFilter.bedrooms,
+    }));
+  }, []);
 
-  const filteredListings = useMemo(() => {
-    const data = newListingsQuery.data ?? [];
-    if (activeFilter === "rent") return data.filter((p) => p.tag === "For Rent");
-    if (activeFilter === "buy") return data.filter((p) => p.tag === "For Sale");
-    return data;
-  }, [newListingsQuery.data, activeFilter]);
+  const handleFullFiltersApply = useCallback((allFilters) => {
+    setFilters(prev => ({
+      ...prev,
+      ...allFilters,
+    }));
+  }, []);
 
-  const isFeaturedLoading = featuredQuery.isLoading || featuredQuery.isFetching || isPending;
-  const isListingsLoading = newListingsQuery.isLoading || newListingsQuery.isFetching || isPending;
+  const isFeaturedLoading = featuredQuery.isLoading || featuredQuery.isFetching;
+  const isListingsLoading = newListingsQuery.isLoading || newListingsQuery.isFetching;
 
   return (
     <div className="min-h-screen bg-[#F7F6F2]">
@@ -57,7 +123,7 @@ const ExplorePage = () => {
         onClearAllRecent={recent.clearAll}
         activeFilter={activeFilter}
         onFilterToggle={handleFilterToggle}
-        filtersDimmed={isPending}
+        filtersDimmed={isFeaturedLoading || isListingsLoading}
       />
 
       <div className="pb-28">
@@ -80,8 +146,8 @@ const ExplorePage = () => {
                   onRetry={() => featuredQuery.refetch()}
                 />
               </div>
-            ) : filteredFeatured.length > 0 ? (
-              filteredFeatured.map((p) => (
+            ) : featuredQuery.data && featuredQuery.data.length > 0 ? (
+              featuredQuery.data.map((p) => (
                 <FeaturedCard
                   key={p.id}
                   {...p}
@@ -92,7 +158,7 @@ const ExplorePage = () => {
               <EmptyState
                 icon="home"
                 title="No featured properties"
-                message="Check back later for featured listings"
+                message="Try adjusting your filters"
               />
             )}
           </div>
@@ -114,8 +180,8 @@ const ExplorePage = () => {
                 message={newListingsQuery.error?.message}
                 onRetry={() => newListingsQuery.refetch()}
               />
-            ) : filteredListings.length > 0 ? (
-              filteredListings.map((p) => (
+            ) : newListingsQuery.data && newListingsQuery.data.length > 0 ? (
+              newListingsQuery.data.map((p) => (
                 <NewListingCard
                   key={p.id}
                   {...p}
@@ -133,6 +199,28 @@ const ExplorePage = () => {
         </div>
 
       </div>
+
+      {/* Filter Modals */}
+      <PriceFilterModal
+        isOpen={activeModal === 'price'}
+        onClose={() => setActiveModal(null)}
+        onApply={handlePriceApply}
+        currentFilters={filters}
+      />
+
+      <BedroomsFilterModal
+        isOpen={activeModal === 'bedrooms'}
+        onClose={() => setActiveModal(null)}
+        onApply={handleBedroomsApply}
+        currentFilters={filters}
+      />
+
+      <FullFiltersModal
+        isOpen={activeModal === 'filters'}
+        onClose={() => setActiveModal(null)}
+        onApply={handleFullFiltersApply}
+        currentFilters={filters}
+      />
     </div>
   );
 };

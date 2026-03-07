@@ -1,4 +1,4 @@
-
+// src/store/slices/savedSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 // ─── Initial State ─────────────────────────────────────────────────────────────
@@ -71,6 +71,27 @@ const savedSlice = createSlice({
         notes: state.notes || {},
       }));
     },
+
+    // Add to saved (for API optimistic updates)
+    addSaved: (state, action) => {
+      const propertyId = action.payload;
+      
+      // Safety check
+      if (!Array.isArray(state.propertyIds)) {
+        state.propertyIds = [];
+      }
+      
+      // Only add if not already saved
+      if (!state.propertyIds.includes(propertyId)) {
+        state.propertyIds.push(propertyId);
+        
+        // Sync to localStorage
+        localStorage.setItem('savedProperties', JSON.stringify({
+          propertyIds: state.propertyIds,
+          notes: state.notes || {},
+        }));
+      }
+    },
     
     // Remove specific property
     removeSaved: (state, action) => {
@@ -102,6 +123,17 @@ const savedSlice = createSlice({
       localStorage.removeItem('savedProperties');
     },
     
+    // Set saved IDs (for API sync)
+    setSavedIds: (state, action) => {
+      state.propertyIds = action.payload;
+      
+      // Sync to localStorage
+      localStorage.setItem('savedProperties', JSON.stringify({
+        propertyIds: state.propertyIds,
+        notes: state.notes || {},
+      }));
+    },
+    
     // Bulk add (useful for syncing from server)
     addMultipleSaved: (state, action) => {
       const newIds = action.payload;
@@ -118,7 +150,7 @@ const savedSlice = createSlice({
       }));
     },
 
-    // ─── NEW: Note Actions ─────────────────────────────────────────────────────
+    // ─── Note Actions ──────────────────────────────────────────────────────────
 
     // Set/update note for a property
     setNote: (state, action) => {
@@ -161,23 +193,25 @@ const savedSlice = createSlice({
 });
 
 export const { 
-  toggleSaved, 
+  toggleSaved,
+  addSaved,      // NEW for API
   removeSaved, 
   clearAllSaved, 
+  setSavedIds,   // NEW for API sync
   addMultipleSaved,
-  setNote,      // NEW
-  deleteNote,   // NEW
+  setNote,
+  deleteNote,
 } = savedSlice.actions;
 
 // ─── Selectors ─────────────────────────────────────────────────────────────────
 
-// Original selectors (unchanged)
+// Original selectors
 export const selectSavedIds = (state) => state.saved?.propertyIds || [];
 export const selectIsSaved = (propertyId) => (state) => 
   (state.saved?.propertyIds || []).includes(propertyId);
 export const selectSavedCount = (state) => state.saved?.propertyIds?.length || 0;
 
-// NEW: Note selectors
+// Note selectors
 export const selectAllNotes = (state) => state.saved?.notes || {};
 export const selectPropertyNote = (propertyId) => (state) => 
   state.saved?.notes?.[propertyId] || '';

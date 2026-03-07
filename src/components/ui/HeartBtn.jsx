@@ -1,16 +1,35 @@
-
+// src/components/ui/HeartBtn.jsx
 import { useCallback, memo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/utils/useRedux";
 import { useSaved } from "../../hooks/utils/useRedux";
+import { useSavePropertyMutation } from "../../hooks/properties/useSavedProperties";
 
 const HeartBtn = memo(({ size = "sm", propertyId }) => {
-  const { isSaved, toggleSaved } = useSaved();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const { isSaved } = useSaved();
+  const { saveProperty, unsaveProperty } = useSavePropertyMutation();
+  
   const saved = isSaved(propertyId);
 
   const handleClick = useCallback((e) => {
     e.stopPropagation();
     e.preventDefault();
-    toggleSaved(propertyId);
-  }, [propertyId, toggleSaved]);
+
+    // Check authentication
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: window.location.pathname } });
+      return;
+    }
+
+    // Toggle save/unsave with API
+    if (saved) {
+      unsaveProperty({ propertyId });
+    } else {
+      saveProperty({ propertyId, notes: '' });
+    }
+  }, [isAuthenticated, saved, propertyId, saveProperty, unsaveProperty, navigate]);
 
   const sizeClass = size === "sm" ? "w-8 h-8" : "w-10 h-10";
 
@@ -37,5 +56,7 @@ const HeartBtn = memo(({ size = "sm", propertyId }) => {
     </button>
   );
 });
+
+HeartBtn.displayName = 'HeartBtn';
 
 export default HeartBtn;

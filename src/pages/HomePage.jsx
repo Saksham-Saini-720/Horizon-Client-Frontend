@@ -11,7 +11,7 @@ const HomePage = () => {
   return !location.pathname.startsWith("/property") ? (
     <>
       {/* Top navigation */}
-      { !location.pathname.startsWith("/inquiries")  && <Navbar /> }
+      { (!location.pathname.startsWith("/inquiries") && !location.pathname.startsWith("/map"))  && <Navbar /> }
       
       {/* Nested routes render here */}
       <Outlet />

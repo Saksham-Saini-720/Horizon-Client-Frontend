@@ -1,44 +1,47 @@
-
+// src/components/saved/SavedPropertyCard.jsx
 import { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeSaved, setNote, selectPropertyNote } from '../../store/slices/savedSlice';
+import { setNote, selectPropertyNote } from '../../store/slices/savedSlice';
+import { useSavePropertyMutation } from '../../hooks/properties/useSavedProperties';
 import PropertyImage from '../ui/PropertyImage';
 
 /**
- * SavedPropertyCard Component - FINAL WORKING VERSION
- * With complete note functionality
+ * SavedPropertyCard Component - WITH API
+ * Complete note functionality with API integration
  */
 const SavedPropertyCard = memo(({ property }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { unsaveProperty } = useSavePropertyMutation();
+  
   const note = useSelector(selectPropertyNote(property.id));
   const hasNote = !!note;
 
   const [isEditing, setIsEditing] = useState(false);
   const [localNote, setLocalNote] = useState('');
 
-  const { id, price, title, location, beds, baths, area, tag, img } = property;
+  const { id, price, title, location, beds, baths, area, tag, img, savedAt } = property;
 
   // Navigate to property
   const handleClick = useCallback(() => {
     navigate(`/property/${id}`);
   }, [navigate, id]);
 
-  // Remove property
+  // Remove property (API call)
   const handleRemove = useCallback((e) => {
     e.stopPropagation();
-    dispatch(removeSaved(id));
-  }, [dispatch, id]);
+    unsaveProperty({ propertyId: id });
+  }, [unsaveProperty, id]);
 
-  // Add/Edit note
+  // Edit note
   const handleEditNote = useCallback((e) => {
     e.stopPropagation();
     setLocalNote(note || '');
     setIsEditing(true);
   }, [note]);
 
-  // Save note
+  // Save note (Redux only for now)
   const handleSaveNote = useCallback((e) => {
     e.stopPropagation();
     dispatch(setNote({ propertyId: id, note: localNote }));
@@ -50,6 +53,25 @@ const SavedPropertyCard = memo(({ property }) => {
     e.stopPropagation();
     setIsEditing(false);
     setLocalNote('');
+  }, []);
+
+  // Format saved time
+  const formatSavedTime = useCallback((timestamp) => {
+    if (!timestamp) return 'Recently saved';
+    
+    const now = new Date();
+    const saved = new Date(timestamp);
+    const diffMs = now - saved;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `Saved ${diffMins} ${diffMins === 1 ? 'minute' : 'minutes'} ago`;
+    if (diffHours < 24) return `Saved ${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+    if (diffDays < 30) return `Saved ${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+    
+    return `Saved on ${saved.toLocaleDateString()}`;
   }, []);
 
   return (
@@ -146,7 +168,7 @@ const SavedPropertyCard = memo(({ property }) => {
 
           {/* Timestamp */}
           <p className="text-[10px] text-gray-400 font-['DM_Sans',sans-serif]">
-            Saved 4 minutes ago
+            {formatSavedTime(savedAt)}
           </p>
         </div>
       </div>
@@ -170,19 +192,24 @@ const SavedPropertyCard = memo(({ property }) => {
                 autoFocus
               />
               
-              <div className="flex items-center justify-end gap-2 mt-2">
-                <button
-                  onClick={handleCancelNote}
-                  className="px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-gray-100 font-['DM_Sans',sans-serif] transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveNote}
-                  className="px-4 py-2 rounded-lg bg-[#1C2A3A] text-white text-[13px] font-semibold hover:bg-[#2A3A4A] font-['DM_Sans',sans-serif] transition-colors"
-                >
-                  Save Note
-                </button>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">
+                  {localNote.length}/500
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCancelNote}
+                    className="px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-gray-100 font-['DM_Sans',sans-serif] transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveNote}
+                    className="px-4 py-2 rounded-lg bg-[#1C2A3A] text-white text-[13px] font-semibold hover:bg-[#2A3A4A] font-['DM_Sans',sans-serif] transition-colors"
+                  >
+                    Save Note
+                  </button>
+                </div>
               </div>
             </>
           ) : (
@@ -213,11 +240,11 @@ const SavedPropertyCard = memo(({ property }) => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* LEFT: Add/Edit Note */}
-        <div onClick={handleEditNote} className="flex-1 flex items-center justify-center py-3 hover:bg-gray-50 transition-colors">
-          <button
-            
-            className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#1C2A3A] font-['DM_Sans',sans-serif] transition-colors"
-          >
+        <button
+          onClick={handleEditNote}
+          className="flex-1 flex items-center justify-center py-3 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#1C2A3A] font-['DM_Sans',sans-serif] transition-colors">
             <svg 
               className="w-3.5 h-3.5" 
               viewBox="0 0 24 24" 
@@ -239,18 +266,18 @@ const SavedPropertyCard = memo(({ property }) => {
               )}
             </svg>
             {hasNote ? 'Edit Note' : 'Add Note'}
-          </button>
-        </div>
+          </div>
+        </button>
 
         {/* VERTICAL SEPARATOR */}
         <div className="w-px bg-gray-200"></div>
 
         {/* RIGHT: Remove */}
-        <div onClick={handleRemove} className="flex-1 flex items-center justify-center py-3 hover:bg-gray-50 transition-colors">
-          <button
-            
-            className="flex items-center gap-1.5 text-[13px] font-semibold text-red-500 hover:text-red-600 font-['DM_Sans',sans-serif] transition-colors"
-          >
+        <button
+          onClick={handleRemove}
+          className="flex-1 flex items-center justify-center py-3 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center gap-1.5 text-[13px] font-semibold text-red-500 hover:text-red-600 font-['DM_Sans',sans-serif] transition-colors">
             <svg
               className="w-3.5 h-3.5"
               viewBox="0 0 24 24"
@@ -262,10 +289,9 @@ const SavedPropertyCard = memo(({ property }) => {
               <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
             </svg>
             Remove
-          </button>
-        </div>
+          </div>
+        </button>
       </div>
-
     </div>
   );
 });

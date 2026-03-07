@@ -1,12 +1,17 @@
-
+// src/components/property/PropertyHeader.jsx
 import { memo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/utils/useRedux";
 import { useSaved } from "../../hooks/utils/useRedux";
+import { useSavePropertyMutation } from "../../hooks/properties/useSavedProperties";
 import toast from "react-hot-toast";
 
 const PropertyHeader = memo(({ propertyId }) => {
   const navigate = useNavigate();
-  const { isSaved, toggleSaved } = useSaved();
+  const { isAuthenticated } = useAuth();
+  const { isSaved } = useSaved();
+  const { saveProperty, unsaveProperty } = useSavePropertyMutation();
+  
   const saved = isSaved(propertyId);
 
   const handleBack = useCallback(() => {
@@ -14,13 +19,21 @@ const PropertyHeader = memo(({ propertyId }) => {
   }, [navigate]);
 
   const handleToggleSave = useCallback(() => {
-    toggleSaved(propertyId);
-    if (!saved) {
-      toast.success("Added to saved properties");
-    } else {
-      toast("Removed from saved");
+    // Check authentication
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: window.location.pathname } });
+      return;
     }
-  }, [propertyId, toggleSaved, saved]);
+
+    // Toggle save/unsave with API
+    if (saved) {
+      unsaveProperty({ propertyId });
+      // Toast is handled by the mutation
+    } else {
+      saveProperty({ propertyId, notes: '' });
+      // Toast is handled by the mutation
+    }
+  }, [isAuthenticated, saved, propertyId, saveProperty, unsaveProperty, navigate]);
 
   const handleShare = useCallback(async () => {
     if (navigator.share) {
@@ -93,5 +106,7 @@ const PropertyHeader = memo(({ propertyId }) => {
     </div>
   );
 });
+
+PropertyHeader.displayName = 'PropertyHeader';
 
 export default PropertyHeader;
