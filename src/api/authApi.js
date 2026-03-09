@@ -36,20 +36,3 @@ export const verifyEmail = (payload) =>
 export const resendVerification = () =>
   apiPost("/auth/resend-verification");
 
-export const fetchProfile = async () => {
-  // 🔁 replace with real API
-  await new Promise((r) => setTimeout(r, 800));
-
-  return {
-    name: "Horizon User",
-    email: "user@example.com",
-    phone: "+91 9876543210",
-    bio: "Real estate enthusiast",
-    avatar: "",
-  };
-};
-
-export const updateProfile = async (data) => {
-  await new Promise((r) => setTimeout(r, 600));
-  return data;
-};
