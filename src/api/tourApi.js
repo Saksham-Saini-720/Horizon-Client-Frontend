@@ -1,22 +1,17 @@
-// src/api/tourApi.js - UPDATED to match API docs
+// src/api/tourApi.js - COMPLETE VERSION
 import axiosInstance from './axiosInstance';
 
 /**
  * Submit Tour Request
  * POST /api/v1/tours/property/:id
- * PUBLIC endpoint - no auth required
+ * PUBLIC (rate-limited)
  */
 export const submitTourRequest = async (propertyId, data) => {
   try {
-    const response = await axiosInstance.post(`/tours/property/${propertyId}`, {
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      preferredDate: data.preferredDate, // YYYY-MM-DD
-      preferredTime: data.preferredTime, // HH:mm (single time)
-      numberOfPeople: data.numberOfPeople || 1,
-      message: data.message || '',
-    });
+    const response = await axiosInstance.post(
+      `/tours/property/${propertyId}`,
+      data
+    );
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to submit tour request');
@@ -24,9 +19,9 @@ export const submitTourRequest = async (propertyId, data) => {
 };
 
 /**
- * Get User's Tour Requests
+ * Get User's Tours
  * GET /api/v1/tours
- * AUTHENTICATED - requires Bearer token
+ * AUTHENTICATED
  */
 export const getUserTours = async (params = {}) => {
   try {
@@ -52,13 +47,15 @@ export const getTourById = async (tourId) => {
 };
 
 /**
- * Cancel Tour Request
+ * Cancel Tour Request (Client)
  * PATCH /api/v1/tours/:id/cancel
  * AUTHENTICATED
  */
 export const cancelTourRequest = async (tourId, reason) => {
   try {
-    const response = await axiosInstance.patch(`/tours/${tourId}/cancel`, { reason });
+    const response = await axiosInstance.patch(`/tours/${tourId}/cancel`, {
+      reason,
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to cancel tour');
@@ -66,19 +63,64 @@ export const cancelTourRequest = async (tourId, reason) => {
 };
 
 /**
- * Reschedule Tour Request
+ * Reschedule Tour (Client)
  * PATCH /api/v1/tours/:id/reschedule
  * AUTHENTICATED
  */
-export const rescheduleTourRequest = async (tourId, data) => {
+export const rescheduleTourRequest = async (tourId, preferredDate, preferredTime) => {
   try {
     const response = await axiosInstance.patch(`/tours/${tourId}/reschedule`, {
-      preferredDate: data.preferredDate,
-      preferredTime: data.preferredTime,
-      reason: data.reason || '',
+      preferredDate,
+      preferredTime,
     });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to reschedule tour');
+  }
+};
+
+/**
+ * Confirm Tour (Agent)
+ * PATCH /api/v1/tours/:id/confirm
+ * AUTHENTICATED - agent only
+ */
+export const confirmTour = async (tourId, confirmedDateTime) => {
+  try {
+    const response = await axiosInstance.patch(`/tours/${tourId}/confirm`, {
+      confirmedDateTime,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to confirm tour');
+  }
+};
+
+/**
+ * Complete Tour (Agent)
+ * PATCH /api/v1/tours/:id/complete
+ * AUTHENTICATED - agent only
+ */
+export const completeTour = async (tourId, notes = '') => {
+  try {
+    const response = await axiosInstance.patch(`/tours/${tourId}/complete`, {
+      notes,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to complete tour');
+  }
+};
+
+/**
+ * Delete Tour
+ * DELETE /api/v1/tours/:id
+ * AUTHENTICATED
+ */
+export const deleteTour = async (tourId) => {
+  try {
+    const response = await axiosInstance.delete(`/tours/${tourId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to delete tour');
   }
 };

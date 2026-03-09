@@ -1,40 +1,88 @@
+// src/hooks/profile/useUpdateProfile.js - FIXED for your authSlice
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
+import { updateBasicInfo, updateClientPreferences, updateClientNotifications } from '../../api/profileApi';
+import { updateUser } from '../../store/slices/authSlice'; // ✅ Changed from setUser
+import toast from 'react-hot-toast';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
-import { updateUser } from "../../store/slices/authSlice";
-import toast from "react-hot-toast";
+/**
+ * useUpdateBasicInfo Hook
+ * Updates user's basic information (firstName, lastName, phone, email)
+ */
+export const useUpdateBasicInfo = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
-// Mock API - replace with real endpoint
-const updateProfileApi = async (data) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-  // Simulate API response
-  return {
-    success: true,
-    user: data,
-  };
+  return useMutation({
+    mutationFn: updateBasicInfo,
+    onSuccess: (response) => {
+      const user = response.data?.user;
+      
+      // ✅ Update Redux using updateUser
+      if (user) {
+        dispatch(updateUser({
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          ...user,
+        }));
+      }
+      
+      // Invalidate profile query
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      
+      // Show success toast
+      toast.success('Profile updated successfully');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update profile');
+    },
+  });
 };
 
-export default function useUpdateProfile() {
-  const dispatch = useDispatch();
+/**
+ * useUpdatePreferences Hook
+ * Updates user's preferences
+ */
+export const useUpdatePreferences = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateProfileApi,
-
-    onSuccess: (response) => {
-      // Update Redux state
-      dispatch(updateUser(response.user));
+    mutationFn: updateClientPreferences,
+    onSuccess: () => {
+      // Invalidate profile query
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
       
-      // Invalidate any user-related queries
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-      
-      // Show success message
-      toast.success("Profile updated successfully");
+      // Show success toast
+      toast.success('Preferences updated successfully');
     },
-
     onError: (error) => {
-      toast.error(error.message || "Failed to update profile");
+      toast.error(error.message || 'Failed to update preferences');
     },
   });
-}
+};
+
+/**
+ * useUpdateNotifications Hook
+ * Updates user's notification settings
+ */
+export const useUpdateNotifications = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateClientNotifications,
+    onSuccess: () => {
+      // Invalidate profile query
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      
+      // Show success toast
+      toast.success('Notification settings updated');
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update notifications');
+    },
+  });
+};

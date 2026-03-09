@@ -1,11 +1,12 @@
-// src/api/propertyApi.js
+// src/api/propertyApi.js - COMPLETE VERSION
 import axiosInstance from './axiosInstance';
 
-// ─── Property Listing APIs ────────────────────────────────────────────────────
+// ─── Public Property APIs ─────────────────────────────────────────────────────
 
 /**
  * Get all properties with filters and pagination
  * GET /api/v1/properties
+ * PUBLIC
  */
 export const getAllProperties = async (params = {}) => {
   try {
@@ -19,6 +20,7 @@ export const getAllProperties = async (params = {}) => {
 /**
  * Get property by ID
  * GET /api/v1/properties/:id
+ * PUBLIC
  */
 export const getPropertyById = async (propertyId) => {
   try {
@@ -32,6 +34,7 @@ export const getPropertyById = async (propertyId) => {
 /**
  * Search properties with query
  * GET /api/v1/properties?search=keyword
+ * PUBLIC
  */
 export const searchProperties = async (searchQuery, params = {}) => {
   try {
@@ -47,6 +50,7 @@ export const searchProperties = async (searchQuery, params = {}) => {
 /**
  * Get featured properties
  * GET /api/v1/properties/featured
+ * PUBLIC
  */
 export const getFeaturedProperties = async (params = {}) => {
   try {
@@ -60,6 +64,7 @@ export const getFeaturedProperties = async (params = {}) => {
 /**
  * Get new listings (sorted by newest)
  * GET /api/v1/properties?sort=newest
+ * PUBLIC
  */
 export const getNewListings = async (params = {}) => {
   try {
@@ -79,6 +84,7 @@ export const getNewListings = async (params = {}) => {
 /**
  * Get nearby properties using GPS coordinates
  * GET /api/v1/properties/nearby
+ * PUBLIC
  */
 export const getNearbyProperties = async (longitude, latitude, maxDistance = 5000, limit = 20) => {
   try {
@@ -99,6 +105,7 @@ export const getNearbyProperties = async (longitude, latitude, maxDistance = 500
 /**
  * View property (tracked view - requires auth)
  * GET /api/v1/properties/:id/view
+ * AUTHENTICATED
  */
 export const viewPropertyTracked = async (propertyId) => {
   try {
@@ -109,47 +116,201 @@ export const viewPropertyTracked = async (propertyId) => {
   }
 };
 
-// ─── Property Enquiry APIs ────────────────────────────────────────────────────
+// ─── User Properties APIs (Client/Agent) ──────────────────────────────────────
 
 /**
- * Submit Property Enquiry
- * POST /api/v1/enquiries/property/:id
+ * Get user's properties (for agents or clients who listed properties)
+ * GET /api/v1/properties/my-properties
+ * AUTHENTICATED - client or agent
  */
-export const submitPropertyEnquiry = async (propertyId, data) => {
+export const getUserProperties = async (params = {}) => {
   try {
-    const response = await axiosInstance.post(
-      `/enquiries/property/${propertyId}`,
-      data
+    const response = await axiosInstance.get('/properties/my-properties', { params });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch user properties');
+  }
+};
+
+// ─── Agent Property Management APIs ───────────────────────────────────────────
+
+/**
+ * Create new property
+ * POST /api/v1/properties
+ * AUTHENTICATED - verified agent only
+ */
+export const createProperty = async (formData) => {
+  try {
+    const response = await axiosInstance.post('/properties', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to create property');
+  }
+};
+
+/**
+ * Update property
+ * PUT /api/v1/properties/:id
+ * AUTHENTICATED - owner only
+ */
+export const updateProperty = async (propertyId, data) => {
+  try {
+    const response = await axiosInstance.put(`/properties/${propertyId}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to update property');
+  }
+};
+
+/**
+ * Delete property
+ * DELETE /api/v1/properties/:id
+ * AUTHENTICATED - owner only
+ */
+export const deleteProperty = async (propertyId) => {
+  try {
+    const response = await axiosInstance.delete(`/properties/${propertyId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to delete property');
+  }
+};
+
+/**
+ * Update featured image
+ * PUT /api/v1/properties/:id/featured-image
+ * AUTHENTICATED - owner only
+ */
+export const updateFeaturedImage = async (propertyId, imageFile) => {
+  try {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    
+    const response = await axiosInstance.put(
+      `/properties/${propertyId}/featured-image`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
     );
     return response.data;
   } catch (error) {
-    const message = error.response?.data?.message || 'Failed to submit enquiry';
-    throw new Error(message);
+    throw new Error(error.response?.data?.message || 'Failed to update featured image');
   }
 };
 
 /**
- * Get user's enquiries
- * GET /api/v1/enquiries
+ * Add gallery images
+ * POST /api/v1/properties/:id/gallery
+ * AUTHENTICATED - owner only
  */
-export const getUserEnquiries = async (params = {}) => {
+export const addGalleryImages = async (propertyId, images, captions = []) => {
   try {
-    const response = await axiosInstance.get('/enquiries', { params });
+    const formData = new FormData();
+    images.forEach((image) => {
+      formData.append('images', image);
+    });
+    if (captions.length > 0) {
+      formData.append('captions', JSON.stringify(captions));
+    }
+    
+    const response = await axiosInstance.post(
+      `/properties/${propertyId}/gallery`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch enquiries');
+    throw new Error(error.response?.data?.message || 'Failed to add gallery images');
   }
 };
 
 /**
- * Get enquiry by ID
+ * Remove gallery image
+ * DELETE /api/v1/properties/:id/gallery/:index
+ * AUTHENTICATED - owner only
  */
-export const getEnquiryById = async (enquiryId) => {
+export const removeGalleryImage = async (propertyId, imageIndex) => {
   try {
-    const response = await axiosInstance.get(`/enquiries/${enquiryId}`);
+    const response = await axiosInstance.delete(
+      `/properties/${propertyId}/gallery/${imageIndex}`
+    );
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch enquiry');
+    throw new Error(error.response?.data?.message || 'Failed to remove gallery image');
+  }
+};
+
+/**
+ * Submit property for approval
+ * POST /api/v1/properties/:id/submit
+ * AUTHENTICATED - owner only
+ */
+export const submitPropertyForApproval = async (propertyId) => {
+  try {
+    const response = await axiosInstance.post(`/properties/${propertyId}/submit`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to submit property');
+  }
+};
+
+// ─── Admin Property APIs ──────────────────────────────────────────────────────
+
+/**
+ * Approve property
+ * POST /api/v1/properties/:id/approve
+ * AUTHENTICATED - admin/manager only
+ */
+export const approveProperty = async (propertyId) => {
+  try {
+    const response = await axiosInstance.post(`/properties/${propertyId}/approve`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to approve property');
+  }
+};
+
+/**
+ * Reject property
+ * POST /api/v1/properties/:id/reject
+ * AUTHENTICATED - admin/manager only
+ */
+export const rejectProperty = async (propertyId, reason) => {
+  try {
+    const response = await axiosInstance.post(`/properties/${propertyId}/reject`, {
+      reason,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to reject property');
+  }
+};
+
+/**
+ * Update property status
+ * PATCH /api/v1/properties/:id/status
+ * AUTHENTICATED - admin/manager only
+ */
+export const updatePropertyStatus = async (propertyId, status, rejectionReason = null) => {
+  try {
+    const response = await axiosInstance.patch(`/properties/${propertyId}/status`, {
+      status,
+      rejectionReason,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to update property status');
   }
 };
 
@@ -157,7 +318,8 @@ export const getEnquiryById = async (enquiryId) => {
 
 /**
  * Save property to favorites
- * POST /api/v1/profile/client/saved-properties
+ * POST /api/v1/profiles/client/saved-properties
+ * AUTHENTICATED
  */
 export const saveProperty = async (propertyId, notes = '') => {
   try {
@@ -173,7 +335,8 @@ export const saveProperty = async (propertyId, notes = '') => {
 
 /**
  * Remove property from favorites
- * DELETE /api/v1/profile/client/saved-properties/:propertyId
+ * DELETE /api/v1/profiles/client/saved-properties/:propertyId
+ * AUTHENTICATED
  */
 export const unsaveProperty = async (propertyId) => {
   try {
@@ -186,7 +349,8 @@ export const unsaveProperty = async (propertyId) => {
 
 /**
  * Get saved properties
- * GET /api/v1/profile/client/saved-properties
+ * GET /api/v1/profiles/client/saved-properties
+ * AUTHENTICATED
  */
 export const getSavedProperties = async () => {
   try {

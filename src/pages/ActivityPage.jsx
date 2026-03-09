@@ -1,7 +1,7 @@
-
+// src/pages/ActivityPage.jsx - WITH API
 import { memo, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectInquiriesCount, selectToursCount, selectMessagesCount } from '../store/slices/activitySlice';
+import { useEnquiries } from '../hooks/activity/useEnquiries';
+import { useTours } from '../hooks/activity/useTours';
 import StatsCard from '../components/activity/StatsCard';
 import InquiriesTab from '../components/activity/InquiriesTab';
 import ToursTab from '../components/activity/ToursTab';
@@ -10,17 +10,21 @@ import MessagesTab from '../components/activity/MessagesTab';
 /**
  * ActivityPage Component
  * Main activity page showing inquiries, tours, and messages
- * NOW WITH REDUX INTEGRATION
+ * NOW WITH API INTEGRATION
  */
 const ActivityPage = memo(() => {
   const [activeTab, setActiveTab] = useState('inquiries');
 
-  // Get counts from Redux
-  const inquiriesCount = useSelector(selectInquiriesCount);
-  const toursCount = useSelector(selectToursCount);
-  const messagesCount = useSelector(selectMessagesCount);
+  // Fetch counts from API
+  const { data: enquiries = [] } = useEnquiries();
+  const { data: tours = [] } = useTours();
+  
+  // Get counts
+  const inquiriesCount = enquiries.length;
+  const toursCount = tours.length;
+  const messagesCount = 0; // TODO: Implement messages API
 
-  // Stats data (now using Redux counts)
+  // Stats data (now using API counts)
   const stats = [
     {
       id: 'inquiries',
@@ -71,51 +75,51 @@ const ActivityPage = memo(() => {
     <div className="min-h-screen pb-24 bg-gray-100">
       <div className='bg-gray-100 border-b-2 border-gray-300'>
         {/* Header */}
-      <div className=" border-b border-gray-100 px-4 pt-4">
-        <h1 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-1">
-          Activity
-        </h1>
-        <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif]">
-          Manage your property interactions
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="px-3 py-3 rounded-2xl mb-3">
-        <div className="grid grid-cols-3 gap-4">
-          {stats.map((stat) => (
-            <StatsCard
-              key={stat.id}
-              icon={stat.icon}
-              label={stat.label}
-              count={stat.count}
-              color={stat.color}
-            />
-          ))}
+        <div className=" border-b border-gray-100 px-4 pt-4">
+          <h1 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-1">
+            Activity
+          </h1>
+          <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif]">
+            Manage your property interactions
+          </p>
         </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="px-6">
-        <div className="flex gap-8 border-b border-gray-200">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`relative pb-3 text-[14px] font-semibold font-['DM_Sans',sans-serif] transition-colors ${
-                activeTab === tab.id
-                  ? 'text-[#1C2A3A]'
-                  : 'text-gray-400 hover:text-gray-600'
-              }`}
-            >
-              {tab.label}
-              {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1C2A3A] rounded-full" />
-              )}
-            </button>
-          ))}
+        {/* Stats Cards */}
+        <div className="px-3 py-3 rounded-2xl mb-3">
+          <div className="grid grid-cols-3 gap-4">
+            {stats.map((stat) => (
+              <StatsCard
+                key={stat.id}
+                icon={stat.icon}
+                label={stat.label}
+                count={stat.count}
+                color={stat.color}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+
+        {/* Tabs */}
+        <div className="px-6">
+          <div className="flex gap-8 border-b border-gray-200">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative pb-3 text-[14px] font-semibold font-['DM_Sans',sans-serif] transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-[#1C2A3A]'
+                    : 'text-gray-400 hover:text-gray-600'
+                }`}
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1C2A3A] rounded-full" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Tab Content */}

@@ -1,20 +1,33 @@
-
-import { memo, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { updateUser } from '../../store/slices/authSlice';
-import toast from 'react-hot-toast';
+// src/components/profile/EditProfileModal.jsx - WITH API
+import { memo, useState, useCallback, useEffect } from 'react';
+import { useUpdateBasicInfo } from '../../hooks/profile/useUpdateProfile';
 
 /**
  * EditProfileModal Component
  * Modal for editing user profile information
+ * NOW WITH API INTEGRATION
  */
 const EditProfileModal = memo(({ isOpen, onClose, user }) => {
-  const dispatch = useDispatch();
+  const updateMutation = useUpdateBasicInfo();
+  
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
     phone: user?.phone || '',
     email: user?.email || ''
   });
+
+  // Update form when user changes
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        phone: user.phone || '',
+        email: user.email || ''
+      });
+    }
+  }, [user]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -24,20 +37,20 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
   const handleSave = useCallback((e) => {
     e.preventDefault();
     
-    // Update user in Redux
-    dispatch(updateUser(formData));
-    
-    // Show success toast
-    toast.success('Profile updated successfully');
-    
-    // Close modal
-    onClose();
-  }, [formData, dispatch, onClose]);
+    // Call API to update profile
+    updateMutation.mutate(formData, {
+      onSuccess: () => {
+        // Close modal on success
+        onClose();
+      }
+    });
+  }, [formData, updateMutation, onClose]);
 
   const handleCancel = useCallback(() => {
     // Reset form to original values
     setFormData({
-      name: user?.name || '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
       phone: user?.phone || '',
       email: user?.email || ''
     });
@@ -46,7 +59,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
     onClose();
   }, [user, onClose]);
 
-  // IMPORTANT: Return null if not open
+  // Return null if not open
   if (!isOpen) return null;
 
   return (
@@ -95,7 +108,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
 
           {/* Form */}
           <form onSubmit={handleSave} className="px-6 py-6 space-y-5">
-            {/* Name */}
+            {/* First Name */}
             <div>
               <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
                 <svg
@@ -108,12 +121,37 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
-                Name
+                First Name
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                required
+              />
+            </div>
+
+            {/* Last Name */}
+            <div>
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                Last Name
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
                 required
@@ -180,24 +218,35 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[#1C2A3A] font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-gray-50 transition-all active:scale-95"
+                disabled={updateMutation.isPending}
+                className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[#1C2A3A] font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-[#1C2A3A] text-white font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] transition-all shadow-lg active:scale-95"
+                disabled={updateMutation.isPending}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-[#1C2A3A] text-white font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Save Changes
+                {updateMutation.isPending ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Save Changes
+                  </>
+                )}
               </button>
             </div>
           </form>

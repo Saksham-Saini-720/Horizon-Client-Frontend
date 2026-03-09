@@ -1,8 +1,11 @@
-
-import { memo, useState, useCallback } from 'react';
+// src/pages/ProfilePage.jsx - FINAL VERSION
+import { memo, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import useLogout from '../hooks/auth/useLogout';
+import { useProfile } from '../hooks/profile/useProfile';
+import { useEnquiries } from '../hooks/activity/useEnquiries';
+import { useTours } from '../hooks/activity/useTours';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import MembershipBadge from '../components/profile/MembershipBadge';
 import QuickAccessGrid from '../components/profile/QuickAccessCard';
@@ -14,7 +17,6 @@ import LogoutModal from '../components/profile/LogoutModal';
 
 /**
  * NotLoggedInState Component
- * Shows when user is not authenticated
  */
 const NotLoggedInState = () => {
   const navigate = useNavigate();
@@ -53,11 +55,27 @@ const NotLoggedInState = () => {
 };
 
 /**
- * ProfilePage Component
- * Main profile page with all sections
+ * ProfileSkeleton Component
+ */
+const ProfileSkeleton = () => (
+  <div className="min-h-screen bg-gray-100 pb-24 px-4 animate-pulse">
+    <div className="bg-white mt-6 px-6 rounded-3xl mb-6 shadow-lg h-64" />
+    <div className="bg-white h-20 rounded-2xl mb-6" />
+    <div className="grid grid-cols-2 gap-4 mb-6">
+      {Array(4).fill(0).map((_, i) => (
+        <div key={i} className="bg-white h-32 rounded-2xl" />
+      ))}
+    </div>
+  </div>
+);
+
+/**
+ * ProfilePage Component - FINAL VERSION
+ * Single fetch, proper data sync, no duplicate calls
  */
 const ProfilePage = memo(() => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const logoutMutation = useLogout();
   
   // State
@@ -66,13 +84,33 @@ const ProfilePage = memo(() => {
   
   // Get auth state from Redux
   const isAuthenticated = useSelector(state => state.auth?.isAuthenticated || false);
-  const user = useSelector(state => state.auth?.user || null);
+  const reduxUser = useSelector(state => state.auth?.user);
   
-  // Get counts from Redux (if available)
-  const inquiriesCount = useSelector(state => state.activity?.inquiries?.length || 0);
-  const toursCount = useSelector(state => state.activity?.tours?.length || 0);
-  const messagesCount = useSelector(state => state.activity?.messages?.length || 0);
-  const savedCount = useSelector(state => state.saved?.properties?.length || 0);
+  console.log('🔵 [ProfilePage] Mounted - Auth:', isAuthenticated);
+  
+  // ✅ SINGLE profile fetch (includes user + profile data)
+  const { 
+    data: profile, 
+    isLoading: profileLoading, 
+    isError, 
+    error 
+  } = useProfile({
+    enabled: isAuthenticated,
+  });
+  
+  // ✅ Activity counts (only if authenticated)
+  const { data: enquiries = [] } = useEnquiries({}, { 
+    enabled: isAuthenticated,
+  });
+  
+  const { data: tours = [] } = useTours({}, { 
+    enabled: isAuthenticated,
+  });
+  
+  // Get saved count from profile (backend source of truth)
+  const savedCount = profile?.savedProperties?.length || 0;
+
+  console.log('📊 [ProfilePage] Counts - Saved:', savedCount, 'Enquiries:', enquiries.length, 'Tours:', tours.length);
 
   // Handle logout
   const handleLogout = useCallback(() => {
@@ -81,30 +119,85 @@ const ProfilePage = memo(() => {
   }, [logoutMutation]);
 
   // Show not logged in state
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated) {
     return <NotLoggedInState />;
   }
 
-  // Show profile when authenticated
+  // Show loading skeleton
+  if (profileLoading) {
+    return <ProfileSkeleton />;
+  }
+
+  // Show error state
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 pb-28">
+        <div className="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center mb-6">
+          <svg className="w-12 h-12 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <h2 className="text-[24px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2">
+          Failed to Load Profile
+        </h2>
+        <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center max-w-xs mb-8">
+          {error?.message || 'Something went wrong'}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-8 py-3.5 rounded-xl bg-[#1C2A3A] text-white text-[15px] font-semibold font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] active:scale-95 transition-all shadow-lg"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  // Use profile or fallback to Redux user
+  const displayUser = profile || reduxUser;
+  
+  if (!displayUser) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 pb-28">
+        <h2 className="text-[24px] font-bold text-[#1C2A3A] mb-4">No User Data</h2>
+        <button
+          onClick={() => navigate('/login')}
+          className="px-8 py-3.5 rounded-xl bg-[#1C2A3A] text-white"
+        >
+          Back to Login
+        </button>
+      </div>
+    );
+  }
+
+  console.log('✅ [ProfilePage] Rendering with user:', displayUser.firstName);
+
+  // Show profile
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
-
       <div className="px-4">
         {/* Profile Header */}
         <ProfileHeader
-          user={user}
+          user={displayUser}
           onEdit={() => setShowEditModal(true)}
         />
 
         {/* Membership Badge */}
-        <MembershipBadge memberSince={user.memberSince || 'January 2024'} />
+        <MembershipBadge 
+          memberSince={displayUser.createdAt 
+            ? new Date(displayUser.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+            : 'January 2024'
+          } 
+        />
 
-        {/* Quick Access - ONLY ONE INSTANCE */}
+        {/* Quick Access */}
         <QuickAccessGrid
           savedCount={savedCount}
-          inquiriesCount={inquiriesCount}
-          toursCount={toursCount}
-          messagesCount={messagesCount}
+          inquiriesCount={enquiries.length}
+          toursCount={tours.length}
+          messagesCount={0}
           onNavigate={navigate}
         />
 
@@ -112,7 +205,7 @@ const ProfilePage = memo(() => {
         <RecentActivity onNavigate={navigate} />
 
         {/* Preferences */}
-        <Preferences />
+        <Preferences profile={displayUser} />
 
         {/* Account & Security */}
         <AccountSecurity onLogout={() => setShowLogoutModal(true)} />
@@ -122,7 +215,7 @@ const ProfilePage = memo(() => {
       <EditProfileModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
-        user={user}
+        user={displayUser}
       />
 
       {/* Logout Modal */}
