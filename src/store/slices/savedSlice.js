@@ -1,4 +1,4 @@
-// src/store/slices/savedSlice.js
+
 import { createSlice } from '@reduxjs/toolkit';
 
 // ─── Initial State ─────────────────────────────────────────────────────────────

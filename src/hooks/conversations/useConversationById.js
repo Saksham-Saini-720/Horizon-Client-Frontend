@@ -1,4 +1,4 @@
-// src/hooks/conversations/useConversationById.js - UPDATED WITH FIXES
+
 import { useQuery } from '@tanstack/react-query';
 import { getConversationById } from '../../api/conversationApi';
 
@@ -60,7 +60,7 @@ const normalizeConversationDetail = (conv) => ({
     lastSeen: conv.otherParticipant?.lastSeen || null,
   },
   
-  // ⭐ UPDATED: Handle deleted properties (same as tours/enquiries fix)
+  //  UPDATED: Handle deleted properties (same as tours/enquiries fix)
   property: (conv.property && conv.property !== null)
     ? {
         id: conv.property._id || conv.property.id,
@@ -69,7 +69,7 @@ const normalizeConversationDetail = (conv) => ({
         image: conv.property.images?.[0] || conv.property.image || null,
         purpose: conv.property.purpose || conv.property.listingType || 'sale',
       }
-    : null, // ✅ Return null if property is deleted
+    : null, // Return null if property is deleted
   
   messages: (conv.messages || []).map(normalizeMessage),
   status: conv.status || 'active',

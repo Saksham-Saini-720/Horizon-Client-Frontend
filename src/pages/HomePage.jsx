@@ -1,33 +1,4 @@
 
-// import { Outlet, useLocation } from "react-router-dom";
-// import Footer from "../components/layouts/Footer";
-// import Navbar from "../components/layouts/Navbar";
-// import PropertyDetailPage from "./PropertyDetailPage";
-
-// const HomePage = () => {
-
-//   const location = useLocation()
-  
-//   return !location.pathname.startsWith("/property") ? (
-//     <>
-//       {/* Top navigation */}
-//       { (!location.pathname.startsWith("/inquiries") && !location.pathname.startsWith("/map"))  && <Navbar /> }
-      
-//       {/* Nested routes render here */}
-//       <Outlet />
-      
-//       {/* Bottom navigation */}
-//       <Footer />
-//     </>
-//   ) : (
-//     <PropertyDetailPage/>
-//   );
-// };
-
-// export default HomePage;
-
-
-// src/pages/HomePage.jsx
 import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../components/layouts/Footer";
 import Navbar from "../components/layouts/Navbar";
@@ -42,10 +13,11 @@ const HomePage = () => {
     location.pathname.startsWith("/inquiries") ||
     location.pathname.startsWith("/map") ||
     location.pathname.startsWith("/chat/") ||// Individual conversation has its own header
-    location.pathname.startsWith("/terms");  
+    location.pathname.startsWith("/terms") ||
+    location.pathname.startsWith("/privacy"); 
 
   // Hide footer on individual conversation page (has its own input bar)
-  const hideFooter = location.pathname.match(/^\/chat\/.+/) || location.pathname.startsWith("/terms");
+  const hideFooter = location.pathname.match(/^\/chat\/.+/) || location.pathname.startsWith("/terms") || location.pathname.startsWith("/privacy") || location.pathname.startsWith("/map");
 
   if (isPropertyDetail) {
     return <PropertyDetailPage />;

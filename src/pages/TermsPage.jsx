@@ -1,4 +1,4 @@
-// src/pages/TermsPage.jsx
+
 import { useNavigate } from 'react-router-dom';
 
 const SECTIONS = [

@@ -1,4 +1,4 @@
-// src/pages/ActivityPage.jsx - WITH API
+
 import { memo, useState } from 'react';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';

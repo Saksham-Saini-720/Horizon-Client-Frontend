@@ -1,4 +1,4 @@
-// src/components/explore/filters/BedroomsFilterModal.jsx
+
 import { memo, useState } from 'react';
 
 const BEDROOM_OPTIONS = ['1', '2', '3', '4+'];

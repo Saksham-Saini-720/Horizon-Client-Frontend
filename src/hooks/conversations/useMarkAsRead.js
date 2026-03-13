@@ -1,4 +1,4 @@
-// src/hooks/conversations/useMarkAsRead.js - UPDATED WITH FIXES
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { markConversationAsRead, getUnreadCount } from '../../api/conversationApi';
@@ -27,7 +27,7 @@ export const useMarkAsRead = () => {
       dispatch(decrementUnread());
     },
     onSuccess: (_, conversationId) => {
-      // ⭐ UPDATED: Smarter cache invalidation
+      // UPDATED: Smarter cache invalidation
       
       // Only invalidate specific conversation
       queryClient.invalidateQueries({ 

@@ -1,4 +1,4 @@
-// src/hooks/properties/useNearbyProperties.js
+
 import { useQuery } from '@tanstack/react-query';
 import { getNearbyProperties } from '../../api/propertyApi';
 import { transformPropertyResponse } from '../../utils/propertyTransform';
@@ -23,12 +23,9 @@ export const useNearbyProperties = (
   return useQuery({
     queryKey: ['properties', 'nearby', longitude, latitude, maxDistance, limit],
     queryFn: async () => {
-      console.log('🔍 Fetching nearby properties:', { longitude, latitude, maxDistance, limit });
       
       const response = await getNearbyProperties(longitude, latitude, maxDistance, limit);
       const transformed = transformPropertyResponse(response);
-      
-      console.log('✅ Nearby properties loaded:', transformed.properties.length);
       
       return transformed.properties;
     },

@@ -1,4 +1,4 @@
-// src/components/profile/EditProfileModal.jsx - WITH API
+
 import { memo, useState, useCallback, useEffect } from 'react';
 import { useUpdateBasicInfo } from '../../hooks/profile/useUpdateProfile';
 

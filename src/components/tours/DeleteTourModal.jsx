@@ -1,4 +1,4 @@
-// src/components/tours/DeleteTourModal.jsx
+
 import { memo } from 'react';
 import { useDeleteTour } from '../../hooks/tours/useTourActions';
 

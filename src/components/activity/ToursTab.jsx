@@ -1,17 +1,14 @@
-// src/components/activity/ToursTab.jsx - WITH API
+
 import { memo } from 'react';
 import { useTours } from '../../hooks/activity/useTours';
 import TourCard from './TourCard';
 import { NewListingCardSkeleton } from '../ui/SkeletonCards';
-import { useDispatch } from 'react-redux';
-import { clearActivity } from '../../store/slices/activitySlice';
 
 /**
  * ToursTab Component
  * Lists all tour requests from API
  */
 const ToursTab = memo(() => {
-  // const dispatch = useDispatch();
   // Fetch tours from API
   const { data: tours = [], isLoading, isError, error, refetch } = useTours();
 

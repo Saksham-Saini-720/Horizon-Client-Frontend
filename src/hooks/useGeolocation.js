@@ -1,4 +1,4 @@
-// src/hooks/useGeolocation.js
+
 import { useState, useEffect } from 'react';
 
 /**
@@ -24,10 +24,6 @@ export const useGeolocation = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log('📍 Location received:', {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
 
         setLocation({
           latitude: position.coords.latitude,
@@ -38,7 +34,6 @@ export const useGeolocation = () => {
         setLoading(false);
       },
       (error) => {
-        console.error('❌ Location error:', error);
         
         let errorMessage = 'Unable to get your location';
         

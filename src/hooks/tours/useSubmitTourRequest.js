@@ -1,4 +1,4 @@
-// src/hooks/tours/useSubmitTourRequest.js - UPDATED to match API
+
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { submitTourRequest } from '../../api/tourApi';

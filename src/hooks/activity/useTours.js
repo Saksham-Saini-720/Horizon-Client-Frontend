@@ -1,4 +1,4 @@
-// src/hooks/activity/useTours.js - FIXED: Filters null properties
+
 import { useQuery } from '@tanstack/react-query';
 import { getUserTours } from '../../api/tourApi';
 
@@ -45,8 +45,6 @@ const transformTour = (tour) => {
     });
   };
 
-  console.log("Transforming tour:", tour);
-
   return {
     id: tour._id || tour.id,
     property: {
@@ -88,22 +86,13 @@ export const useTours = (filters = {}, options = {}) => {
       const response = await getUserTours(filters);
       const tours = response.data?.tours || response.data || [];
       
-      console.log('📋 Total tour requests:', tours.length);
-      
-      // ⭐ FILTER OUT NULL PROPERTIES (deleted properties)
+      //  FILTER OUT NULL PROPERTIES (deleted properties)
       const validTours = tours.filter(tour => {
         if (!tour.property || tour.property === null) {
-          console.warn('⚠️ Skipping tour with deleted property:', {
-            tourId: tour._id || tour.id,
-            createdAt: tour.createdAt,
-            status: tour.status
-          });
           return false;
         }
         return true;
       });
-      
-      console.log('✅ Valid tours after filtering:', validTours.length);
       
       return validTours.map(transformTour);
     },

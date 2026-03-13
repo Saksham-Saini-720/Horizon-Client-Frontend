@@ -1,4 +1,4 @@
-// src/hooks/conversations/useConversations.js - UPDATED WITH FIXES
+
 import { useQuery } from '@tanstack/react-query';
 import { getConversations } from '../../api/conversationApi';
 
@@ -32,7 +32,7 @@ export const useConversations = (filters = {}) => {
       };
     },
     
-    // ⭐ UPDATED: Better UX
+    //  UPDATED: Better UX
     placeholderData: { conversations: [], pagination: null, total: 0 }, // Show empty while loading
     keepPreviousData: true, // Keep old data while refetching
     
@@ -70,7 +70,7 @@ const normalizeConversation = (conv) => ({
     isOnline: conv.otherParticipant?.isOnline || false,
   },
   
-  // ⭐ UPDATED: Handle deleted properties (same as tours/enquiries fix)
+  // UPDATED: Handle deleted properties (same as tours/enquiries fix)
   property: (conv.property && conv.property !== null)
     ? {
         id: conv.property._id || conv.property.id,
@@ -78,7 +78,7 @@ const normalizeConversation = (conv) => ({
         location: conv.property.location || conv.property.address || '',
         image: conv.property.images?.[0] || conv.property.image || null,
       }
-    : null, // ✅ Return null if property is deleted
+    : null, //  Return null if property is deleted
   
   // Last message preview
   lastMessage: conv.lastMessage?.content || '',

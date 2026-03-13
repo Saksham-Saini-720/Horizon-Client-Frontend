@@ -1,11 +1,11 @@
-// src/utils/propertyTransform.js
+
+
 /**
  * Transform API property to component format
  */
 export function transformProperty(apiProperty) {
   if (!apiProperty) return null;
 
-  // Extract data
   const {
     _id,
     price,
@@ -24,46 +24,45 @@ export function transformProperty(apiProperty) {
     updatedAt
   } = apiProperty;
 
-  // Format price with currency symbol
-  const formattedPrice = formatPrice(price, currency, purpose);
-
-  // Format location
+  const formattedPrice    = formatPrice(price, currency, purpose);
   const formattedLocation = formatLocation(location);
+  const formattedArea     = formatArea(details?.squareFeet);
+  const imageUrl          = getPropertyImage(images);
+  const tag               = formatPurpose(purpose);
 
-  // Format area
-  const formattedArea = formatArea(details?.squareFeet);
+  // MongoDB GeoJSON format: { type: 'Point', coordinates: [lng, lat] }
+  // Note: GeoJSON order is [longitude, latitude] — NOT [lat, lng]
+  const coords = location?.coordinates?.coordinates ?? location?.coordinates;
+  const lng = Array.isArray(coords) ? coords[0] : (location?.lng ?? location?.longitude ?? null);
+  const lat = Array.isArray(coords) ? coords[1] : (location?.lat ?? location?.latitude  ?? null);
 
-  // Get image URL
-  const imageUrl = getPropertyImage(images);
-
-  // ⭐ FIXED: Format purpose to tag
-  const tag = formatPurpose(purpose);
-
-  // Build transformed property
   return {
-    id: _id,
-    price: formattedPrice,
-    rawPrice: price, // Keep raw price for sorting
-    title: title || description || 'Untitled Property',
+    id:       _id,
+    price:    formattedPrice,
+    rawPrice: price,
+    title:    title || description || 'Untitled Property',
     location: formattedLocation,
-    beds: details?.bedrooms ? `${details.bedrooms} Bed${details.bedrooms > 1 ? 's' : ''}` : null,
-    baths: details?.bathrooms ? `${details.bathrooms} Bath${details.bathrooms > 1 ? 's' : ''}` : null,
-    area: formattedArea,
-    img: imageUrl,
-    tag: tag, // ⭐ CRITICAL: Tag for filters
-    purpose: purpose, // ⭐ Keep original purpose too
-    type: type,
+    beds:     details?.bedrooms  ? `${details.bedrooms} Bed${details.bedrooms > 1 ? 's' : ''}`   : null,
+    baths:    details?.bathrooms ? `${details.bathrooms} Bath${details.bathrooms > 1 ? 's' : ''}` : null,
+    area:     formattedArea,
+    img:      imageUrl,
+    tag:      tag,
+    purpose:  purpose,
+    type:     type,
     amenities: amenities || [],
-    status: status,
+    status:   status,
+    // lat/lng for map markers
+    latitude:  lat,
+    longitude: lng,
     owner: owner ? {
-      id: owner._id,
-      name: `${owner.firstName || ''} ${owner.lastName || ''}`.trim() || 'Agent',
+      id:     owner._id,
+      name:   `${owner.firstName || ''} ${owner.lastName || ''}`.trim() || 'Agent',
       avatar: owner.avatar,
-      phone: owner.phone,
-      email: owner.email
+      phone:  owner.phone,
+      email:  owner.email,
     } : null,
-    createdAt: createdAt,
-    updatedAt: updatedAt,
+    createdAt,
+    updatedAt,
   };
 }
 
@@ -76,143 +75,106 @@ export function transformProperties(apiProperties) {
 }
 
 /**
- * Transform API response with pagination
+ * Transform API response — handles ALL response shapes
+ *  FIX 1: Added more format handlers for nearby/other endpoints
  */
 export function transformPropertyResponse(apiResponse) {
   if (!apiResponse) return { properties: [], pagination: null };
 
-  // Handle both formats:
-  // 1. { data: { properties } } - For paginated responses
-  // 2. { data: { items, pagination } } - For search responses
-  const data = apiResponse.data || {};
-  
+  const data = apiResponse.data || apiResponse || {};
+
   let properties = [];
-  let pagination = null;
+  let pagination  = null;
 
-  if (data.properties) {
-    // Format 1: Featured/New listings
-    properties = transformProperties(data.properties);
-  } else if (data.items) {
-    // Format 2: Search results
-    properties = transformProperties(data.items);
-    pagination = data.pagination;
-  } else if (Array.isArray(data)) {
-    // Format 3: Direct array
+
+  if (Array.isArray(data)) {
+    // Format A: Direct array  →  [{ ... }, { ... }]
     properties = transformProperties(data);
-  }
 
-  return {
-    properties,
-    pagination
-  };
+  } else if (Array.isArray(data.properties)) {
+    // Format B: { properties: [...] }  (featured, new listings)
+    properties = transformProperties(data.properties);
+    pagination  = data.pagination ?? null;
+
+  } else if (Array.isArray(data.items)) {
+    // Format C: { items: [...], pagination: {} }  (search)
+    properties = transformProperties(data.items);
+    pagination  = data.pagination ?? null;
+
+  } else if (Array.isArray(data.nearby)) {
+    // Format D: { nearby: [...] }  (nearby endpoint)
+    properties = transformProperties(data.nearby);
+
+  } else if (Array.isArray(data.results)) {
+    // Format E: { results: [...] }
+    properties = transformProperties(data.results);
+
+  } else if (Array.isArray(data.data)) {
+    // Format F: { data: { data: [...] } }  (double-nested)
+    properties = transformProperties(data.data);
+
+  } 
+
+  return { properties, pagination };
 }
 
-/**
- * Format price with currency and purpose
- */
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 export function formatPrice(price, currency = 'USD', purpose = 'sale') {
   if (!price) return 'Price not available';
-
-  const symbol = getCurrencySymbol(currency);
+  const symbol         = getCurrencySymbol(currency);
   const formattedPrice = new Intl.NumberFormat('en-US').format(price);
-
-  // For rent, add "/mo"
-  if (purpose === 'rent') {
-    return `${symbol} ${formattedPrice}/mo`;
-  }
-
-  return `${symbol} ${formattedPrice}`;
+  return purpose === 'rent' ? `${symbol} ${formattedPrice}/mo` : `${symbol} ${formattedPrice}`;
 }
 
-/**
- * Get currency symbol
- */
 export function getCurrencySymbol(currency) {
-  const symbols = {
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    INR: '₹',
-    ZMW: 'ZMW',
-  };
+  const symbols = { USD: '$', EUR: '€', GBP: '£', INR: '₹', ZMW: 'ZMW' };
   return symbols[currency] || '$';
 }
 
-/**
- * Format location
- */
 export function formatLocation(location) {
   if (!location) return 'Location not available';
-
   const parts = [];
-  if (location.city) parts.push(location.city);
+  if (location.city)  parts.push(location.city);
   if (location.state) parts.push(location.state);
-
   return parts.length > 0 ? parts.join(', ') : 'Location not available';
 }
 
-/**
- * Format area
- */
 export function formatArea(squareFeet) {
   if (!squareFeet) return null;
   return `${new Intl.NumberFormat('en-US').format(squareFeet)} sq ft`;
 }
 
-/**
- * Get property image URL
- */
 export function getPropertyImage(images) {
-  if (!images || !images.featured) {
+  if (!images?.featured) {
     return 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800';
   }
-
-  // Priority: medium > large > thumbnail > original
-  const featured = images.featured;
+  const f = images.featured;
   return (
-    featured.medium?.url ||
-    featured.large?.url ||
-    featured.thumbnail?.url ||
-    featured.original?.url ||
+    f.medium?.url ||
+    f.large?.url  ||
+    f.thumbnail?.url ||
+    f.original?.url  ||
     'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800'
   );
 }
 
-/**
- * Get all property images
- */
 export function getAllPropertyImages(images) {
-  const imageUrls = [];
-
-  if (images?.featured) {
-    const url = getPropertyImage(images);
-    imageUrls.push(url);
-  }
-
-  if (images?.gallery && Array.isArray(images.gallery)) {
+  const urls = [];
+  if (images?.featured) urls.push(getPropertyImage(images));
+  if (Array.isArray(images?.gallery)) {
     images.gallery.forEach(img => {
       const url = img.medium?.url || img.large?.url || img.original?.url;
-      if (url) imageUrls.push(url);
+      if (url) urls.push(url);
     });
   }
-
-  return imageUrls.length > 0
-    ? imageUrls
+  return urls.length > 0
+    ? urls
     : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800'];
 }
 
-/**
- * ⭐ FIXED: Format purpose to display tag
- */
 export function formatPurpose(purpose) {
-  if (!purpose) return 'For Sale'; // Default
-  
-  const purposeMap = {
-    'sale': 'For Sale',
-    'rent': 'For Rent',
-    'for-sale': 'For Sale',
-    'for-rent': 'For Rent',
-  };
-
-  return purposeMap[purpose.toLowerCase()] || 'For Sale';
+  if (!purpose) return 'For Sale';
+  const map = { sale: 'For Sale', rent: 'For Rent', 'for-sale': 'For Sale', 'for-rent': 'For Rent' };
+  return map[purpose.toLowerCase()] || 'For Sale';
 }

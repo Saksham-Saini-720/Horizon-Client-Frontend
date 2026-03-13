@@ -1,4 +1,4 @@
-// src/components/search/SearchHeader.jsx
+
 import { memo, useState, useRef } from "react";
 
 /**

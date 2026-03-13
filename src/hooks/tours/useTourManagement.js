@@ -1,4 +1,4 @@
-// src/hooks/tours/useTourManagement.js
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { cancelTourRequest, rescheduleTourRequest, confirmTour, completeTour, deleteTour } from '../../api/tourApi';
 import toast from 'react-hot-toast';

@@ -1,4 +1,4 @@
-// src/pages/ProfilePage.jsx - FIXED: Correct saved count
+
 import { memo, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,7 +6,7 @@ import useLogout from '../hooks/auth/useLogout';
 import { useProfile } from '../hooks/profile/useProfile';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
-import { useSavedProperties } from '../hooks/properties/useSavedProperties'; // ⭐ ADDED
+import { useSavedProperties } from '../hooks/properties/useSavedProperties'; // ADDED
 import ProfileHeader from '../components/profile/ProfileHeader';
 import MembershipBadge from '../components/profile/MembershipBadge';
 import QuickAccessGrid from '../components/profile/QuickAccessCard';
@@ -85,11 +85,9 @@ const ProfilePage = memo(() => {
   
   // Get auth state from Redux
   const isAuthenticated = useSelector(state => state.auth?.isAuthenticated || false);
-  const reduxUser = useSelector(state => state.auth?.user);
+  const reduxUser = useSelector(state => state.auth?.user)
   
-  console.log('🔵 [ProfilePage] Mounted - Auth:', isAuthenticated);
-  
-  // ✅ SINGLE profile fetch (includes user + profile data)
+  // SINGLE profile fetch (includes user + profile data)
   const { 
     data: profile, 
     isLoading: profileLoading, 
@@ -99,12 +97,12 @@ const ProfilePage = memo(() => {
     enabled: isAuthenticated,
   });
   
-  // ⭐ FIX: Use useSavedProperties for accurate count (filters deleted properties)
+  // FIX: Use useSavedProperties for accurate count (filters deleted properties)
   const { data: savedProperties = [] } = useSavedProperties({ 
     enabled: isAuthenticated,
   });
   
-  // ✅ Activity counts (only if authenticated)
+  // Activity counts (only if authenticated)
   const { data: enquiries = [] } = useEnquiries({}, { 
     enabled: isAuthenticated,
   });
@@ -113,10 +111,8 @@ const ProfilePage = memo(() => {
     enabled: isAuthenticated,
   });
   
-  // ⭐ FIXED: Get count from useSavedProperties (already filters null properties)
+  // FIXED: Get count from useSavedProperties (already filters null properties)
   const savedCount = savedProperties.length;
-
-  console.log('📊 [ProfilePage] Counts - Saved:', savedCount, 'Enquiries:', enquiries.length, 'Tours:', tours.length);
 
   // Handle logout
   const handleLogout = useCallback(() => {
@@ -177,8 +173,6 @@ const ProfilePage = memo(() => {
       </div>
     );
   }
-
-  console.log('✅ [ProfilePage] Rendering with user:', displayUser.firstName);
 
   // Show profile
   return (

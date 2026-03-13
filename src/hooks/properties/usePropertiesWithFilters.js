@@ -1,4 +1,4 @@
-// src/hooks/properties/usePropertiesWithFilters.js
+
 import { useQuery } from "@tanstack/react-query";
 import { getAllProperties, getFeaturedProperties, getNewListings } from "../../api/propertyApi";
 import { transformPropertyResponse } from "../../utils/propertyTransform";

@@ -1,4 +1,4 @@
-// src/components/chat/ConversationList.jsx
+
 import { memo } from 'react';
 import ConversationItem from './ConversationItem';
 

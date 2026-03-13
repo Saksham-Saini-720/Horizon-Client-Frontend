@@ -15,6 +15,7 @@ const PropertyDetailPage = lazy(() => import("../pages/PropertyDetailPage"));
 const ForgotPasswordPage = lazy(() => import("../pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("../pages/ResetPasswordPage"));
 const TermsPage = lazy(() => import("../pages/TermsPage"));
+const PrivacyPage = lazy(() => import("../pages/PrivacyPage"));
 
 // ─── Public Routes ─────────────────────────────────────────────────────────────
 
@@ -53,6 +54,11 @@ const publicRoutes = [
     path: "terms", 
     element: TermsPage, 
     title: "Terms & Conditions" 
+  },
+  { 
+    path: "privacy", 
+    element: PrivacyPage, 
+    title: "Privacy Policy" 
   },
   // {
   //   path: "saved",

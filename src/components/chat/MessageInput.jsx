@@ -1,4 +1,4 @@
-// src/components/chat/MessageInput.jsx
+
 import { memo, useState, useCallback, useRef } from 'react';
 
 /**

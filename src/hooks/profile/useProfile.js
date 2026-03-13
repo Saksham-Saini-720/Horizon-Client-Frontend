@@ -1,4 +1,4 @@
-// src/hooks/profile/useProfile.js - FINAL FIX
+
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { getMyProfile } from '../../api/profileApi';
@@ -62,16 +62,11 @@ export const useProfile = (options = {}) => {
   return useQuery({
     queryKey: ['profile'],
     queryFn: async () => {
-      console.log('🔵 [useProfile] Fetching profile from API...');
       
       const response = await getMyProfile();
       
-      console.log('📦 [useProfile] Raw backend response:', response.data);
-      
       // Transform to frontend format
       const profile = transformProfile(response.data);
-      
-      console.log('✅ [useProfile] Transformed profile:', profile);
       
       // Sync with Redux (flat structure for auth)
       dispatch(updateUser({
@@ -86,8 +81,6 @@ export const useProfile = (options = {}) => {
         preferences: profile.preferences,
         notifications: profile.notifications,
       }));
-      
-      console.log('✅ [useProfile] Redux synced');
       
       return profile;
     },

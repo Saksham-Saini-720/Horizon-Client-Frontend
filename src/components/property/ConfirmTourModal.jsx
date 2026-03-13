@@ -1,4 +1,4 @@
-// src/components/property/ConfirmTourModal.jsx - FIXED for API format
+
 import { memo, useState, useCallback } from 'react';
 import { useSubmitTourRequest } from '../../hooks/tours/useSubmitTourRequest';
 import TourSuccessModal from './TourSuccessModal';

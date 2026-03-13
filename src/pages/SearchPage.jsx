@@ -1,4 +1,4 @@
-// src/pages/SearchPage.jsx
+
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";

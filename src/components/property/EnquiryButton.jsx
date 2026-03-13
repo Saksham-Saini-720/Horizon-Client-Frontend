@@ -1,4 +1,4 @@
-// src/components/property/EnquiryButton.jsx
+
 import { memo, useState } from 'react';
 import EnquiryForm from './EnquiryForm';
 

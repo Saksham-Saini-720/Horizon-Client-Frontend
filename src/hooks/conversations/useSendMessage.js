@@ -1,4 +1,4 @@
-// src/hooks/conversations/useSendMessage.js - UPDATED WITH FIXES
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendMessage } from '../../api/conversationApi';
@@ -28,7 +28,7 @@ export const useSendMessage = (conversationId) => {
   const mutation = useMutation({
     mutationFn: (content) => sendMessage(conversationId, content),
     
-    // ⭐ UPDATED: Add retry logic for network failures
+    // UPDATED: Add retry logic for network failures
     retry: 2, // Retry twice on failure
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 
@@ -83,7 +83,7 @@ export const useSendMessage = (conversationId) => {
         );
       }
       
-      // ⭐ UPDATED: Smarter cache invalidation
+      //  UPDATED: Smarter cache invalidation
       // Only invalidate specific conversation
       queryClient.invalidateQueries({ 
         queryKey: ['conversation', conversationId],

@@ -1,4 +1,4 @@
-// src/api/tourApi.js - COMPLETE VERSION
+
 import axiosInstance from './axiosInstance';
 
 /**

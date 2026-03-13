@@ -9,6 +9,7 @@ import LoadingScreen from "./components/ui/LoadingScreen";
 import { store, persistor } from "./store/index";
 import App from "./App";
 import "./index.css";
+import 'leaflet/dist/leaflet.css';
 
 // ─── TanStack Query Client ─────────────────────────────────────────────────────
 

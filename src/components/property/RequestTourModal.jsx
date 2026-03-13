@@ -1,4 +1,4 @@
-// src/components/property/RequestTourModal.jsx - UPDATED
+
 import { memo, useState, useCallback } from 'react';
 import ConfirmTourModal from './ConfirmTourModal';
 

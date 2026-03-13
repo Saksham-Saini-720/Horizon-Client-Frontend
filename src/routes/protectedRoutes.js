@@ -8,7 +8,7 @@ const ActivityPage = lazy(() => import("../pages/ActivityPage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
 const MapPage = lazy(() => import("../pages/MapPage"));
 
-// ✅ Chat pages
+// Chat pages
 const ChatPage = lazy(() => import("../pages/ChatPage"));
 const ConversationPage = lazy(() => import("../pages/ConversationPage"));
 
@@ -35,7 +35,7 @@ const protectedRoutes = [
     element: ProfilePage,
     title: "Profile",
   },
-  // ✅ Chat routes
+  // Chat routes
   {
     path: "chat",
     element: ChatPage,

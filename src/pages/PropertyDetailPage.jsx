@@ -1,4 +1,4 @@
-// src/pages/PropertyDetailPage.jsx
+
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import usePropertyDetail from "../hooks/properties/usePropertyDetail";

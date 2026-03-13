@@ -1,4 +1,4 @@
-// src/components/activity/TourCard.jsx - WITH CANCEL UI + DELETE OPTION
+
 import { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CancelTourModal from '../tours/CancelTourModal';
@@ -17,7 +17,7 @@ const TourCard = memo(({ tour }) => {
   // Modal states
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Check if cancelled
   const isCancelled = status === 'cancelled';
@@ -281,19 +281,21 @@ const TourCard = memo(({ tour }) => {
           </div>
 
           {/* Action Buttons - Different for cancelled vs active */}
-          {isCancelled ? (
-            // Cancelled tour - only show delete button
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] hover:bg-gray-50 hover:border-red-400 hover:text-red-600 transition-all flex items-center justify-center gap-2"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
-              Remove from List
-            </button>
-          ) : (
+          {
+          // isCancelled ? (
+          //   // Cancelled tour - only show delete button
+          //   <button
+          //     onClick={() => setShowDeleteModal(true)}
+          //     className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] hover:bg-gray-50 hover:border-red-400 hover:text-red-600 transition-all flex items-center justify-center gap-2"
+          //   >
+          //     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          //       <polyline points="3 6 5 6 21 6" />
+          //       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          //     </svg>
+          //     Remove from List
+          //   </button>
+          // ) : 
+          (
             // Active tour - show reschedule and cancel
             <div className="flex gap-2">
               <button
@@ -340,11 +342,11 @@ const TourCard = memo(({ tour }) => {
         </>
       )}
       
-      <DeleteTourModal
+      {/* <DeleteTourModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         tour={tour}
-      />
+      /> */}
     </>
   );
 });

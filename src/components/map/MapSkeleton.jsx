@@ -1,4 +1,4 @@
-// src/components/map/MapSkeleton.jsx
+
 import { memo } from "react";
 
 /**

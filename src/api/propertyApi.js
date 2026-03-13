@@ -1,4 +1,4 @@
-// src/api/propertyApi.js - COMPLETE VERSION
+
 import axiosInstance from './axiosInstance';
 
 // ─── Public Property APIs ─────────────────────────────────────────────────────
@@ -11,7 +11,6 @@ import axiosInstance from './axiosInstance';
 export const getAllProperties = async (params = {}) => {
   try {
     const response = await axiosInstance.get('/properties', { params });
-    // console.log("API Response for All Properties:", response);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to fetch properties');
@@ -177,7 +176,6 @@ export const unsaveProperty = async (propertyId) => {
 export const getSavedProperties = async () => {
   try {
     const response = await axiosInstance.get('/profiles/client/saved-properties');
-    console.log("API Response for Saved Properties:", response);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to fetch saved properties');

@@ -1,4 +1,4 @@
-// src/components/ui/HeartBtn.jsx
+
 import { useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/utils/useRedux";

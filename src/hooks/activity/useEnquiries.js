@@ -1,4 +1,4 @@
-// src/hooks/activity/useEnquiries.js - FIXED: Filters null properties + typo fix
+
 import { useQuery } from '@tanstack/react-query';
 import { getUserEnquiries } from '../../api/enquiryApi';
 
@@ -45,12 +45,12 @@ const formatTimestamp = (dateString) => {
  * Transform API enquiry data to component format
  */
 const transformEnquiry = (enquiry) => {
-  console.log("Transforming enquiry:", enquiry);
+
   return {
     id: enquiry._id || enquiry.id,
     property: {
       id: enquiry.property?._id || enquiry.property?.id,
-      // ⭐ FIXED: Changed from tour.property to enquiry.property
+      // FIXED: Changed from tour.property to enquiry.property
       img: enquiry.property?.images?.featured?.thumbnail?.url || enquiry.property?.image || '/placeholder.jpg',
       title: enquiry.property?.title || 'Property',
       location: formatLocation(enquiry.property?.location),
@@ -82,22 +82,14 @@ export const useEnquiries = (filters = {}, options = {}) => {
       const response = await getUserEnquiries(filters);
       const enquiries = response.data?.enquiries || response.data || [];
       
-      console.log('📋 Total enquiries:', enquiries.length);
-      
-      // ⭐ FILTER OUT NULL PROPERTIES (deleted properties)
+      // FILTER OUT NULL PROPERTIES (deleted properties)
       const validEnquiries = enquiries.filter(enquiry => {
         if (!enquiry.property || enquiry.property === null) {
-          console.warn('⚠️ Skipping enquiry with deleted property:', {
-            enquiryId: enquiry._id || enquiry.id,
-            createdAt: enquiry.createdAt,
-            status: enquiry.status
-          });
+          
           return false;
         }
         return true;
       });
-      
-      console.log('✅ Valid enquiries after filtering:', validEnquiries.length);
       
       return validEnquiries.map(transformEnquiry);
     },

@@ -1,4 +1,4 @@
-// src/hooks/properties/usePropertyManagement.js
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   createProperty, 

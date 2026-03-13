@@ -1,4 +1,4 @@
-// src/components/explore/filters/FullFiltersModal.jsx
+
 import { memo, useState } from 'react';
 
 const PROPERTY_TYPES = ['Apartment', 'House', 'Villa', 'Commercial', 'Land'];

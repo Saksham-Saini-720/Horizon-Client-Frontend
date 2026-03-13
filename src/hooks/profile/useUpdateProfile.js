@@ -1,8 +1,8 @@
-// src/hooks/profile/useUpdateProfile.js - FIXED for your authSlice
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { updateBasicInfo, updateClientPreferences, updateClientNotifications } from '../../api/profileApi';
-import { updateUser } from '../../store/slices/authSlice'; // ✅ Changed from setUser
+import { updateUser } from '../../store/slices/authSlice'; // Changed from setUser
 import toast from 'react-hot-toast';
 
 /**
@@ -18,7 +18,7 @@ export const useUpdateBasicInfo = () => {
     onSuccess: (response) => {
       const user = response.data?.user;
       
-      // ✅ Update Redux using updateUser
+      // Update Redux using updateUser
       if (user) {
         dispatch(updateUser({
           id: user._id,

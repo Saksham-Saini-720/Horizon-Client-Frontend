@@ -1,4 +1,4 @@
-// src/components/tours/CancelTourModal.jsx
+
 import { memo, useState } from 'react';
 import { useCancelTour } from '../../hooks/tours/useTourActions';
 

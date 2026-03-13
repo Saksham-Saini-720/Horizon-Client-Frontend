@@ -1,4 +1,4 @@
-// src/hooks/properties/useSavedProperties.js
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { getSavedProperties, saveProperty, unsaveProperty } from '../../api/propertyApi';
@@ -26,21 +26,13 @@ export function useSavedProperties(options = {}) {
       // Extract properties from saved entries
       const savedEntries = response.data?.savedProperties || [];
       
-      console.log('📋 Total saved entries:', savedEntries.length);
-      
-      // ⭐ FILTER OUT NULL PROPERTIES (deleted properties)
+      // FILTER OUT NULL PROPERTIES (deleted properties)
       const validEntries = savedEntries.filter(entry => {
         if (!entry.property || entry.property === null) {
-          console.warn('⚠️ Skipping deleted property:', {
-            id: entry._id,
-            savedAt: entry.savedAt
-          });
           return false;
         }
         return true;
       });
-      
-      console.log('✅ Valid properties after filtering:', validEntries.length);
       
       // Transform ONLY valid properties
       const properties = validEntries.map(entry => {
@@ -55,8 +47,6 @@ export function useSavedProperties(options = {}) {
       // Sync savedIds to Redux
       const savedIds = properties.map(p => p.id);
       dispatch(setSavedIds(savedIds));
-
-      console.log('💾 Synced to Redux:', savedIds.length, 'properties');
 
       return properties;
     },

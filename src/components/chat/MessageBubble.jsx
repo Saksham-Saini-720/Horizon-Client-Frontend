@@ -1,4 +1,4 @@
-// src/components/chat/MessageBubble.jsx
+
 import { memo } from 'react';
 
 /**

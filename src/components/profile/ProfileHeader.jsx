@@ -1,4 +1,4 @@
-// src/components/profile/ProfileHeader.jsx - UPDATED
+
 import { memo } from 'react';
 
 /**

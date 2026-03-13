@@ -1,4 +1,4 @@
-// src/components/saved/SavedPropertyCard.jsx
+
 import { memo, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';

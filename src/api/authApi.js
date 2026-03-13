@@ -24,12 +24,6 @@ export const resetPassword = (payload) =>
 export const changePassword = (payload) =>
   apiPost("/auth/change-password", payload);
 
-export const sendOtp = (payload) =>
-  apiPost("/auth/send-otp", payload);
-
-export const verifyOtp = (payload) =>
-  apiPost("/auth/verify-otp", payload);
-
 export const verifyEmail = (payload) =>
   apiPost("/auth/verify-email", payload);
 

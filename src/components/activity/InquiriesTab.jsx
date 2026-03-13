@@ -1,4 +1,4 @@
-// src/components/activity/InquiriesTab.jsx - WITH API
+
 import { memo } from 'react';
 import { useEnquiries } from '../../hooks/activity/useEnquiries';
 import InquiryCard from './InquiryCard';

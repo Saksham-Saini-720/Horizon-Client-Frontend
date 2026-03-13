@@ -1,4 +1,4 @@
-// src/hooks/enquiries/useEnquiryManagement.js
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateEnquiryStatus, deleteEnquiry } from '../../api/enquiryApi';
 import toast from 'react-hot-toast';

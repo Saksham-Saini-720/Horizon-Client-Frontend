@@ -1,4 +1,4 @@
-// src/pages/ChatPage.jsx
+
 import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import ChatPageHeader from '../components/chat/ChatPageHeader';

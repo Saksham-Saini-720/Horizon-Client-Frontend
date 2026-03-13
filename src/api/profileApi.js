@@ -1,4 +1,4 @@
-// src/api/profileApi.js - FINAL (Matches backend structure)
+
 import axiosInstance from './axiosInstance';
 
 /**
@@ -42,7 +42,7 @@ export const updateClientPreferences = async (preferences) => {
   try {
     const response = await axiosInstance.put('/profiles/client/preferences', {
       preferences: {
-        propertyTypes: preferences.propertyTypes || [], // ✅ Backend field name
+        propertyTypes: preferences.propertyTypes || [], 
         locations: preferences.locations || [],
         budget: preferences.budget || { min: 0, currency: 'USD' },
         amenities: preferences.amenities || [],

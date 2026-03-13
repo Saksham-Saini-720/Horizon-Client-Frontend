@@ -1,4 +1,4 @@
-// src/hooks/properties/usePropertyDetail.js
+
 import { useQuery } from "@tanstack/react-query";
 import { getPropertyById, viewPropertyTracked } from "../../api/propertyApi";
 import { useAuth } from "../utils/useRedux";

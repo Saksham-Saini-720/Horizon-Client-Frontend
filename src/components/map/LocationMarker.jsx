@@ -1,37 +1,101 @@
-// src/components/map/LocationMarker.jsx
-import { memo } from 'react';
+
+import { Marker, Circle } from 'react-leaflet';
+import L from 'leaflet';
 
 /**
  * LocationMarker Component
- * Shows user's current location on the map
+ * Leaflet marker — same pulsing blue dot visual as before
+ * Shows user's current location + search radius circle
  */
-const LocationMarker = memo(({ position }) => {
+const LocationMarker = ({ location, radius }) => {
+  // Support both { lat, lng } and { latitude, longitude }
+  const lat = location?.latitude  ?? location?.lat;
+  const lng = location?.longitude ?? location?.lng;
+
+  if (!lat || !lng) return null;
+
+  // Pulsing blue dot icon — same visual as the old CSS version
+  const icon = L.divIcon({
+    className: '',
+    iconSize:   [48, 48],
+    iconAnchor: [24, 24],
+    html: `
+      <div style="
+        position: relative;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <!-- Outer pulse (largest, most transparent) -->
+        <div style="
+          position: absolute;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: rgba(59,130,246,0.15);
+          animation: pulse-outer 2s ease-in-out infinite;
+        "></div>
+        <!-- Middle circle -->
+        <div style="
+          position: absolute;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: rgba(96,165,250,0.3);
+          animation: pulse-mid 2s ease-in-out infinite 0.3s;
+        "></div>
+        <!-- Center dot -->
+        <div style="
+          position: relative;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #2563EB;
+          border: 2.5px solid white;
+          box-shadow: 0 2px 8px rgba(37,99,235,0.5);
+          z-index: 1;
+        "></div>
+      </div>
+      <style>
+        @keyframes pulse-outer {
+          0%, 100% { transform: scale(1);   opacity: 0.4; }
+          50%       { transform: scale(1.4); opacity: 0.1; }
+        }
+        @keyframes pulse-mid {
+          0%, 100% { transform: scale(1);   opacity: 0.5; }
+          50%       { transform: scale(1.2); opacity: 0.2; }
+        }
+      </style>
+    `,
+  });
+
   return (
-    <div
-      className="absolute transform -translate-x-1/2 -translate-y-1/2 z-30"
-      style={{
-        top: position.top,
-        left: position.left,
-      }}
-    >
-      {/* Outer Pulse Circle */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <div className="w-16 h-16 rounded-full bg-blue-500 opacity-20 animate-ping" />
-      </div>
+    <>
+      {/* Dashed radius circle — shows search area */}
+      {radius && (
+        <Circle
+          center={[lat, lng]}
+          radius={radius}
+          pathOptions={{
+            color:       '#3B82F6',
+            fillColor:   '#3B82F6',
+            fillOpacity: 0.05,
+            weight:      1.5,
+            dashArray:   '6 5',
+          }}
+        />
+      )}
 
-      {/* Middle Circle */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <div className="w-10 h-10 rounded-full bg-blue-400 opacity-30" />
-      </div>
-
-      {/* Center Dot */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <div className="w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow-lg" />
-      </div>
-    </div>
+      {/* Pulsing dot */}
+      <Marker
+        position={[lat, lng]}
+        icon={icon}
+        zIndexOffset={2000}
+      />
+    </>
   );
-});
-
-LocationMarker.displayName = 'LocationMarker';
+};
 
 export default LocationMarker;

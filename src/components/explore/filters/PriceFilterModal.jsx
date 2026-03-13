@@ -1,4 +1,4 @@
-// src/components/explore/filters/PriceFilterModal.jsx
+
 import { memo, useState } from 'react';
 
 const PRICE_RANGES = [

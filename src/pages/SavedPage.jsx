@@ -1,4 +1,4 @@
-// src/pages/SavedPage.jsx - FIXED: Sticky Header + Saved Properties Bug
+
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -210,14 +210,6 @@ const SavedPage = () => {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [viewMode, setViewMode] = useState('list'); // list or grid
 
-  // Debug: Log saved query data
-  console.log('🔍 SavedPage Debug:', {
-    isAuthenticated,
-    isLoading: savedQuery.isLoading,
-    isError: savedQuery.isError,
-    dataLength: savedQuery.data?.length,
-    data: savedQuery.data,
-  });
 
   // Filter and sort properties
   const processedProperties = useMemo(() => {

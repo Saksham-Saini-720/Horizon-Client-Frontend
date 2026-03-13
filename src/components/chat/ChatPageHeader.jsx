@@ -1,4 +1,4 @@
-// src/components/chat/ChatPageHeader.jsx
+
 import { memo } from 'react';
 
 /**

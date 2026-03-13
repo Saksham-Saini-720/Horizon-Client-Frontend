@@ -1,4 +1,4 @@
-// src/components/chat/PropertyBanner.jsx
+
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 

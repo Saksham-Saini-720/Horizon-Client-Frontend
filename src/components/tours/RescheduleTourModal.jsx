@@ -1,4 +1,4 @@
-// src/components/tours/RescheduleTourModal.jsx
+
 import { memo, useState } from 'react';
 import { useRescheduleTour } from '../../hooks/tours/useTourActions';
 

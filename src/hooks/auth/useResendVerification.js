@@ -7,7 +7,6 @@ export default function useResendVerification() {
   return useMutation({
     mutationFn: async () => {
       const response = await resendVerification();
-      console.log("Resend verification response:", response);
       return response.data;
     },
     
