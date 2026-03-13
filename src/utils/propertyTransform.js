@@ -118,10 +118,10 @@ export function formatPrice(price, currency = 'USD', purpose = 'sale') {
 
   // For rent, add "/mo"
   if (purpose === 'rent') {
-    return `${symbol}${formattedPrice}/mo`;
+    return `${symbol} ${formattedPrice}/mo`;
   }
 
-  return `${symbol}${formattedPrice}`;
+  return `${symbol} ${formattedPrice}`;
 }
 
 /**
@@ -133,7 +133,7 @@ export function getCurrencySymbol(currency) {
     EUR: '€',
     GBP: '£',
     INR: '₹',
-    ZMW: 'K',
+    ZMW: 'ZMW',
   };
   return symbols[currency] || '$';
 }

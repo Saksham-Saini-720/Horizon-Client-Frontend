@@ -14,6 +14,7 @@ const VerifyEmailPage = lazy(() => import("../pages/VerifyEmailPage"));
 const PropertyDetailPage = lazy(() => import("../pages/PropertyDetailPage"));
 const ForgotPasswordPage = lazy(() => import("../pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("../pages/ResetPasswordPage"));
+const TermsPage = lazy(() => import("../pages/TermsPage"));
 
 // ─── Public Routes ─────────────────────────────────────────────────────────────
 
@@ -47,6 +48,11 @@ const publicRoutes = [
     path: "reset-password/:token",
     element: ResetPasswordPage,
     title: "Reset Password",
+  },
+  { 
+    path: "terms", 
+    element: TermsPage, 
+    title: "Terms & Conditions" 
   },
   // {
   //   path: "saved",

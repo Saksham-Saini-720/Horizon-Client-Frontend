@@ -75,43 +75,7 @@ export const updateClientNotifications = async (notifications) => {
   }
 };
 
-/**
- * Get Agent Statistics
- * GET /api/v1/profiles/agent/statistics
- */
-export const getAgentStatistics = async () => {
-  try {
-    const response = await axiosInstance.get('/profiles/agent/statistics');
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch agent statistics');
-  }
-};
 
-/**
- * Search Agents
- * GET /api/v1/profiles/agents/search
- */
-export const searchAgents = async (params = {}) => {
-  try {
-    const response = await axiosInstance.get('/profiles/agents/search', { params });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to search agents');
-  }
-};
 
-/**
- * Get Top Agents
- * GET /api/v1/profiles/agents/top
- */
-export const getTopAgents = async (limit = 10) => {
-  try {
-    const response = await axiosInstance.get('/profiles/agents/top', {
-      params: { limit },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch top agents');
-  }
-};
+
+

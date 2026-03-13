@@ -1,27 +1,64 @@
 
+// import { Outlet, useLocation } from "react-router-dom";
+// import Footer from "../components/layouts/Footer";
+// import Navbar from "../components/layouts/Navbar";
+// import PropertyDetailPage from "./PropertyDetailPage";
+
+// const HomePage = () => {
+
+//   const location = useLocation()
+  
+//   return !location.pathname.startsWith("/property") ? (
+//     <>
+//       {/* Top navigation */}
+//       { (!location.pathname.startsWith("/inquiries") && !location.pathname.startsWith("/map"))  && <Navbar /> }
+      
+//       {/* Nested routes render here */}
+//       <Outlet />
+      
+//       {/* Bottom navigation */}
+//       <Footer />
+//     </>
+//   ) : (
+//     <PropertyDetailPage/>
+//   );
+// };
+
+// export default HomePage;
+
+
+// src/pages/HomePage.jsx
 import { Outlet, useLocation } from "react-router-dom";
 import Footer from "../components/layouts/Footer";
 import Navbar from "../components/layouts/Navbar";
 import PropertyDetailPage from "./PropertyDetailPage";
 
 const HomePage = () => {
+  const location = useLocation();
 
-  const location = useLocation()
-  
-  return !location.pathname.startsWith("/property") ? (
+  const isPropertyDetail = location.pathname.startsWith("/property");
+  // Hide navbar on these pages (they have their own headers)
+  const hideNavbar =
+    location.pathname.startsWith("/inquiries") ||
+    location.pathname.startsWith("/map") ||
+    location.pathname.startsWith("/chat/") ||// Individual conversation has its own header
+    location.pathname.startsWith("/terms");  
+
+  // Hide footer on individual conversation page (has its own input bar)
+  const hideFooter = location.pathname.match(/^\/chat\/.+/) || location.pathname.startsWith("/terms");
+
+  if (isPropertyDetail) {
+    return <PropertyDetailPage />;
+  }
+
+  return (
     <>
-      {/* Top navigation */}
-      { (!location.pathname.startsWith("/inquiries") && !location.pathname.startsWith("/map"))  && <Navbar /> }
-      
-      {/* Nested routes render here */}
+      {!hideNavbar && <Navbar />}
       <Outlet />
-      
-      {/* Bottom navigation */}
-      <Footer />
+      {!hideFooter && <Footer />}
     </>
-  ) : (
-    <PropertyDetailPage/>
   );
 };
 
 export default HomePage;
+

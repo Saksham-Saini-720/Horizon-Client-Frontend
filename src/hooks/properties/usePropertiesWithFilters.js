@@ -74,7 +74,9 @@ export function useNewListingsFiltered(filters = {}, options = {}) {
       };
       
       const response = await getAllProperties(params);
+      // console.log("API Response for New Listings with Filters:", response);
       const transformed = transformPropertyResponse(response);
+      // console.log("Transformed Properties:", transformed);
       return transformed.properties;
     },
 

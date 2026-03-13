@@ -1,6 +1,8 @@
 
 import { memo, useCallback } from 'react';
+
 import { useNavigate } from 'react-router-dom';
+
 
 /**
  * InquiryCard Component
@@ -9,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 const InquiryCard = memo(({ inquiry }) => {
   const navigate = useNavigate();
   const { property, message, agent, status, timestamp } = inquiry;
+  console.log("Rendering InquiryCard for property:", property);
+
 
   // Status badge config
   const statusConfig = {
@@ -116,6 +120,7 @@ const InquiryCard = memo(({ inquiry }) => {
           {timestamp}
         </p>
       </div>
+      
     </div>
   );
 });

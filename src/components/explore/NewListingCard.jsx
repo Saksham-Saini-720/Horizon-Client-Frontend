@@ -24,7 +24,7 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
   }, [navigate, id]);
 
   const isForSale = tag === "For Sale";
-
+  
   return (
     <div
       onClick={handleClick}
@@ -62,17 +62,17 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
 
         {/* Beds / Baths / Area */}
         <div className="flex items-center gap-4">
-          <SpecItem label={`${beds} Beds`}>
+          <SpecItem label={`${beds}`}>
             <path d="M2 20v-7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v7" />
             <path d="M2 15h20" /><path d="M5 15v-3" /><path d="M19 15v-3" />
           </SpecItem>
 
-          <SpecItem label={`${baths} Baths`}>
+          <SpecItem label={`${baths}`}>
             <path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4z" />
             <path d="M6 12V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v6" />
           </SpecItem>
 
-          <SpecItem label={area}>
+          <SpecItem label={`${area}`}>
             <rect x="3" y="3" width="18" height="18" rx="2" />
           </SpecItem>
         </div>

@@ -1,4 +1,4 @@
-// src/pages/ProfilePage.jsx - FINAL VERSION
+// src/pages/ProfilePage.jsx - FIXED: Correct saved count
 import { memo, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,6 +6,7 @@ import useLogout from '../hooks/auth/useLogout';
 import { useProfile } from '../hooks/profile/useProfile';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
+import { useSavedProperties } from '../hooks/properties/useSavedProperties'; // ⭐ ADDED
 import ProfileHeader from '../components/profile/ProfileHeader';
 import MembershipBadge from '../components/profile/MembershipBadge';
 import QuickAccessGrid from '../components/profile/QuickAccessCard';
@@ -70,8 +71,8 @@ const ProfileSkeleton = () => (
 );
 
 /**
- * ProfilePage Component - FINAL VERSION
- * Single fetch, proper data sync, no duplicate calls
+ * ProfilePage Component - FIXED: Correct saved count
+ * Uses useSavedProperties for accurate count (filters deleted properties)
  */
 const ProfilePage = memo(() => {
   const navigate = useNavigate();
@@ -98,6 +99,11 @@ const ProfilePage = memo(() => {
     enabled: isAuthenticated,
   });
   
+  // ⭐ FIX: Use useSavedProperties for accurate count (filters deleted properties)
+  const { data: savedProperties = [] } = useSavedProperties({ 
+    enabled: isAuthenticated,
+  });
+  
   // ✅ Activity counts (only if authenticated)
   const { data: enquiries = [] } = useEnquiries({}, { 
     enabled: isAuthenticated,
@@ -107,8 +113,8 @@ const ProfilePage = memo(() => {
     enabled: isAuthenticated,
   });
   
-  // Get saved count from profile (backend source of truth)
-  const savedCount = profile?.savedProperties?.length || 0;
+  // ⭐ FIXED: Get count from useSavedProperties (already filters null properties)
+  const savedCount = savedProperties.length;
 
   console.log('📊 [ProfilePage] Counts - Saved:', savedCount, 'Enquiries:', enquiries.length, 'Tours:', tours.length);
 
@@ -192,7 +198,7 @@ const ProfilePage = memo(() => {
           } 
         />
 
-        {/* Quick Access */}
+        {/* Quick Access - NOW WITH CORRECT COUNT */}
         <QuickAccessGrid
           savedCount={savedCount}
           inquiriesCount={enquiries.length}

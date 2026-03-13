@@ -129,10 +129,10 @@ function formatPrice(price, currency = 'USD', purpose = 'sale') {
   const formatted = new Intl.NumberFormat('en-US').format(price);
 
   if (purpose === 'rent') {
-    return `${symbol}${formatted}/mo`;
+    return `${symbol} ${formatted}/mo`;
   }
 
-  return `${symbol}${formatted}`;
+  return `${symbol} ${formatted}`;
 }
 
 /**
@@ -144,7 +144,7 @@ function getCurrencySymbol(currency) {
     EUR: '€',
     GBP: '£',
     INR: '₹',
-    ZMW: 'K',
+    ZMW: 'ZK',
   };
   return symbols[currency] || '$';
 }

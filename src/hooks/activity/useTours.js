@@ -1,4 +1,4 @@
-// src/hooks/activity/useTours.js - OPTIMIZED (Less API calls)
+// src/hooks/activity/useTours.js - FIXED: Filters null properties
 import { useQuery } from '@tanstack/react-query';
 import { getUserTours } from '../../api/tourApi';
 
@@ -45,11 +45,13 @@ const transformTour = (tour) => {
     });
   };
 
+  console.log("Transforming tour:", tour);
+
   return {
     id: tour._id || tour.id,
     property: {
       id: tour.property?._id || tour.property?.id,
-      img: tour.property?.images?.[0] || tour.property?.image || '/placeholder.jpg',
+      img: tour.property?.images?.featured?.thumbnail?.url || tour.property?.image || '/placeholder.jpg',
       title: tour.property?.title || 'Property',
       location: formatLocation(tour.property?.location),
     },
@@ -75,21 +77,35 @@ const transformTour = (tour) => {
 };
 
 /**
- * useTours Hook - OPTIMIZED
- * Reduced API calls, better caching
+ * useTours Hook - FIXED: Filters null properties
+ * Reduced API calls, better caching, handles deleted properties
  */
 export const useTours = (filters = {}, options = {}) => {
   return useQuery({
     queryKey: ['tours', filters],
     queryFn: async () => {
-      console.log('🔵 [useTours] Fetching tours...');
       
       const response = await getUserTours(filters);
       const tours = response.data?.tours || response.data || [];
       
-      console.log('✅ [useTours] Received:', tours.length, 'tours');
+      console.log('📋 Total tour requests:', tours.length);
       
-      return tours.map(transformTour);
+      // ⭐ FILTER OUT NULL PROPERTIES (deleted properties)
+      const validTours = tours.filter(tour => {
+        if (!tour.property || tour.property === null) {
+          console.warn('⚠️ Skipping tour with deleted property:', {
+            tourId: tour._id || tour.id,
+            createdAt: tour.createdAt,
+            status: tour.status
+          });
+          return false;
+        }
+        return true;
+      });
+      
+      console.log('✅ Valid tours after filtering:', validTours.length);
+      
+      return validTours.map(transformTour);
     },
     staleTime: 5 * 60 * 1000, // ✅ 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

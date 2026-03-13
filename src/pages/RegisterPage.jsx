@@ -16,7 +16,7 @@ const VALIDATORS = {
   lastName: (v) => !v.trim() ? "Last name required" : null,
   email: (v) => !/\S+@\S+\.\S+/.test(v) ? "Enter a valid email" : null,
   password: (v) => v.length < 8 ? "Min 8 characters required" : null,
-  phone: (v) => v && !/^\+?[\d\s\-]{7,15}$/.test(v) ? "Enter a valid phone number" : null,
+  phone: (v) => !v?.trim() ? "Phone number is required" : !/^\+?[\d\s\-]{7,15}$/.test(v) ? "Enter a valid phone number" : null,
 };
 
 // ─── RegisterPage ─────────────────────────────────────────────────────────────
@@ -46,7 +46,13 @@ export default function RegisterPage() {
       .map(([key, validate]) => validate(values[key]))
       .filter(Boolean);
 
-    if (errors.length) return;
+    if (errors.length) {
+    [firstNameRef, lastNameRef, emailRef, passwordRef, phoneRef].forEach((ref) => {
+      ref.current?.focus();
+      ref.current?.blur();
+    });
+    return;
+  }
 
     registerMutation.mutate({
       firstName: values.firstName,
@@ -125,6 +131,7 @@ export default function RegisterPage() {
             name="phone"
             type="tel"
             label="Phone"
+            required
             placeholder="+260 97X XXX XXX"
             validator={VALIDATORS.phone}
             className="mb-6"

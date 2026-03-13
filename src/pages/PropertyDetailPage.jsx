@@ -86,7 +86,7 @@ const PropertyDetailPage = () => {
   return (
     <div className="min-h-screen bg-white pb-24">
       {/* Image Carousel with Header Overlay */}
-      <div className="relative h-[400px]">
+      <div className="relative h-[600px]">
         <PropertyImageCarousel images={property.images} />
         <PropertyHeader propertyId={id} />
       </div>

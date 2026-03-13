@@ -5,11 +5,12 @@ import { lazy } from "react";
 
 const SavedPage = lazy(() => import("../pages/SavedPage"));
 const ActivityPage = lazy(() => import("../pages/ActivityPage"));
-// const ToursPage = lazy(() => import("../../pages/ToursPage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
 const MapPage = lazy(() => import("../pages/MapPage"));
-// const MessagesPage = lazy(() => import("../../pages/MessagesPage"));
-// const MessageThreadPage = lazy(() => import("../../pages/MessageThreadPage"));
+
+// ✅ Chat pages
+const ChatPage = lazy(() => import("../pages/ChatPage"));
+const ConversationPage = lazy(() => import("../pages/ConversationPage"));
 
 // ─── Protected Routes ──────────────────────────────────────────────────────────
 
@@ -29,26 +30,22 @@ const protectedRoutes = [
     element: MapPage,
     title: "Map View",
   },
-  // {
-  //   path: "tours",
-  //   element: ToursPage,
-  //   title: "My Tours",
-  // },
   {
     path: "profile",
     element: ProfilePage,
     title: "Profile",
   },
-  // {
-  //   path: "messages",
-  //   element: MessagesPage,
-  //   title: "Messages",
-  // },
-  // {
-  //   path: "messages/:threadId",
-  //   element: MessageThreadPage,
-  //   title: "Message Thread",
-  // },
+  // ✅ Chat routes
+  {
+    path: "chat",
+    element: ChatPage,
+    title: "Messages",
+  },
+  {
+    path: "chat/:id",
+    element: ConversationPage,
+    title: "Conversation",
+  },
 ];
 
 export default protectedRoutes;

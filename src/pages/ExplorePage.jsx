@@ -55,6 +55,7 @@ const ExplorePage = () => {
   // Fetch data with filters
   const featuredQuery = useFeaturedPropertiesFiltered(apiFilters);
   const newListingsQuery = useNewListingsFiltered(apiFilters);
+  // console.log("Applied Filters:", newListingsQuery);
 
   // Filter chip handlers
   const handleFilterToggle = useCallback((id) => {

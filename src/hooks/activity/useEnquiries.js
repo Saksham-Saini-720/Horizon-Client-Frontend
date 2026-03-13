@@ -1,4 +1,4 @@
-// src/hooks/activity/useEnquiries.js - OPTIMIZED (Less API calls)
+// src/hooks/activity/useEnquiries.js - FIXED: Filters null properties + typo fix
 import { useQuery } from '@tanstack/react-query';
 import { getUserEnquiries } from '../../api/enquiryApi';
 
@@ -18,33 +18,6 @@ const formatLocation = (location) => {
   }
   
   return 'Location';
-};
-
-/**
- * Transform API enquiry data to component format
- */
-const transformEnquiry = (enquiry) => {
-  return {
-    id: enquiry._id || enquiry.id,
-    property: {
-      id: enquiry.property?._id || enquiry.property?.id,
-      img: enquiry.property?.images?.[0] || enquiry.property?.image || '/placeholder.jpg',
-      title: enquiry.property?.title || 'Property',
-      location: formatLocation(enquiry.property?.location),
-      price: enquiry.property?.price || 'Price',
-    },
-    message: enquiry.message || '',
-    agent: {
-      name: enquiry.agent?.firstName && enquiry.agent?.lastName
-        ? `${enquiry.agent.firstName} ${enquiry.agent.lastName}`.trim()
-        : enquiry.agent?.name || 'Agent',
-      role: enquiry.agent?.role || 'Property Agent',
-      avatar: enquiry.agent?.avatar || enquiry.agent?.profileImage || null,
-    },
-    status: enquiry.status || 'submitted',
-    timestamp: formatTimestamp(enquiry.createdAt),
-    createdAt: enquiry.createdAt,
-  };
 };
 
 /**
@@ -69,21 +42,64 @@ const formatTimestamp = (dateString) => {
 };
 
 /**
- * useEnquiries Hook - OPTIMIZED
- * Reduced API calls, better caching
+ * Transform API enquiry data to component format
+ */
+const transformEnquiry = (enquiry) => {
+  console.log("Transforming enquiry:", enquiry);
+  return {
+    id: enquiry._id || enquiry.id,
+    property: {
+      id: enquiry.property?._id || enquiry.property?.id,
+      // ⭐ FIXED: Changed from tour.property to enquiry.property
+      img: enquiry.property?.images?.featured?.thumbnail?.url || enquiry.property?.image || '/placeholder.jpg',
+      title: enquiry.property?.title || 'Property',
+      location: formatLocation(enquiry.property?.location),
+      price: enquiry.property?.price || 'Price',
+    },
+    message: enquiry.message || '',
+    agent: {
+      name: enquiry.agent?.firstName && enquiry.agent?.lastName
+        ? `${enquiry.agent.firstName} ${enquiry.agent.lastName}`.trim()
+        : enquiry.agent?.name || 'Agent',
+      role: enquiry.agent?.role || 'Property Agent',
+      avatar: enquiry.agent?.avatar || enquiry.agent?.profileImage || null,
+    },
+    status: enquiry.status || 'submitted',
+    timestamp: formatTimestamp(enquiry.createdAt),
+    createdAt: enquiry.createdAt,
+  };
+};
+
+/**
+ * useEnquiries Hook - FIXED: Filters null properties
+ * Reduced API calls, better caching, handles deleted properties
  */
 export const useEnquiries = (filters = {}, options = {}) => {
   return useQuery({
     queryKey: ['enquiries', filters],
     queryFn: async () => {
-      console.log('🔵 [useEnquiries] Fetching enquiries...');
       
       const response = await getUserEnquiries(filters);
       const enquiries = response.data?.enquiries || response.data || [];
       
-      console.log('✅ [useEnquiries] Received:', enquiries.length, 'enquiries');
+      console.log('📋 Total enquiries:', enquiries.length);
       
-      return enquiries.map(transformEnquiry);
+      // ⭐ FILTER OUT NULL PROPERTIES (deleted properties)
+      const validEnquiries = enquiries.filter(enquiry => {
+        if (!enquiry.property || enquiry.property === null) {
+          console.warn('⚠️ Skipping enquiry with deleted property:', {
+            enquiryId: enquiry._id || enquiry.id,
+            createdAt: enquiry.createdAt,
+            status: enquiry.status
+          });
+          return false;
+        }
+        return true;
+      });
+      
+      console.log('✅ Valid enquiries after filtering:', validEnquiries.length);
+      
+      return validEnquiries.map(transformEnquiry);
     },
     staleTime: 5 * 60 * 1000, // ✅ 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

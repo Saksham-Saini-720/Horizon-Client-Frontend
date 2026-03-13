@@ -11,6 +11,7 @@ import axiosInstance from './axiosInstance';
 export const getAllProperties = async (params = {}) => {
   try {
     const response = await axiosInstance.get('/properties', { params });
+    // console.log("API Response for All Properties:", response);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to fetch properties');
@@ -132,187 +133,8 @@ export const getUserProperties = async (params = {}) => {
   }
 };
 
-// ─── Agent Property Management APIs ───────────────────────────────────────────
 
-/**
- * Create new property
- * POST /api/v1/properties
- * AUTHENTICATED - verified agent only
- */
-export const createProperty = async (formData) => {
-  try {
-    const response = await axiosInstance.post('/properties', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to create property');
-  }
-};
 
-/**
- * Update property
- * PUT /api/v1/properties/:id
- * AUTHENTICATED - owner only
- */
-export const updateProperty = async (propertyId, data) => {
-  try {
-    const response = await axiosInstance.put(`/properties/${propertyId}`, data);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to update property');
-  }
-};
-
-/**
- * Delete property
- * DELETE /api/v1/properties/:id
- * AUTHENTICATED - owner only
- */
-export const deleteProperty = async (propertyId) => {
-  try {
-    const response = await axiosInstance.delete(`/properties/${propertyId}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to delete property');
-  }
-};
-
-/**
- * Update featured image
- * PUT /api/v1/properties/:id/featured-image
- * AUTHENTICATED - owner only
- */
-export const updateFeaturedImage = async (propertyId, imageFile) => {
-  try {
-    const formData = new FormData();
-    formData.append('image', imageFile);
-    
-    const response = await axiosInstance.put(
-      `/properties/${propertyId}/featured-image`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to update featured image');
-  }
-};
-
-/**
- * Add gallery images
- * POST /api/v1/properties/:id/gallery
- * AUTHENTICATED - owner only
- */
-export const addGalleryImages = async (propertyId, images, captions = []) => {
-  try {
-    const formData = new FormData();
-    images.forEach((image) => {
-      formData.append('images', image);
-    });
-    if (captions.length > 0) {
-      formData.append('captions', JSON.stringify(captions));
-    }
-    
-    const response = await axiosInstance.post(
-      `/properties/${propertyId}/gallery`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to add gallery images');
-  }
-};
-
-/**
- * Remove gallery image
- * DELETE /api/v1/properties/:id/gallery/:index
- * AUTHENTICATED - owner only
- */
-export const removeGalleryImage = async (propertyId, imageIndex) => {
-  try {
-    const response = await axiosInstance.delete(
-      `/properties/${propertyId}/gallery/${imageIndex}`
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to remove gallery image');
-  }
-};
-
-/**
- * Submit property for approval
- * POST /api/v1/properties/:id/submit
- * AUTHENTICATED - owner only
- */
-export const submitPropertyForApproval = async (propertyId) => {
-  try {
-    const response = await axiosInstance.post(`/properties/${propertyId}/submit`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to submit property');
-  }
-};
-
-// ─── Admin Property APIs ──────────────────────────────────────────────────────
-
-/**
- * Approve property
- * POST /api/v1/properties/:id/approve
- * AUTHENTICATED - admin/manager only
- */
-export const approveProperty = async (propertyId) => {
-  try {
-    const response = await axiosInstance.post(`/properties/${propertyId}/approve`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to approve property');
-  }
-};
-
-/**
- * Reject property
- * POST /api/v1/properties/:id/reject
- * AUTHENTICATED - admin/manager only
- */
-export const rejectProperty = async (propertyId, reason) => {
-  try {
-    const response = await axiosInstance.post(`/properties/${propertyId}/reject`, {
-      reason,
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to reject property');
-  }
-};
-
-/**
- * Update property status
- * PATCH /api/v1/properties/:id/status
- * AUTHENTICATED - admin/manager only
- */
-export const updatePropertyStatus = async (propertyId, status, rejectionReason = null) => {
-  try {
-    const response = await axiosInstance.patch(`/properties/${propertyId}/status`, {
-      status,
-      rejectionReason,
-    });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to update property status');
-  }
-};
 
 // ─── Saved/Favorite Properties ────────────────────────────────────────────────
 
@@ -355,6 +177,7 @@ export const unsaveProperty = async (propertyId) => {
 export const getSavedProperties = async () => {
   try {
     const response = await axiosInstance.get('/profiles/client/saved-properties');
+    console.log("API Response for Saved Properties:", response);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to fetch saved properties');
