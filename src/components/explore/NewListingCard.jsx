@@ -7,7 +7,7 @@ import HeartBtn from "../ui/HeartBtn";
 // ─── Small spec item (Beds / Baths / Area) ───────────────────────────────────
 
 const SpecItem = ({ label, children }) => (
-  <span className="flex items-center gap-1.5 text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+  <span className="flex items-center gap-1.5 text-[12px] text-gray-500 font-inter">
     <svg className="w-4 h-4 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
       {children}
     </svg>
@@ -35,8 +35,8 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
         <PropertyImage src={img} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 
         {/* For Sale / For Rent tag */}
-        <span className={`absolute top-3 left-3 text-[12px] font-bold px-3 py-1 rounded-full font-['DM_Sans',sans-serif]
-          ${isForSale ? "bg-[#1C2A3A] text-white" : "bg-amber-400 text-[#1C2A3A]"}`}>
+        <span className={`absolute top-3 left-3 text-[12px] font-bold px-3 py-1 rounded-full font-inter
+          ${isForSale ? "bg-primary text-white" : "bg-amber-400 text-primary"}`}>
           {tag}
         </span>
 
@@ -47,15 +47,15 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
 
       {/* Info */}
       <div className="px-4 pt-3 pb-4">
-        <p className="text-[20px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">{price}</p>
-        <p className="text-[14px] font-bold text-[#1C2A3A] mt-0.5 font-['DM_Sans',sans-serif]">{title}</p>
+        <p className="text-[24px] font-black text-primary font-playfair">{price}</p>
+        <p className="text-[16px] font-black text-primary mt-0.5 font-playfair">{title}</p>
 
         <div className="flex items-center gap-1 mt-0.5">
           <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
             <circle cx="12" cy="10" r="3" />
           </svg>
-          <p className="text-[12px] text-gray-400 font-['DM_Sans',sans-serif]">{location}</p>
+          <p className="text-[14px] text-gray-400 font-inter">{location}</p>
         </div>
 
         <div className="h-px bg-gray-100 my-3" />

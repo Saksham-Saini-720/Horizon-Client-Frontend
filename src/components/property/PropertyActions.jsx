@@ -10,12 +10,12 @@ import RequestTourModal from './RequestTourModal';
 const ActionButton = memo(({ icon, label, onClick, primary = false, variant = 'default' }) => (
   <button
     onClick={onClick}
-    className={`flex-1 flex max-w-40 items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-semibold text-[15px] font-['DM_Sans',sans-serif] transition-all active:scale-95 ${
+    className={`flex-1 flex max-w-40 items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-semibold text-[15px] font-inter transition-all active:scale-95 ${
       primary
-        ? 'bg-[#1C2A3A] text-white shadow-lg hover:bg-[#2A3A4A]'
+        ? 'bg-primary text-white shadow-lg hover:bg-primary-light'
         : variant === 'yellow'
-        ? 'bg-white text-[#1C2A3A] border border-gray-200 hover:bg-amber-400 hover:border-amber-400 hover:text-white'
-        : 'bg-white text-[#1C2A3A] border border-gray-200 hover:bg-gray-50'
+        ? 'bg-white text-primary border border-gray-200 hover:bg-amber-400 hover:border-amber-400 hover:text-white'
+        : 'bg-white text-primary border border-gray-200 hover:bg-gray-50'
     }`}
   >
     {icon}

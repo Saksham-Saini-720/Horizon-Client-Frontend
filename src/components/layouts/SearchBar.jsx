@@ -11,7 +11,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest font-['DM_Sans',sans-serif]">
+        <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest font-inter">
           {label}
         </p>
         {!query && (
@@ -19,7 +19,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
           <button
             onMouseDown={(e) => e.preventDefault()} 
             onClick={onClearAll}
-            className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-['DM_Sans',sans-serif]"
+            className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-inter"
           >
             Clear all
           </button>
@@ -54,7 +54,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
             {/* Term */}
             <span
               onClick={() => onSelect(term)}
-              className="flex-1 text-[14px] font-medium text-[#1C2A3A] font-['DM_Sans',sans-serif] truncate"
+              className="flex-1 text-[16px] font-medium text-primary font-inter truncate"
             >
               {/* Bold matching part */}
               {query ? (
@@ -101,7 +101,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
       {/* Footer hint */}
       {!query && (
         <div className="px-4 py-2.5 border-t border-gray-50 bg-gray-50/50">
-          <p className="text-[11px] text-gray-300 font-['DM_Sans',sans-serif]">
+          <p className="text-[12px] text-gray-300 font-inter">
             Tap to search · ✕ to remove one · Clear all to reset
           </p>
         </div>
@@ -175,7 +175,7 @@ const SearchBar = memo(({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}   // no delay needed — onMouseDown preventDefault handles it
           placeholder={placeholder}
-          className="flex-1 bg-transparent outline-none border-none text-[15px] text-gray-700 placeholder-gray-400 font-['DM_Sans',sans-serif]"
+          className="flex-1 bg-transparent outline-none border-none text-[16px] text-gray-700 placeholder-gray-400 font-inter"
         />
 
         {/* Clear ✕ */}
@@ -197,7 +197,7 @@ const SearchBar = memo(({
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleSubmit}
-          className="flex-shrink-0 h-8 px-3 rounded-lg text-[13px] font-semibold text-white transition-all active:scale-95"
+          className="flex-shrink-0 h-8 px-3 rounded-lg text-[14px] font-semibold text-white transition-all active:scale-95"
           style={{ background: "linear-gradient(135deg, #F5B731, #E8A020)" }}
         >
           Search

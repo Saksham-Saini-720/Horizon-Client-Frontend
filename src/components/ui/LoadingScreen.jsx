@@ -1,5 +1,6 @@
 
 import { memo } from "react";
+import { HorizonLogo } from "../layouts/Navbar";
 
 const LoadingScreen = memo(() => {
   return (
@@ -8,18 +9,16 @@ const LoadingScreen = memo(() => {
       {/* Logo */}
       <div className="mb-8">
         <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-2xl">
-          <span className="text-[#2C3E50] text-[48px] font-bold font-['DM_Sans',sans-serif]">
-            H
-          </span>
+          <HorizonLogo size={140}/>
         </div>
       </div>
 
       {/* Brand Name */}
-      <h1 className="text-white text-[36px] font-bold font-['DM_Sans',sans-serif] mb-1">
+      <h1 className="text-white text-[36px] font-balck font-playfair mb-1">
         Horizon
       </h1>
       
-      <p className="text-white/60 text-[14px] font-['DM_Sans',sans-serif] tracking-widest uppercase mb-12">
+      <p className="text-white/60 text-[14px] font-inter tracking-widest uppercase mb-12">
         PROPERTIES
       </p>
 

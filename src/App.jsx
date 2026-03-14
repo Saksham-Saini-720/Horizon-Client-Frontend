@@ -15,10 +15,10 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 // ─── Suspense Fallback ─────────────────────────────────────────────────────────
 
 const PageLoader = () => (
-  <div className="min-h-screen bg-[#F7F6F2] flex items-center justify-center">
+  <div className="min-h-screen bg-surface flex items-center justify-center">
     <div className="flex flex-col items-center">
       <div className="w-16 h-16 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin" />
-      <p className="mt-4 text-[14px] text-gray-500 font-['DM_Sans',sans-serif]">
+      <p className="mt-4 text-[14px] text-gray-500 font-inter">
         Loading...
       </p>
     </div>
@@ -65,11 +65,11 @@ export default function App() {
             <Route 
               path="404" 
               element={
-                <div className="min-h-screen bg-[#F7F6F2] flex flex-col items-center justify-center px-4 text-center pb-28">
-                  <h1 className="text-[48px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2">
+                <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-4 text-center pb-28">
+                  <h1 className="text-[48px] font-bold text-primary font-inter mb-2">
                     404
                   </h1>
-                  <p className="text-[18px] text-gray-500 font-['DM_Sans',sans-serif] mb-6">
+                  <p className="text-[18px] text-gray-500 font-inter mb-6">
                     Page not found
                   </p>
                   <a 

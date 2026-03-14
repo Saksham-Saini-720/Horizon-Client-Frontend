@@ -19,7 +19,7 @@ const NavItem = ({ to, icon, label, badge }) => (
           {/* Unread badge */}
           {badge > 0 && (
             <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 bg-amber-500 rounded-full flex items-center justify-center px-1">
-              <span className="text-white text-[9px] font-bold leading-none">
+              <span className="text-white text-[10px] font-bold leading-none">
                 {badge > 9 ? '9+' : badge}
               </span>
             </span>
@@ -28,7 +28,7 @@ const NavItem = ({ to, icon, label, badge }) => (
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-500" />
           )}
         </div>
-        <span className={`text-[11px] font-semibold font-['DM_Sans',sans-serif] ${isActive ? "text-amber-500" : "text-gray-500"}`}>
+        <span className={`text-[12px] font-semibold font-inter ${isActive ? "text-amber-500" : "text-gray-500"}`}>
           {label}
         </span>
       </>
@@ -41,7 +41,7 @@ export default function Footer() {
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-lg z-40">
-      <nav className="flex items-center justify-around px-2 py-1 max-w-md mx-auto">
+      <nav className="flex items-center justify-around  py-1 max-w-md mx-auto">
 
         <NavItem
           to="/"

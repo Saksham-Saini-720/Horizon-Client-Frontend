@@ -31,7 +31,7 @@ const FILTERS = [
 
 
 const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => (
-  <div className={`flex items-center gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide transition-opacity duration-150 ${dimmed ? "opacity-60" : "opacity-100"}`}>
+  <div className={`flex items-center gap-2 px-4 py-4 overflow-x-auto scrollbar-hide transition-opacity duration-150 ${dimmed ? "opacity-60" : "opacity-100"}`}>
     {FILTERS.map(({ id, label, icon }) => {
       const isActive = activeFilter === id;
       return (
@@ -40,10 +40,10 @@ const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => (
           onClick={() => onToggle(id)}
           className={`
             flex items-center gap-1.5 flex-shrink-0 px-4 py-2 rounded-full border
-            text-[13px] font-semibold font-['DM_Sans',sans-serif] transition-all active:scale-95
+            text-[14px] font-semibold font-inter transition-all active:scale-95
             ${isActive
-              ? "bg-[#1C2A3A] text-white border-[#1C2A3A]"
-              : "bg-white text-[#1C2A3A] border-gray-200"
+              ? "bg-primary text-white border-primary"
+              : "bg-white text-primary border-gray-200"
             }
           `}
         >

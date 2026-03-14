@@ -30,13 +30,13 @@ const SuccessState = memo(({
       </div>
 
       {/* Title */}
-      <h3 className="text-[22px] font-bold text-gray-900 mb-2">
+      <h3 className="text-[24px] font-bold text-gray-900 mb-2">
         {title}
       </h3>
 
       {/* Message */}
       {message && (
-        <p className="text-[15px] text-gray-600 mb-6">
+        <p className="text-[16px] text-gray-600 mb-6">
           {message}
         </p>
       )}

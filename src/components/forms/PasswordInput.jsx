@@ -54,7 +54,7 @@ const PasswordInput = memo(({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-[14px] font-semibold text-gray-700 mb-2">
+        <label className="block text-[16px] font-semibold text-gray-700 mb-2">
           {label}
         </label>
       )}
@@ -69,7 +69,7 @@ const PasswordInput = memo(({
         onBlur={handleBlur}
         onFocus={handleFocus}
         onChange={handleChange}
-        className={`w-full border rounded-xl px-4 py-3.5 text-[15px] text-gray-800 placeholder-gray-400
+        className={`w-full border rounded-xl px-4 py-3.5 text-[16px] text-gray-800 placeholder-gray-400
           outline-none transition-colors
           ${fieldError
             ? "border-red-300 bg-red-50 focus:border-red-400"
@@ -90,7 +90,7 @@ const PasswordInput = memo(({
               />
             ))}
           </div>
-          <p className={`text-[12px] ${
+          <p className={`text-[14px] ${
             strength <= 2 ? "text-orange-600" : "text-green-600"
           }`}>
             {strengthLabels[strength - 1]}
@@ -99,11 +99,11 @@ const PasswordInput = memo(({
       )}
 
       {fieldError && (
-        <p className="text-[13px] text-red-500 mt-1.5">{fieldError}</p>
+        <p className="text-[14px] text-red-500 mt-1.5">{fieldError}</p>
       )}
       
       {hint && !fieldError && (
-        <p className="text-[12px] text-gray-400 mt-1">{hint}</p>
+        <p className="text-[14px] text-gray-400 mt-1">{hint}</p>
       )}
     </div>
   );

@@ -15,7 +15,7 @@ const MessageSuccessModal = memo(({ agent }) => {
       <div className="fixed left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-2xl z-50 animate-in slide-in-from-bottom duration-300">
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
-          <h2 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+          <h2 className="text-[22px] font-bold text-primary font-inter">
             Send Message
           </h2>
         </div>
@@ -37,11 +37,11 @@ const MessageSuccessModal = memo(({ agent }) => {
           </div>
 
           {/* Success Text */}
-          <h3 className="text-[24px] font-bold text-[#1C2A3A] text-center font-['DM_Sans',sans-serif] mb-3">
+          <h3 className="text-[24px] font-bold text-primary text-center font-inter mb-3">
             Message Sent!
           </h3>
 
-          <p className="text-[14px] text-gray-500 text-center font-['DM_Sans',sans-serif]">
+          <p className="text-[14px] text-gray-500 text-center font-inter">
             {agent?.name || 'Grace Tembo'} typically responds within 2 hours
           </p>
         </div>

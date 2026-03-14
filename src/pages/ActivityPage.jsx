@@ -1,30 +1,23 @@
-
 import { memo, useState } from 'react';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
+import { useConversations } from '../hooks/conversations/useConversations';
 import StatsCard from '../components/activity/StatsCard';
 import InquiriesTab from '../components/activity/InquiriesTab';
 import ToursTab from '../components/activity/ToursTab';
 import MessagesTab from '../components/activity/MessagesTab';
 
-/**
- * ActivityPage Component
- * Main activity page showing inquiries, tours, and messages
- * NOW WITH API INTEGRATION
- */
 const ActivityPage = memo(() => {
   const [activeTab, setActiveTab] = useState('inquiries');
 
-  // Fetch counts from API
-  const { data: enquiries = [] } = useEnquiries();
-  const { data: tours = [] } = useTours();
-  
-  // Get counts
-  const inquiriesCount = enquiries.length;
-  const toursCount = tours.length;
-  const messagesCount = 0; // TODO: Implement messages API
+  const { data: enquiries = [] }                    = useEnquiries();
+  const { data: tours = [] }                        = useTours();
+  const { conversations = [], total: convTotal = 0 } = useConversations();
 
-  // Stats data (now using API counts)
+  const inquiriesCount = enquiries.length;
+  const toursCount     = tours.length;
+  const messagesCount  = convTotal || conversations.length; 
+
   const stats = [
     {
       id: 'inquiries',
@@ -35,7 +28,7 @@ const ActivityPage = memo(() => {
       ),
       label: 'Inquiries',
       count: inquiriesCount,
-      color: 'text-gray-600'
+      color: 'text-gray-600',
     },
     {
       id: 'tours',
@@ -49,7 +42,7 @@ const ActivityPage = memo(() => {
       ),
       label: 'Tours',
       count: toursCount,
-      color: 'text-amber-500'
+      color: 'text-amber-500',
     },
     {
       id: 'chats',
@@ -60,61 +53,45 @@ const ActivityPage = memo(() => {
       ),
       label: 'Chats',
       count: messagesCount,
-      color: 'text-green-500'
-    }
+      color: 'text-green-500',
+    },
   ];
 
-  // Tabs
   const tabs = [
     { id: 'inquiries', label: 'Inquiries' },
-    { id: 'tours', label: 'Tours' },
-    { id: 'messages', label: 'Messages' }
+    { id: 'tours',     label: 'Tours'     },
+    { id: 'messages',  label: 'Messages'  },
   ];
 
   return (
     <div className="min-h-screen pb-24 bg-gray-100">
       <div className='bg-gray-100 border-b-2 border-gray-300'>
-        {/* Header */}
-        <div className=" border-b border-gray-100 px-4 pt-4">
-          <h1 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-1">
-            Activity
-          </h1>
-          <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif]">
-            Manage your property interactions
-          </p>
+        <div className="border-b border-gray-100 px-4 pt-4">
+          <h1 className="text-[24px] font-black text-primary font-playfair mb-1">Activity</h1>
+          <p className="text-[14px] text-gray-500 font-inter">Manage your property interactions</p>
         </div>
 
-        {/* Stats Cards */}
         <div className="px-3 py-3 rounded-2xl mb-3">
           <div className="grid grid-cols-3 gap-4">
             {stats.map((stat) => (
-              <StatsCard
-                key={stat.id}
-                icon={stat.icon}
-                label={stat.label}
-                count={stat.count}
-                color={stat.color}
-              />
+              <StatsCard key={stat.id} icon={stat.icon} label={stat.label} count={stat.count} color={stat.color} />
             ))}
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="px-6">
           <div className="flex gap-8 border-b border-gray-200">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative pb-3 text-[14px] font-semibold font-['DM_Sans',sans-serif] transition-colors ${
-                  activeTab === tab.id
-                    ? 'text-[#1C2A3A]'
-                    : 'text-gray-400 hover:text-gray-600'
+                className={`relative pb-3 text-[14px] font-semibold font-inter transition-colors ${
+                  activeTab === tab.id ? 'text-primary' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
                 {tab.label}
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1C2A3A] rounded-full" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
                 )}
               </button>
             ))}
@@ -122,16 +99,14 @@ const ActivityPage = memo(() => {
         </div>
       </div>
 
-      {/* Tab Content */}
       <div className="px-4 py-6">
         {activeTab === 'inquiries' && <InquiriesTab />}
-        {activeTab === 'tours' && <ToursTab />}
-        {activeTab === 'messages' && <MessagesTab />}
+        {activeTab === 'tours'     && <ToursTab />}
+        {activeTab === 'messages'  && <MessagesTab />}
       </div>
     </div>
   );
 });
 
 ActivityPage.displayName = 'ActivityPage';
-
 export default ActivityPage;

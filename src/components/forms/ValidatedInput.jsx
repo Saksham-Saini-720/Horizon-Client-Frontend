@@ -33,7 +33,7 @@ const ValidatedInput = memo(({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-[14px] font-semibold text-gray-700 mb-2">
+        <label className="block text-[16px] font-semibold text-gray-700 mb-2">
           {label}
           {!required && <span className="text-gray-400 font-normal ml-1">(optional)</span>}
         </label>
@@ -48,7 +48,7 @@ const ValidatedInput = memo(({
         required={required}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        className={`w-full border rounded-xl px-4 py-3.5 text-[15px] text-gray-800 placeholder-gray-400
+        className={`w-full border rounded-xl px-4 py-3.5 text-[16px] text-gray-800 placeholder-gray-400
           outline-none transition-colors ${extraClass}
           ${fieldError
             ? "border-red-300 bg-red-50 focus:border-red-400"
@@ -57,7 +57,7 @@ const ValidatedInput = memo(({
       />
       
       {fieldError && (
-        <p className="text-[13px] text-red-500 mt-1.5">{fieldError}</p>
+        <p className="text-[14px] text-red-500 mt-1.5">{fieldError}</p>
       )}
       
       {hint && !fieldError && (

@@ -22,7 +22,7 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
           onClick={() => navigate('/chat')}
           className="p-1 -ml-1 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors"
         >
-          <svg className="w-6 h-6 text-[#1C2A3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </button>
@@ -43,7 +43,7 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
                 }}
               />
             ) : (
-              <span className="text-white text-[14px] font-bold font-['DM_Sans',sans-serif]">
+              <span className="text-white text-[14px] font-black font-playfair">
                 {avatarInitials}
               </span>
             )}
@@ -57,10 +57,10 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
 
         {/* Name & Status */}
         <div className="flex-1 min-w-0">
-          <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] truncate">
+          <p className="text-[16px] font-black text-primary font-playfair truncate">
             {participant?.name || 'Unknown'}
           </p>
-          <p className="text-[12px] font-['DM_Sans',sans-serif] text-gray-500">
+          <p className="text-[12px] font-inter text-gray-500">
             {participant?.isOnline ? (
               <span className="text-green-500 font-medium">Active now</span>
             ) : participant?.lastSeen ? (
@@ -73,11 +73,11 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
 
         {/* Action Icons */}
         <div className="flex items-center gap-1">
-          <button
+          {/* <button
             onClick={onCallPress}
             className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors"
           >
-            <svg className="w-5 h-5 text-[#1C2A3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.9a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 16a2 2 0 0 1 .29.92z" />
             </svg>
           </button>
@@ -86,17 +86,17 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
             onClick={onVideoPress}
             className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors"
           >
-            <svg className="w-5 h-5 text-[#1C2A3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="23 7 16 12 23 17 23 7" />
               <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
             </svg>
-          </button>
+          </button> */}
 
           <button
             onClick={onMorePress}
             className="p-2 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors"
           >
-            <svg className="w-5 h-5 text-[#1C2A3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="5" r="1" fill="currentColor" />
               <circle cx="12" cy="12" r="1" fill="currentColor" />
               <circle cx="12" cy="19" r="1" fill="currentColor" />

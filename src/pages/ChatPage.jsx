@@ -1,36 +1,25 @@
-
+// src/pages/ChatPage.jsx
 import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import ChatPageHeader from '../components/chat/ChatPageHeader';
-import ConversationList from '../components/chat/ConversationList';
+import { useNavigate } from 'react-router-dom';
+import ConversationItem from '../components/chat/ConversationItem';
 import { useConversations } from '../hooks/conversations/useConversations';
 import { useUnreadCount } from '../hooks/conversations/useMarkAsRead';
 import { selectUnreadCount } from '../store/slices/conversationSlice';
 
-/**
- * ChatPage
- * Messages list page - /chat
- * Shows all conversations with search
- */
 const ChatPage = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
-  // Sync unread count to Redux
   useUnreadCount();
-
   const unreadCount = useSelector(selectUnreadCount);
 
-  // Debounce search input
   const handleSearchChange = useCallback((e) => {
     const val = e.target.value;
     setSearchQuery(val);
-
-    // Simple debounce
     clearTimeout(window._chatSearchTimeout);
-    window._chatSearchTimeout = setTimeout(() => {
-      setDebouncedSearch(val);
-    }, 300);
+    window._chatSearchTimeout = setTimeout(() => setDebouncedSearch(val), 300);
   }, []);
 
   const { conversations, isLoading, isError, error, refetch } = useConversations({
@@ -38,49 +27,116 @@ const ChatPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#F7F6F2]">
-      {/* Header */}
-      <ChatPageHeader unreadCount={unreadCount} />
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
 
-      {/* Search */}
-      <div className="px-4 py-3 bg-white">
-        <div className="flex items-center gap-2.5 bg-gray-100 rounded-2xl px-4 py-2.5">
-          <svg className="w-4 h-4 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
+      {/* ── Header ── */}
+      <div style={{ backgroundColor: '#1C2A3A' }} className="px-4 pt-12 pb-4">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-[24px] font-bold text-white font-['DM_Sans',sans-serif]">
+            Messages
+          </h1>
+          {unreadCount > 0 && (
+            <span className="bg-amber-500 text-white text-[12px] font-bold px-3 py-1 rounded-full font-['DM_Sans',sans-serif]">
+              {unreadCount} unread
+            </span>
+          )}
+        </div>
+
+        {/* Search bar */}
+        <div className="flex items-center gap-2.5 bg-white/10 rounded-2xl px-4 py-2.5">
+          <svg className="w-4 h-4 text-white/60 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
           </svg>
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search conversations..."
-            className="flex-1 bg-transparent text-[14px] text-[#1C2A3A] placeholder-gray-400 outline-none font-['DM_Sans',sans-serif]"
+            className="flex-1 bg-transparent text-[14px] text-white placeholder-white/50 outline-none font-['DM_Sans',sans-serif]"
           />
           {searchQuery.length > 0 && (
-            <button
-              onClick={() => { setSearchQuery(''); setDebouncedSearch(''); }}
-              className="p-0.5 rounded-full hover:bg-gray-200 transition-colors"
-            >
-              <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M18 6 6 18M6 6l12 12" />
+            <button onClick={() => { setSearchQuery(''); setDebouncedSearch(''); }}>
+              <svg className="w-4 h-4 text-white/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M18 6 6 18M6 6l12 12"/>
               </svg>
             </button>
           )}
         </div>
       </div>
 
-      {/* Conversations */}
-      <div className="px-4 pt-4 pb-28">
-        <ConversationList
-          conversations={conversations}
-          isLoading={isLoading}
-          isError={isError}
-          error={error}
-          onRetry={refetch}
-        />
+      {/* ── Content ── */}
+      <div className="flex-1 pb-28">
+
+        {isLoading ? (
+          <div className="bg-white mt-2">
+            {Array(6).fill(0).map((_, i) => (
+              <ConversationSkeleton key={i} />
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="flex flex-col items-center justify-center py-20 px-6">
+            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <p className="text-[15px] font-semibold text-primary mb-2 font-['DM_Sans',sans-serif]">Couldn't load messages</p>
+            <p className="text-[13px] text-gray-400 mb-5 font-['DM_Sans',sans-serif]">{error?.message}</p>
+            <button onClick={refetch} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[14px] font-semibold font-['DM_Sans',sans-serif]">
+              Try Again
+            </button>
+          </div>
+        ) : conversations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 px-6">
+            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+              <svg className="w-10 h-10 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <p className="text-[17px] font-bold text-primary mb-1 font-['DM_Sans',sans-serif]">No messages yet</p>
+            <p className="text-[13px] text-gray-400 text-center font-['DM_Sans',sans-serif]">
+              Inquire about a property to start a conversation
+            </p>
+          </div>
+        ) : (
+          <div className="mt-2">
+            {/* Section label */}
+            <div className="px-4 py-2">
+              <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-['DM_Sans',sans-serif]">
+                All conversations
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl mx-3 overflow-hidden shadow-sm">
+              {conversations.map((conv, idx) => (
+                <ConversationItem
+                  key={conv.id}
+                  conversation={conv}
+                  isLast={idx === conversations.length - 1}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
+// Skeleton
+const ConversationSkeleton = () => (
+  <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100 animate-pulse">
+    <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0"/>
+    <div className="flex-1">
+      <div className="flex justify-between mb-2">
+        <div className="h-3.5 bg-gray-200 rounded-full w-28"/>
+        <div className="h-3 bg-gray-200 rounded-full w-10"/>
+      </div>
+      <div className="h-3 bg-gray-200 rounded-full w-48"/>
+    </div>
+  </div>
+);
 
 export default ChatPage;

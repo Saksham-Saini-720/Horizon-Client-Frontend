@@ -6,7 +6,7 @@ import useLogout from '../hooks/auth/useLogout';
 import { useProfile } from '../hooks/profile/useProfile';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
-import { useSavedProperties } from '../hooks/properties/useSavedProperties'; // ADDED
+import { useSavedProperties } from '../hooks/properties/useSavedProperties'; 
 import ProfileHeader from '../components/profile/ProfileHeader';
 import MembershipBadge from '../components/profile/MembershipBadge';
 import QuickAccessGrid from '../components/profile/QuickAccessCard';
@@ -14,7 +14,8 @@ import RecentActivity from '../components/profile/RecentActivity';
 import Preferences from '../components/profile/Preferences';
 import AccountSecurity from '../components/profile/AccountSecurity';
 import EditProfileModal from '../components/profile/EditProfileModal';
-import LogoutModal from '../components/profile/LogoutModal';
+import useConversations from '../hooks/conversations/useConversations';
+import LogoutModal from '../components/profile/logoutModal';
 
 /**
  * NotLoggedInState Component
@@ -37,17 +38,17 @@ const NotLoggedInState = () => {
         </svg>
       </div>
 
-      <h2 className="text-[24px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2">
+      <h2 className="text-[24px] font-black text-primary font-playfair mb-2">
         Welcome to Horizon
       </h2>
 
-      <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center max-w-xs mb-8">
+      <p className="text-[14px] text-gray-500 font-inter text-center max-w-xs mb-8">
         Log in to manage your profile, saved properties, inquiries, and more
       </p>
 
       <button
         onClick={() => navigate('/login')}
-        className="px-8 py-3.5 rounded-xl bg-[#1C2A3A] text-white text-[15px] font-semibold font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] active:scale-95 transition-all shadow-lg"
+        className="px-8 py-3.5 rounded-xl bg-primary text-white text-[16px] font-semibold font-inter hover:bg-primary-light active:scale-95 transition-all shadow-lg"
       >
         Log In
       </button>
@@ -113,6 +114,9 @@ const ProfilePage = memo(() => {
   
   // FIXED: Get count from useSavedProperties (already filters null properties)
   const savedCount = savedProperties.length;
+  const { conversations = [], total: convTotal = 0 } = useConversations();
+
+  const messagesCount = convTotal || conversations.length;
 
   // Handle logout
   const handleLogout = useCallback(() => {
@@ -141,15 +145,15 @@ const ProfilePage = memo(() => {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h2 className="text-[24px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2">
+        <h2 className="text-[24px] font-bold text-primary font-inter mb-2">
           Failed to Load Profile
         </h2>
-        <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center max-w-xs mb-8">
+        <p className="text-[14px] text-gray-500 font-inter text-center max-w-xs mb-8">
           {error?.message || 'Something went wrong'}
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="px-8 py-3.5 rounded-xl bg-[#1C2A3A] text-white text-[15px] font-semibold font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] active:scale-95 transition-all shadow-lg"
+          className="px-8 py-3.5 rounded-xl bg-primary text-white text-[15px] font-semibold font-inter hover:bg-primary-light active:scale-95 transition-all shadow-lg"
         >
           Retry
         </button>
@@ -163,10 +167,10 @@ const ProfilePage = memo(() => {
   if (!displayUser) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 pb-28">
-        <h2 className="text-[24px] font-bold text-[#1C2A3A] mb-4">No User Data</h2>
+        <h2 className="text-[24px] font-bold text-primary mb-4">No User Data</h2>
         <button
           onClick={() => navigate('/login')}
-          className="px-8 py-3.5 rounded-xl bg-[#1C2A3A] text-white"
+          className="px-8 py-3.5 rounded-xl bg-primary text-white"
         >
           Back to Login
         </button>
@@ -197,7 +201,7 @@ const ProfilePage = memo(() => {
           savedCount={savedCount}
           inquiriesCount={enquiries.length}
           toursCount={tours.length}
-          messagesCount={0}
+          messagesCount={messagesCount}
           onNavigate={navigate}
         />
 

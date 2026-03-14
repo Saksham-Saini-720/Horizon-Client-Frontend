@@ -64,7 +64,7 @@ const PropertyNote = memo(({ propertyId }) => {
           className="fixed inset-x-4 top-1/2 -translate-y-1/2 bg-white rounded-2xl p-5 shadow-2xl z-50 max-w-md mx-auto animate-in zoom-in-95 duration-200"
           onClick={(e) => e.stopPropagation()}
         >
-          <h3 className="text-[17px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-3">
+          <h3 className="text-[17px] font-bold text-primary font-inter mb-3">
             {hasNote ? 'Edit Note' : 'Add Note'}
           </h3>
 
@@ -73,26 +73,26 @@ const PropertyNote = memo(({ propertyId }) => {
             value={localNote}
             onChange={handleChange}
             placeholder="Add a note about this property..."
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-amber-400 bg-white text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none resize-none transition-colors"
+            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-amber-400 bg-white text-[14px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none resize-none transition-colors"
             rows={5}
             maxLength={500}
           />
           
           <div className="flex items-center justify-between mt-3">
-            <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">
+            <span className="text-[11px] text-gray-400 font-inter">
               {localNote.length}/500
             </span>
             
             <div className="flex gap-2">
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 hover:bg-gray-100 font-['DM_Sans',sans-serif] transition-colors"
+                className="px-4 py-2 rounded-lg text-[14px] font-semibold text-gray-600 hover:bg-gray-100 font-inter transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
-                className="px-5 py-2 rounded-lg bg-[#1C2A3A] text-white text-[13px] font-semibold hover:bg-[#2A3A4A] font-['DM_Sans',sans-serif] transition-colors"
+                className="px-5 py-2 rounded-lg bg-primary text-white text-[14px] font-semibold hover:bg-primary-light font-inter transition-colors"
               >
                 Save Note
               </button>
@@ -108,7 +108,7 @@ const PropertyNote = memo(({ propertyId }) => {
   return (
     <button
       onClick={handleClick}
-      className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-500 hover:text-[#1C2A3A] font-['DM_Sans',sans-serif] transition-colors"
+      className="flex items-center gap-1.5 text-[14px] font-semibold text-gray-500 hover:text-primary font-inter transition-colors"
     >
       <svg 
         className="w-3.5 h-3.5" 

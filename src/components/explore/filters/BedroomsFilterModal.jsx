@@ -35,7 +35,7 @@ const BedroomsFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+            <h2 className="text-[22px] font-bold text-primary font-inter">
               Number of Bedrooms
             </h2>
             <button
@@ -58,9 +58,9 @@ const BedroomsFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {
                 key={option}
                 onClick={() => setSelected(option)}
                 className={`
-                  aspect-square rounded-2xl border-2 text-[18px] font-bold font-['DM_Sans',sans-serif] transition-all active:scale-95
+                  aspect-square rounded-2xl border-2 text-[18px] font-bold font-inter transition-all active:scale-95
                   ${selected === option
-                    ? 'border-amber-400 bg-amber-50 text-[#1C2A3A]'
+                    ? 'border-amber-400 bg-amber-50 text-primary'
                     : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                   }
                 `}
@@ -73,7 +73,7 @@ const BedroomsFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {
 
         {/* Info */}
         <div className="px-6 pb-4">
-          <p className="text-[13px] text-gray-500 font-['DM_Sans',sans-serif]">
+          <p className="text-[13px] text-gray-500 font-inter">
             Select 4+ to see properties with 4 or more bedrooms
           </p>
         </div>
@@ -82,14 +82,14 @@ const BedroomsFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {
         <div className="px-6 pb-6 pt-2 flex gap-3">
           <button
             onClick={handleClear}
-            className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-[#1C2A3A] text-[16px] font-bold font-['DM_Sans',sans-serif] hover:bg-gray-50 transition-all active:scale-[0.98]"
+            className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-bold font-inter hover:bg-gray-50 transition-all active:scale-[0.98]"
           >
             Clear
           </button>
           <button
             onClick={handleApply}
             disabled={!selected}
-            className="flex-1 px-6 py-4 rounded-2xl bg-[#1C2A3A] text-white text-[16px] font-bold font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] transition-all active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-bold font-inter hover:bg-primary-light transition-all active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Apply
           </button>

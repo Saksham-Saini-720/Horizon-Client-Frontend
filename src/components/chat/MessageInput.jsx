@@ -65,7 +65,7 @@ const MessageInput = memo(({ onSend, isSending = false, disabled = false }) => {
             placeholder="Type a message..."
             disabled={disabled}
             rows={1}
-            className="flex-1 bg-transparent text-[14px] text-[#1C2A3A] placeholder-gray-400 font-['DM_Sans',sans-serif] resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
+            className="flex-1 bg-transparent text-[14px] text-primary placeholder-gray-400 font-inter resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
             style={{ scrollbarWidth: 'none' }}
           />
           {/* Emoji button */}
@@ -89,7 +89,7 @@ const MessageInput = memo(({ onSend, isSending = false, disabled = false }) => {
           disabled={!canSend}
           className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
             canSend
-              ? 'bg-[#1C2A3A] hover:bg-[#2E4057] active:scale-95 shadow-md'
+              ? 'bg-primary hover:bg-[#2E4057] active:scale-95 shadow-md'
               : 'bg-gray-200'
           }`}
         >

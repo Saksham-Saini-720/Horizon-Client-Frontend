@@ -51,10 +51,10 @@ const PropertyBottomSheet = memo(({ property, onClose, onViewDetails }) => {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[18px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-0.5">
+                <p className="text-[20px] font-bold text-primary font-playfair mb-0.5">
                   {price}
                 </p>
-                <h3 className="text-[14px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] line-clamp-1 mb-1">
+                <h3 className="text-[16px] font-semibold text-primary font-playfair line-clamp-1 mb-1">
                   {title}
                 </h3>
                 {location ? (
@@ -63,10 +63,10 @@ const PropertyBottomSheet = memo(({ property, onClose, onViewDetails }) => {
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                       <circle cx="12" cy="10" r="3"/>
                     </svg>
-                    <span className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif] truncate">{location}</span>
+                    <span className="text-[14px] text-gray-500 font-inter truncate">{location}</span>
                   </div>
                 ) : null}
-                <div className="flex items-center gap-3 text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+                <div className="flex items-center gap-3 text-[14px] text-gray-500 font-inter">
                   {beds != null && (
                     <span className="flex items-center gap-1">
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -102,7 +102,7 @@ const PropertyBottomSheet = memo(({ property, onClose, onViewDetails }) => {
           <div className="px-4 pb-8 pt-2">
             <button
               onClick={onViewDetails}
-              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#1C2A3A] text-white text-[15px] font-bold font-['DM_Sans',sans-serif] hover:bg-[#263547] active:scale-[0.98] transition-all shadow-lg"
+              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-primary text-white text-[16px] font-bold font-inter hover:bg-primary-light active:scale-[0.98] transition-all shadow-lg"
             >
               View Details
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

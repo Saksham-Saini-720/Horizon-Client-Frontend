@@ -27,15 +27,15 @@ const ConversationList = memo(({ conversations, isLoading, isError, error, onRet
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <p className="text-[15px] font-semibold text-[#1C2A3A] mb-1 font-['DM_Sans',sans-serif]">
+        <p className="text-[16px] font-semibold text-primary mb-1 font-inter">
           Couldn't load messages
         </p>
-        <p className="text-[13px] text-gray-400 text-center mb-4 font-['DM_Sans',sans-serif]">
+        <p className="text-[14px] text-gray-400 text-center mb-4 font-inter">
           {error?.message || 'Something went wrong'}
         </p>
         <button
           onClick={onRetry}
-          className="px-5 py-2 rounded-xl bg-amber-500 text-white text-[13px] font-semibold font-['DM_Sans',sans-serif]"
+          className="px-5 py-2 rounded-xl bg-amber-500 text-white text-[14px] font-semibold font-inter"
         >
           Try Again
         </button>
@@ -51,10 +51,10 @@ const ConversationList = memo(({ conversations, isLoading, isError, error, onRet
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
-        <p className="text-[16px] font-semibold text-[#1C2A3A] mb-1 font-['DM_Sans',sans-serif]">
+        <p className="text-[16px] font-semibold text-primary mb-1 font-inter">
           No messages yet
         </p>
-        <p className="text-[13px] text-gray-400 text-center font-['DM_Sans',sans-serif]">
+        <p className="text-[14px] text-gray-400 text-center font-inter">
           Start a conversation by inquiring about a property
         </p>
       </div>

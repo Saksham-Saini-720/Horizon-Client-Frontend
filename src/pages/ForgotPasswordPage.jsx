@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
           >
             {/* Info Box */}
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-              <p className="text-[13px] text-amber-800">
+              <p className="text-[14px] text-amber-800">
                 💡 <strong>Tip:</strong> Check your spam folder if you don't see the email
               </p>
             </div>
@@ -75,20 +75,20 @@ export default function ForgotPasswordPage() {
             <div className="space-y-3">
               <button
                 onClick={handleTryAgain}
-                className="w-full py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                className="w-full py-3 rounded-xl border border-gray-200 text-[16px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Send to Different Email
               </button>
               <button
                 onClick={handleBackToLogin}
-                className="w-full py-3 rounded-xl bg-gray-900 text-white text-[15px] font-semibold hover:bg-gray-800 transition-colors"
+                className="w-full py-3 rounded-xl bg-gray-900 text-white text-[16px] font-semibold hover:bg-gray-800 transition-colors"
               >
                 Back to Login
               </button>
             </div>
 
             {/* Footer */}
-            <p className="text-[13px] text-center text-gray-400 mt-6">
+            <p className="text-[14px] text-center text-gray-400 mt-6">
               Didn't receive the email?{" "}
               <button
                 onClick={() => forgotPasswordMutation.mutate(submittedEmail)}
@@ -125,10 +125,10 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Header */}
-        <h2 className="text-[24px] font-bold text-gray-900 mb-2 text-center">
+        <h2 className="text-[24px] font-black text-gray-900 mb-2 text-center font-playfair">
           Forgot Password?
         </h2>
-        <p className="text-[15px] text-gray-500 mb-6 text-center">
+        <p className="text-[16px] text-gray-500 mb-6 text-center">
           Enter your email and we'll send you a link to reset your password
         </p>
 
@@ -161,7 +161,7 @@ export default function ForgotPasswordPage() {
         </form>
 
         {/* Footer */}
-        <p className="text-[13px] text-center text-gray-400 mt-6">
+        <p className="text-[14px] text-center text-gray-400 mt-6">
           Remember your password?{" "}
           <button
             onClick={handleBackToLogin}

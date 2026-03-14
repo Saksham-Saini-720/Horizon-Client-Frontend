@@ -1,40 +1,26 @@
-
-import { useEffect, useRef, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+// src/pages/ConversationPage.jsx
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import ConversationHeader from '../components/chat/ConversationHeader';
-import PropertyBanner from '../components/chat/PropertyBanner';
-import MessageBubble, { DateSeparator, groupMessagesByDate } from '../components/chat/MessageBubble';
-import MessageInput from '../components/chat/MessageInput';
 import { useConversationById } from '../hooks/conversations/useConversationById';
 import { useSendMessage } from '../hooks/conversations/useSendMessage';
 import { useMarkAsRead } from '../hooks/conversations/useMarkAsRead';
 import { selectOptimisticMessages } from '../store/slices/conversationSlice';
+import PropertyBanner from '../components/chat/PropertyBanner';
 
-/**
- * ConversationPage
- * Individual chat conversation - /chat/:id
- * Shows messages with real-time-like polling + optimistic updates
- */
 const ConversationPage = () => {
   const { id: conversationId } = useParams();
+  const navigate = useNavigate();
   const messagesEndRef = useRef(null);
   const hasMarkedRead = useRef(false);
+  const [text, setText] = useState('');
+  const textareaRef = useRef(null);
 
-  // Fetch conversation
-  const { conversation, messages, participant, property, isLoading, isError, error, refetch } =
-    useConversationById(conversationId);
-
-  // Send message hook
+  const { messages, participant, property, isLoading, isError, error, refetch } = useConversationById(conversationId);
   const { sendMsg, isSending } = useSendMessage(conversationId);
-
-  // Mark as read
   const { markRead } = useMarkAsRead();
-
-  // Optimistic messages from Redux
   const optimisticMessages = useSelector(selectOptimisticMessages(conversationId));
 
-  // Mark as read when conversation opens
   useEffect(() => {
     if (conversationId && !hasMarkedRead.current && !isLoading) {
       markRead(conversationId);
@@ -42,63 +28,77 @@ const ConversationPage = () => {
     }
   }, [conversationId, isLoading, markRead]);
 
-  // Merge real messages with optimistic ones (avoid duplicates)
+  // Merge real + optimistic messages
   const allMessages = useCallback(() => {
-    const optimisticIds = new Set(optimisticMessages.map((m) => m.id));
-    const serverMessages = messages.filter((m) => !optimisticIds.has(m.id));
+    const optimisticIds = new Set(optimisticMessages.map(m => m.id));
+    const serverMessages = messages.filter(m => !optimisticIds.has(m.id));
     return [...serverMessages, ...optimisticMessages].sort(
       (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
     );
   }, [messages, optimisticMessages])();
 
-  // Group messages by date
   const messageGroups = groupMessagesByDate(allMessages);
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
-    if (allMessages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [allMessages.length]);
 
-  // Loading state
+  const handleSend = useCallback(() => {
+    const trimmed = text.trim();
+    if (!trimmed || isSending) return;
+    sendMsg(trimmed);
+    setText('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+  }, [text, isSending, sendMsg]);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  }, [handleSend]);
+
+  const handleTextChange = useCallback((e) => {
+    setText(e.target.value);
+    const el = e.target;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }, []);
+
+  const avatarInitials = getInitials(participant?.name || '');
+  const avatarColor = getAvatarColor(participant?.name || '');
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F7F6F2] flex flex-col">
-        <ConversationHeaderSkeleton />
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
+        <HeaderSkeleton />
         <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin" />
-            <p className="mt-3 text-[13px] text-gray-400 font-['DM_Sans',sans-serif]">Loading messages...</p>
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin"/>
+            <p className="text-[13px] text-gray-400 font-['DM_Sans',sans-serif]">Loading messages...</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // Error state
   if (isError) {
     return (
-      <div className="min-h-screen bg-[#F7F6F2] flex flex-col">
-        <ConversationHeaderSkeleton />
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
+        <HeaderSkeleton />
         <div className="flex-1 flex flex-col items-center justify-center py-16 px-6">
           <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-4">
             <svg className="w-7 h-7 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
-          <p className="text-[15px] font-semibold text-[#1C2A3A] mb-1 font-['DM_Sans',sans-serif]">
-            Couldn't load conversation
-          </p>
-          <p className="text-[13px] text-gray-400 text-center mb-5 font-['DM_Sans',sans-serif]">
-            {error?.message || 'Something went wrong'}
-          </p>
-          <button
-            onClick={refetch}
-            className="px-6 py-2.5 rounded-xl bg-amber-500 text-white text-[14px] font-semibold font-['DM_Sans',sans-serif]"
-          >
+          <p className="text-[15px] font-semibold text-primary mb-1 font-['DM_Sans',sans-serif]">Couldn't load conversation</p>
+          <p className="text-[13px] text-gray-400 text-center mb-5 font-['DM_Sans',sans-serif]">{error?.message || 'Something went wrong'}</p>
+          <button onClick={refetch} className="px-6 py-2.5 rounded-xl bg-amber-500 text-white text-[14px] font-semibold font-['DM_Sans',sans-serif]">
             Try Again
           </button>
         </div>
@@ -107,89 +107,293 @@ const ConversationPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F6F2] flex flex-col">
-      {/* Fixed Header */}
-      <ConversationHeader
-        participant={participant}
-        onCallPress={() => {}}
-        onVideoPress={() => {}}
-        onMorePress={() => {}}
-      />
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
 
-      {/* Scrollable content area */}
-      <div
-        className="flex-1 overflow-y-auto"
-        style={{ paddingTop: '88px', paddingBottom: '80px' }}
-      >
-        {/* Property Banner */}
+      {/* ── Fixed Header ── */}
+      <div className="fixed top-0 left-0 right-0 z-50 shadow-md" style={{ backgroundColor: '#1C2A3A' }}>
+        <div className="flex items-center gap-3 px-3 pt-12 pb-3">
+          {/* Back */}
+          <button onClick={() => navigate('/chat')} className="p-1.5 rounded-xl hover:bg-white/10 active:bg-white/20 transition-colors flex-shrink-0">
+            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+          </button>
+
+          {/* Avatar */}
+          <div className="relative flex-shrink-0">
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center"
+              style={{ backgroundColor: participant?.avatar ? 'transparent' : avatarColor }}>
+              {participant?.avatar ? (
+                <img src={participant.avatar} alt={participant.name} className="w-full h-full object-cover"/>
+              ) : (
+                <span className="text-white text-[15px] font-bold font-['DM_Sans',sans-serif]">{avatarInitials}</span>
+              )}
+            </div>
+            {participant?.isOnline && (
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-primary"/>
+            )}
+          </div>
+
+          {/* Name & status */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[15px] font-bold text-white font-['DM_Sans',sans-serif] truncate leading-tight">
+              {participant?.name || 'Unknown'}
+            </p>
+            <p className="text-[12px] font-['DM_Sans',sans-serif] leading-tight">
+              {participant?.isOnline
+                ? <span className="text-green-400">Active now</span>
+                : participant?.lastSeen
+                  ? <span className="text-white/50">Last seen {formatLastSeen(participant.lastSeen)}</span>
+                  : <span className="text-white/50">Offline</span>
+              }
+            </p>
+          </div>
+
+          {/* More */}
+          <button className="p-2 rounded-xl hover:bg-white/10 transition-colors">
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="5" r="1" fill="currentColor"/>
+              <circle cx="12" cy="12" r="1" fill="currentColor"/>
+              <circle cx="12" cy="19" r="1" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* ── Messages ── */}
+      <div className="flex-1 overflow-y-auto" style={{ paddingTop: '96px', paddingBottom: '76px' }}>
+
+        {/* Property banner */}
         {property && (
-          <div className="py-3">
-            <PropertyBanner property={property} />
+          <div className="pt-3 pb-1">
+            <PropertyBanner property={property}/>
           </div>
         )}
 
         {/* Empty state */}
         {allMessages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 px-6">
-            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-3">
-              <svg className="w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round" />
+            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm">
+              <svg className="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
             <p className="text-[14px] text-gray-400 font-['DM_Sans',sans-serif] text-center">
-              No messages yet. Start the conversation!
+              No messages yet. Say hello! 👋
             </p>
           </div>
         )}
 
-        {/* Messages grouped by date */}
+        {/* Message groups by date */}
         {messageGroups.map((group) => (
           <div key={group.date}>
-            <DateSeparator date={group.date} />
+            {/* Date separator */}
+            <div className="flex items-center justify-center py-3 px-4">
+              <span className="px-4 py-1 bg-white/80 backdrop-blur-sm rounded-full text-[11px] text-gray-500 font-['DM_Sans',sans-serif] font-medium shadow-sm">
+                {group.date}
+              </span>
+            </div>
+
             {group.messages.map((msg, idx) => {
               const nextMsg = group.messages[idx + 1];
-              // Only show time on last message in a consecutive group
-              const showTime =
-                !nextMsg ||
-                nextMsg.isFromMe !== msg.isFromMe ||
-                isTimeDiffSignificant(msg.createdAt, nextMsg.createdAt);
-
+              const showTime = !nextMsg || nextMsg.isFromMe !== msg.isFromMe || isTimeDiffSignificant(msg.createdAt, nextMsg?.createdAt);
+              const isFirst = idx === 0 || group.messages[idx - 1]?.isFromMe !== msg.isFromMe;
               return (
-                <MessageBubble key={msg.id} message={msg} showTime={showTime} />
+                <MessageBubble key={msg.id} message={msg} showTime={showTime} isFirst={isFirst}/>
               );
             })}
           </div>
         ))}
 
-        {/* Scroll anchor */}
-        <div ref={messagesEndRef} className="h-2" />
+        <div ref={messagesEndRef} className="h-2"/>
       </div>
 
-      {/* Fixed Message Input */}
-      <MessageInput onSend={sendMsg} isSending={isSending} />
+      {/* ── Message Input ── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 px-3 py-2.5">
+        <div className="flex items-end gap-2">
+          {/* Text area */}
+          <div className="flex-1 flex items-end bg-gray-100 rounded-2xl px-3.5 py-2.5 min-h-[44px]">
+            <textarea
+              ref={textareaRef}
+              value={text}
+              onChange={handleTextChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a message..."
+              rows={1}
+              className="flex-1 bg-transparent text-[14px] text-primary placeholder-gray-400 font-['DM_Sans',sans-serif] resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
+              style={{ scrollbarWidth: 'none' }}
+            />
+            <button className="ml-1.5 flex-shrink-0 mb-0.5 hover:opacity-75 transition-opacity">
+              <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 13s1.5 2 4 2 4-2 4-2"/>
+                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                <line x1="15" y1="9" x2="15.01" y2="9"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Send button */}
+          <button
+            onClick={handleSend}
+            disabled={!text.trim() || isSending}
+            className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+              text.trim() && !isSending
+                ? 'bg-primary hover:bg-[#2E4057] active:scale-95 shadow-md'
+                : 'bg-gray-200'
+            }`}
+          >
+            {isSending ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"/>
+            ) : (
+              <svg className={`w-5 h-5 ${text.trim() ? 'text-white' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
     </div>
   );
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ── MessageBubble ──
+const MessageBubble = ({ message, showTime, isFirst }) => {
+  const { content, isFromMe, createdAt, isRead, isOptimistic } = message;
+  const timeStr = formatTime(createdAt);
 
-function isTimeDiffSignificant(date1, date2) {
-  if (!date1 || !date2) return true;
-  const diff = Math.abs(new Date(date2) - new Date(date1));
-  return diff > 1000 * 60 * 2; // 2 minutes
-}
+  if (isFromMe) {
+    return (
+      <div className="flex justify-end mb-1 px-3">
+        <div className="max-w-[75%]" style={{ opacity: isOptimistic ? 0.7 : 1 }}>
+          <div
+            className="px-4 py-2.5 shadow-sm"
+            style={{
+              backgroundColor: '#1C2A3A',
+              borderRadius: isFirst ? '18px 18px 4px 18px' : '18px 4px 4px 18px',
+            }}
+          >
+            <p className="text-[14px] text-white font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">
+              {content}
+            </p>
+          </div>
+          {showTime && (
+            <div className="flex items-center justify-end gap-1 mt-0.5 pr-0.5">
+              <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">{timeStr}</span>
+              {isOptimistic ? (
+                <svg className="w-3.5 h-3.5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              ) : isRead ? (
+                <DoubleCheck color="#F59E0B"/>
+              ) : (
+                <DoubleCheck color="#9CA3AF"/>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
-// ─── Skeleton for loading header ────────────────────────────────────────────
+  return (
+    <div className="flex justify-start mb-1 px-3">
+      <div className="max-w-[75%]">
+        <div
+          className="px-4 py-2.5 bg-white shadow-sm border border-gray-100"
+          style={{
+            borderRadius: isFirst ? '18px 18px 18px 4px' : '4px 18px 18px 18px',
+          }}
+        >
+          <p className="text-[14px] text-primary font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">
+            {content}
+          </p>
+        </div>
+        {showTime && (
+          <div className="mt-0.5 pl-0.5">
+            <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">{timeStr}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-const ConversationHeaderSkeleton = () => (
-  <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 pt-12 pb-3 px-4 flex items-center gap-3 animate-pulse">
-    <div className="w-6 h-6 bg-gray-200 rounded" />
-    <div className="w-10 h-10 rounded-full bg-gray-200" />
+const DoubleCheck = ({ color }) => (
+  <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+    <polyline points="1,5.5 4.5,9 9,2" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <polyline points="6,5.5 9.5,9 15,2" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const HeaderSkeleton = () => (
+  <div className="fixed top-0 left-0 right-0 z-50 pt-12 pb-3 px-4 flex items-center gap-3 animate-pulse" style={{ backgroundColor: '#1C2A3A' }}>
+    <div className="w-6 h-6 bg-white/20 rounded"/>
+    <div className="w-10 h-10 rounded-full bg-white/20"/>
     <div className="flex-1">
-      <div className="h-3.5 bg-gray-200 rounded-full w-24 mb-1.5" />
-      <div className="h-3 bg-gray-200 rounded-full w-16" />
+      <div className="h-3.5 bg-white/20 rounded-full w-24 mb-1.5"/>
+      <div className="h-3 bg-white/20 rounded-full w-16"/>
     </div>
   </div>
 );
+
+// ── Helpers ──
+function groupMessagesByDate(messages = []) {
+  const groups = [];
+  let currentDate = null;
+  let currentGroup = null;
+  for (const msg of messages) {
+    const msgDate = getDateLabel(msg.createdAt);
+    if (msgDate !== currentDate) {
+      currentDate = msgDate;
+      currentGroup = { date: msgDate, messages: [] };
+      groups.push(currentGroup);
+    }
+    currentGroup.messages.push(msg);
+  }
+  return groups;
+}
+
+function getDateLabel(dateStr) {
+  if (!dateStr) return 'Today';
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+function formatTime(dateStr) {
+  if (!dateStr) return '';
+  return new Date(dateStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
+function formatLastSeen(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMins = Math.floor((now - date) / 60000);
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHrs = Math.floor(diffMins / 60);
+  if (diffHrs < 24) return `${diffHrs}h ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function isTimeDiffSignificant(date1, date2) {
+  if (!date1 || !date2) return true;
+  return Math.abs(new Date(date2) - new Date(date1)) > 1000 * 60 * 2;
+}
+
+function getInitials(name = '') {
+  return name.split(' ').slice(0, 2).map(n => n[0]?.toUpperCase()).join('');
+}
+
+const AVATAR_COLORS = ['#1C2A3A', '#2E4057', '#3D6B8A', '#5B8DB8', '#7B5EA7', '#A06B9A', '#C97B6E'];
+function getAvatarColor(name = '') {
+  const charCode = name?.charCodeAt(0) || 0;
+  return AVATAR_COLORS[charCode % AVATAR_COLORS.length];
+}
 
 export default ConversationPage;

@@ -101,7 +101,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+            <h2 className="text-[22px] font-black text-primary font-playfair">
               Request a Tour
             </h2>
             <button
@@ -119,7 +119,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
         <div className="px-6 py-6 space-y-6">
           {/* Visit Type */}
           <div>
-            <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-3">
+            <label className="block text-[13px] font-semibold text-gray-700 font-inter mb-3">
               Visit Type
             </label>
             <div className="grid grid-cols-2 gap-4">
@@ -128,7 +128,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                 onClick={() => setVisitType('in-person')}
                 className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${
                   visitType === 'in-person'
-                    ? 'border-[#1C2A3A] bg-gray-50'
+                    ? 'border-primary bg-gray-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -137,10 +137,10 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                   <circle cx="12" cy="12" r="3" />
                 </svg>
                 <div className="text-center">
-                  <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+                  <p className="text-[15px] font-bold text-primary font-inter">
                     In Person
                   </p>
-                  <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+                  <p className="text-[12px] text-gray-500 font-inter">
                     Visit the property
                   </p>
                 </div>
@@ -151,7 +151,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                 onClick={() => setVisitType('virtual')}
                 className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${
                   visitType === 'virtual'
-                    ? 'border-[#1C2A3A] bg-gray-50'
+                    ? 'border-primary bg-gray-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -160,10 +160,10 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                   <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                 </svg>
                 <div className="text-center">
-                  <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+                  <p className="text-[15px] font-bold text-primary font-inter">
                     Virtual Tour
                   </p>
-                  <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+                  <p className="text-[12px] text-gray-500 font-inter">
                     Video call tour
                   </p>
                 </div>
@@ -173,7 +173,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
 
           {/* Select Date */}
           <div>
-            <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-3">
+            <label className="block text-[13px] font-semibold text-gray-700 font-inter mb-3">
               Select Date
             </label>
             <div className="grid grid-cols-6 gap-3">
@@ -183,17 +183,17 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                   onClick={() => handleDateSelect(d)}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${
                     selectedDate?.date === d.date
-                      ? 'border-[#1C2A3A] bg-gray-50'
+                      ? 'border-primary bg-gray-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <span className="text-[11px] text-gray-500 font-['DM_Sans',sans-serif] mb-1">
+                  <span className="text-[11px] text-gray-500 font-inter mb-1">
                     {d.day}
                   </span>
-                  <span className="text-[18px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-1">
+                  <span className="text-[18px] font-bold text-primary font-inter mb-1">
                     {d.date}
                   </span>
-                  <span className="text-[10px] text-gray-400 font-['DM_Sans',sans-serif]">
+                  <span className="text-[10px] text-gray-400 font-inter">
                     {d.month}
                   </span>
                 </button>
@@ -205,10 +205,10 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
           {showTimeSlots && (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif]">
+                <label className="text-[13px] font-semibold text-gray-700 font-inter">
                   Select Time (up to 3)
                 </label>
-                <span className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+                <span className="text-[12px] text-gray-500 font-inter">
                   {selectedTimes.length}/3 selected
                 </span>
               </div>
@@ -220,7 +220,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                     disabled={!selectedTimes.includes(time) && selectedTimes.length >= 3}
                     className={`flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${
                       selectedTimes.includes(time)
-                        ? 'border-[#1C2A3A] bg-[#1C2A3A] text-white'
+                        ? 'border-primary bg-primary text-white'
                         : 'border-gray-200 hover:border-gray-300 text-gray-700'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
@@ -228,7 +228,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                       <circle cx="12" cy="12" r="10" />
                       <polyline points="12 6 12 12 16 14" />
                     </svg>
-                    <span className="text-[14px] font-semibold font-['DM_Sans',sans-serif]">
+                    <span className="text-[14px] font-semibold font-inter">
                       {time}
                     </span>
                   </button>
@@ -239,7 +239,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
 
           {/* Note */}
           <div>
-            <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+            <label className="block text-[13px] font-semibold text-gray-700 font-inter mb-2">
               Note for Agent (optional)
             </label>
             <textarea
@@ -248,9 +248,9 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
               placeholder="Any specific areas you'd like to see, accessibility needs, etc."
               rows={3}
               maxLength={500}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] placeholder-gray-400 focus:outline-none focus:border-amber-400 resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-amber-400 resize-none"
             />
-            <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-1">
+            <p className="text-[11px] text-gray-400 font-inter mt-1">
               {note.length}/500 characters
             </p>
           </div>
@@ -262,7 +262,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
               <line x1="12" y1="16" x2="12" y2="12" />
               <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
-            <p className="text-[12px] text-gray-600 font-['DM_Sans',sans-serif] leading-relaxed">
+            <p className="text-[12px] text-gray-600 font-inter leading-relaxed">
               The agent will review your request and confirm the best available slot. You'll receive a notification once confirmed.
             </p>
           </div>
@@ -271,7 +271,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
           <button
             onClick={handleReview}
             disabled={!selectedDate || selectedTimes.length === 0}
-            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-400 text-white text-[16px] font-bold font-['DM_Sans',sans-serif] hover:bg-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed enabled:bg-[#1C2A3A] enabled:hover:bg-[#2A3A4A] shadow-lg"
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-400 text-white text-[16px] font-bold font-inter hover:bg-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed enabled:bg-primary enabled:hover:bg-primary-light shadow-lg"
           >
             Review & Request Tour
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

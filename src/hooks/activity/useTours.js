@@ -45,6 +45,7 @@ const transformTour = (tour) => {
     });
   };
 
+
   return {
     id: tour._id || tour.id,
     property: {

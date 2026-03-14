@@ -85,7 +85,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+            <h2 className="text-[22px] font-black text-primary font-playfair">
               Confirm Tour
             </h2>
             <button
@@ -116,7 +116,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="text-[16px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-1 line-clamp-1">
+              <h3 className="text-[16px] font-black text-primary font-playfair mb-1 line-clamp-1">
                 {property?.title || 'Property'}
               </h3>
               <div className="flex items-center gap-1.5 mb-2">
@@ -124,11 +124,11 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
-                <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+                <p className="text-[12px] text-gray-500 font-inter">
                   {property?.location || 'Location'}
                 </p>
               </div>
-              <p className="text-[16px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+              <p className="text-[16px] font-black text-primary font-playfair">
                 {property?.price || 'Price'}
               </p>
             </div>
@@ -138,7 +138,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
           <div className="space-y-4">
             {/* Visit Type */}
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <span className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif]">
+              <span className="text-[14px] text-gray-500 font-inter">
                 Visit Type
               </span>
               <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                     <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                   </svg>
                 )}
-                <span className="text-[14px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+                <span className="text-[14px] font-semibold text-primary font-inter">
                   {visitType === 'virtual' ? 'Virtual Tour' : 'In Person'}
                 </span>
               </div>
@@ -156,10 +156,10 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
 
             {/* Date */}
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <span className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif]">
+              <span className="text-[14px] text-gray-500 font-inter">
                 Date
               </span>
-              <span className="text-[14px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+              <span className="text-[14px] font-semibold text-primary font-inter">
                 {selectedDate.fullDate.toLocaleDateString('en-US', { 
                   year: 'numeric', 
                   month: 'short', 
@@ -170,12 +170,12 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
 
             {/* Preferred Times */}
             <div className="flex items-start justify-between py-3">
-              <span className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif]">
+              <span className="text-[14px] text-gray-500 font-inter">
                 Preferred Times
               </span>
               <div className="text-right">
                 {selectedTimes.map((time, index) => (
-                  <div key={index} className="text-[14px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] flex items-center gap-1.5 justify-end">
+                  <div key={index} className="text-[14px] font-semibold text-primary font-inter flex items-center gap-1.5 justify-end">
                     {index === 0 && (
                       <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">
                         Primary
@@ -185,7 +185,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                   </div>
                 ))}
                 {selectedTimes.length > 1 && (
-                  <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-1">
+                  <p className="text-[11px] text-gray-400 font-inter mt-1">
                     Agent will confirm one slot
                   </p>
                 )}
@@ -195,10 +195,10 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             {/* Note (if provided) */}
             {note && (
               <div className="py-3 border-t border-gray-100">
-                <span className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] block mb-2">
+                <span className="text-[14px] text-gray-500 font-inter block mb-2">
                   Note for Agent
                 </span>
-                <p className="text-[13px] text-gray-700 font-['DM_Sans',sans-serif] leading-relaxed p-3 bg-gray-50 rounded-lg">
+                <p className="text-[13px] text-gray-700 font-inter leading-relaxed p-3 bg-gray-50 rounded-lg">
                   {note}
                 </p>
               </div>
@@ -214,15 +214,15 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                 className="w-12 h-12 rounded-full object-cover"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-[18px] font-bold font-['DM_Sans',sans-serif]">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-[18px] font-bold font-inter">
                 {agent?.name?.charAt(0) || 'A'}
               </div>
             )}
             <div>
-              <p className="text-[14px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+              <p className="text-[14px] font-bold text-primary font-inter">
                 {agent?.name || 'Agent'}
               </p>
-              <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+              <p className="text-[12px] text-gray-500 font-inter">
                 Will confirm your slot
               </p>
             </div>
@@ -234,7 +234,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             <button
               onClick={onBack}
               disabled={submitMutation.isPending}
-              className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-[#1C2A3A] text-[16px] font-bold font-['DM_Sans',sans-serif] hover:bg-amber-400 hover:border-amber-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-bold font-inter hover:bg-amber-400 hover:border-amber-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
             </button>
@@ -243,7 +243,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             <button
               onClick={handleConfirm}
               disabled={submitMutation.isPending}
-              className="flex-1 px-6 py-4 rounded-2xl bg-[#1C2A3A] text-white text-[16px] font-bold font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-bold font-inter hover:bg-primary-light transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {submitMutation.isPending ? (
                 <>

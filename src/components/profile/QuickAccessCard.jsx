@@ -15,17 +15,17 @@ const QuickAccessCard = memo(({ icon, label, count, timestamp, onClick, iconColo
     </div>
 
     {/* Count */}
-    <p className="text-[25px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-1">
+    <p className="text-[25px] font-black text-primary font-playfair mb-1">
       {count}
     </p>
 
     {/* Label */}
-    <p className="text-[14px] font-medium text-gray-600 font-['DM_Sans',sans-serif] mb-2">
+    <p className="text-[14px] font-medium text-gray-600 font-inter mb-2">
       {label}
     </p>
 
     {/* Timestamp */}
-    <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">
+    <p className="text-[11px] text-gray-400 font-inter">
       {timestamp}
     </p>
   </button>
@@ -102,7 +102,7 @@ const QuickAccessGrid = memo(({ savedCount, inquiriesCount, toursCount, messages
 
   return (
     <div>
-      <h2 className="text-[16px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-3 mt-6">
+      <h2 className="text-[16px] font-black text-primary font-playfair mb-3 mt-6">
         Quick Access
       </h2>
       <div className=" mb-6">

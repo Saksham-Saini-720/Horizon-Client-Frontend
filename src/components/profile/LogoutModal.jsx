@@ -34,7 +34,7 @@ const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
         </div>
 
         {/* Content */}
-        <h3 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2 text-center">
+        <h3 className="text-[22px] font-bold text-primary font-playfair mb-2 text-center">
           Log Out
         </h3>
         
@@ -47,7 +47,7 @@ const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[15px] font-semibold text-primary font-['DM_Sans',sans-serif] hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>

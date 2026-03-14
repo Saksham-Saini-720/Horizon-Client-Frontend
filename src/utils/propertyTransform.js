@@ -120,7 +120,7 @@ export function transformPropertyResponse(apiResponse) {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-export function formatPrice(price, currency = 'USD', purpose = 'sale') {
+export function formatPrice(price, currency = 'ZMW', purpose = 'sale') {
   if (!price) return 'Price not available';
   const symbol         = getCurrencySymbol(currency);
   const formattedPrice = new Intl.NumberFormat('en-US').format(price);
@@ -129,7 +129,7 @@ export function formatPrice(price, currency = 'USD', purpose = 'sale') {
 
 export function getCurrencySymbol(currency) {
   const symbols = { USD: '$', EUR: '€', GBP: '£', INR: '₹', ZMW: 'ZMW' };
-  return symbols[currency] || '$';
+  return symbols[currency] || 'ZMW';
 }
 
 export function formatLocation(location) {

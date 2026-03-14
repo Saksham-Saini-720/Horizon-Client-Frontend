@@ -15,7 +15,7 @@ const AgentCard = memo(({ agent }) => {
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center">
-              <span className="text-white text-[20px] font-bold font-['DM_Sans',sans-serif]">
+              <span className="text-white text-[20px] font-bold font-inter">
                 {agent.name[0]}
               </span>
             </div>
@@ -24,10 +24,10 @@ const AgentCard = memo(({ agent }) => {
 
         {/* Info */}
         <div className="flex-1">
-          <p className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-0.5">
+          <p className="text-[16px] font-bold text-primary font-inter mb-0.5">
             {agent.name}
           </p>
-          <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+          <p className="text-[12px] text-gray-500 font-inter">
             {agent.title}
           </p>
         </div>

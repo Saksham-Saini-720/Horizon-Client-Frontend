@@ -105,7 +105,7 @@ const ExplorePage = () => {
   const listingsError     = showNearby ? nearbyQuery.isError      : newListingsQuery.isError;
 
   return (
-    <div className="min-h-screen bg-[#F7F6F2]">
+    <div className="min-h-screen bg-surface">
 
       <ExploreHeader
         onSubmitSearch={handleSearch}
@@ -128,7 +128,7 @@ const ExplorePage = () => {
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              <p className="text-[13px] font-medium text-amber-800 font-['DM_Sans',sans-serif]">
+              <p className="text-[13px] font-medium text-amber-800 font-inter">
                 Showing properties near <span className="font-bold">{selectedLocation.name}</span>
               </p>
             </div>

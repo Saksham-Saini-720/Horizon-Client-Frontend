@@ -249,11 +249,11 @@ const PrivacyPage = () => {
             onClick={() => navigate(-1)}
             className="p-1 -ml-1 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors"
           >
-            <svg className="w-6 h-6 text-[#1C2A3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-[17px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+          <h1 className="text-[18px] font-black text-primary font-playfair">
             Privacy Policy
           </h1>
         </div>
@@ -270,7 +270,7 @@ const PrivacyPage = () => {
             </svg>
           </div>
           <div>
-            <h2 className="text-[20px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-1">
+            <h2 className="text-[20px] font-black text-primary font-playfair mb-1">
               Privacy Policy
             </h2>
             <div className="flex items-center gap-1.5 mb-2">
@@ -278,11 +278,11 @@ const PrivacyPage = () => {
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
               </svg>
-              <span className="text-[13px] text-gray-400 font-['DM_Sans',sans-serif]">
+              <span className="text-[13px] text-gray-400 font-inter">
                 Last updated: March 1, 2026
               </span>
             </div>
-            <p className="text-[13px] text-gray-500 font-['DM_Sans',sans-serif] leading-[1.5]">
+            <p className="text-[13px] text-gray-500 font-inter leading-[1.5]">
               Your privacy matters. Here's how we collect, use, and protect your data.
             </p>
           </div>
@@ -294,10 +294,10 @@ const PrivacyPage = () => {
             <div key={card.title} className="border border-gray-200 rounded-2xl p-4 flex items-start gap-3">
               <div className="flex-shrink-0 mt-0.5">{card.icon}</div>
               <div>
-                <p className="text-[13px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+                <p className="text-[13px] font-bold text-primary font-inter">
                   {card.title}
                 </p>
-                <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">
+                <p className="text-[12px] text-gray-500 font-inter">
                   {card.desc}
                 </p>
               </div>
@@ -308,10 +308,10 @@ const PrivacyPage = () => {
         {/* Our Commitments Box */}
         <div className="border border-gray-200 rounded-2xl p-5 mb-8">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-5 h-5 text-[#1C2A3A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
-            <span className="text-[15px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+            <span className="text-[15px] font-bold text-primary font-inter">
               Our Commitments
             </span>
           </div>
@@ -319,7 +319,7 @@ const PrivacyPage = () => {
             {COMMITMENTS.map((item) => (
               <div key={item} className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
-                <p className="text-[13px] text-gray-600 font-['DM_Sans',sans-serif]">{item}</p>
+                <p className="text-[13px] text-gray-600 font-inter">{item}</p>
               </div>
             ))}
           </div>
@@ -341,11 +341,11 @@ const PrivacyPage = () => {
             <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
-            <p className="text-[12px] text-gray-400 font-['DM_Sans',sans-serif]">
+            <p className="text-[12px] text-gray-400 font-inter">
               Your data is encrypted & secure
             </p>
           </div>
-          <p className="text-[12px] text-gray-400 font-['DM_Sans',sans-serif]">
+          <p className="text-[12px] text-gray-400 font-inter">
             © 2026 Horizon Properties Ltd. All rights reserved.
           </p>
         </div>
@@ -358,14 +358,14 @@ const PrivacyPage = () => {
 
 const Section = ({ section }) => (
   <div>
-    <h3 className="text-[16px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-3">
+    <h3 className="text-[16px] font-bold text-primary font-inter mb-3">
       {section.title}
     </h3>
     <div className="space-y-3">
       {section.content.map((block, idx) => {
         if (block.type === 'text') {
           return (
-            <p key={idx} className="text-[14px] text-gray-600 font-['DM_Sans',sans-serif] leading-[1.7]">
+            <p key={idx} className="text-[14px] text-gray-600 font-inter leading-[1.7]">
               {block.text}
             </p>
           );
@@ -373,7 +373,7 @@ const Section = ({ section }) => (
 
         if (block.type === 'subheading') {
           return (
-            <p key={idx} className="text-[14px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mt-2">
+            <p key={idx} className="text-[14px] font-bold text-primary font-inter mt-2">
               {block.text}
             </p>
           );
@@ -383,7 +383,7 @@ const Section = ({ section }) => (
           return (
             <div key={idx} className="space-y-1.5">
               {block.items.map((item, i) => (
-                <p key={i} className="text-[14px] text-gray-600 font-['DM_Sans',sans-serif] leading-[1.7]">
+                <p key={i} className="text-[14px] text-gray-600 font-inter leading-[1.7]">
                   • {item}
                 </p>
               ))}
@@ -395,8 +395,8 @@ const Section = ({ section }) => (
           return (
             <div key={idx} className="space-y-3">
               {block.items.map((item, i) => (
-                <p key={i} className="text-[14px] text-gray-600 font-['DM_Sans',sans-serif] leading-[1.7]">
-                  <span className="font-bold text-[#1C2A3A]">{item.label}</span>{' '}
+                <p key={i} className="text-[14px] text-gray-600 font-inter leading-[1.7]">
+                  <span className="font-bold text-primary">{item.label}</span>{' '}
                   {item.text}
                 </p>
               ))}
@@ -408,8 +408,8 @@ const Section = ({ section }) => (
           return (
             <div key={idx} className="space-y-1.5">
               {block.items.map((item, i) => (
-                <p key={i} className="text-[14px] text-gray-600 font-['DM_Sans',sans-serif] leading-[1.7]">
-                  • <span className="font-bold text-[#1C2A3A]">{item.label}</span>{' '}
+                <p key={i} className="text-[14px] text-gray-600 font-inter leading-[1.7]">
+                  • <span className="font-bold text-primary">{item.label}</span>{' '}
                   {item.text}
                 </p>
               ))}
@@ -424,7 +424,7 @@ const Section = ({ section }) => (
                 line === '' ? (
                   <div key={i} className="h-3" />
                 ) : (
-                  <p key={i} className="text-[14px] text-gray-600 font-['DM_Sans',sans-serif] leading-[1.7]">
+                  <p key={i} className="text-[14px] text-gray-600 font-inter leading-[1.7]">
                     {line}
                   </p>
                 )

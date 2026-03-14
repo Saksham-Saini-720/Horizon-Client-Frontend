@@ -7,7 +7,7 @@ import { memo } from 'react';
  */
 const MembershipBadge = memo(({ memberSince }) => {
   return (
-    <div className=" bg-gradient-to-r from-[#1C2A3A] to-[#2A3A4A] rounded-2xl p-4 shadow-lg">
+    <div className=" bg-gradient-to-r from-primary to-primary-light rounded-2xl p-4 shadow-lg">
       <div className="flex items-center gap-3">
         {/* Star Icon */}
         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
@@ -21,10 +21,10 @@ const MembershipBadge = memo(({ memberSince }) => {
 
         {/* Text */}
         <div className="flex-1">
-          <h3 className="text-[14px] font-bold text-white font-['DM_Sans',sans-serif] ">
+          <h3 className="text-[14px] font-bold text-white font-inter ">
             Horizon Member
           </h3>
-          <p className="text-[12px] text-white/70 font-['DM_Sans',sans-serif]">
+          <p className="text-[12px] text-white/70 font-inter">
             Member since {memberSince}
           </p>
         </div>

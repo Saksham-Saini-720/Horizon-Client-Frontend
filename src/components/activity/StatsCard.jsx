@@ -12,11 +12,11 @@ const StatsCard = memo(({ icon, label, count, color }) => {
         <div className={`${color}`}>
           {icon}
         </div>
-        <span className="text-[13px] font-medium text-gray-600 font-['DM_Sans',sans-serif]">
+        <span className="text-[14px] font-medium text-gray-600 font-inter">
           {label}
         </span>
       </div>
-      <p className="text-[20px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+      <p className="text-[20px] font-bold text-primary font-playfair">
         {count}
       </p>
     </div>

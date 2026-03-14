@@ -7,15 +7,15 @@ import { memo } from "react";
  */
 const SectionHeader = memo(({ title, onSeeAll }) => {
   return (
-    <div className="flex items-center justify-between px-4 mb-3">
-      <h2 className="text-[17px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+    <div className="flex items-center justify-between px-4 py-2 my-3">
+      <h2 className="text-xl font-black text-primary font-playfair">
         {title}
       </h2>
       
       {onSeeAll && (
         <button 
           onClick={onSeeAll} 
-          className="flex items-center gap-0.5 text-[13px] font-semibold text-amber-500 font-['DM_Sans',sans-serif] hover:text-amber-600 transition-colors"
+          className="flex items-center gap-0.5 text-[14px] font-semibold text-amber-500 font-inter hover:text-amber-600 transition-colors"
         >
           See all
           <svg 

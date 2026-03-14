@@ -63,7 +63,7 @@ const PropertyImageCarousel = memo(({ images = [] }) => {
       {/* Image Counter */}
       {images.length > 1 && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-sm">
-          <span className="text-white text-[13px] font-semibold font-['DM_Sans',sans-serif]">
+          <span className="text-white text-[13px] font-semibold font-inter">
             {currentIndex + 1} / {images.length}
           </span>
         </div>

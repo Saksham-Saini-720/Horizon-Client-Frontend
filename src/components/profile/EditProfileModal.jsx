@@ -80,10 +80,10 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
           <div className="px-6 pt-6 pb-4 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-[22px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+                <h2 className="text-[22px] font-black text-primary font-playfair">
                   Edit Profile
                 </h2>
-                <p className="text-[13px] text-gray-500 font-['DM_Sans',sans-serif] mt-1">
+                <p className="text-[14px] text-gray-500 font-inter mt-1">
                   Update your personal information
                 </p>
               </div>
@@ -110,7 +110,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
           <form onSubmit={handleSave} className="px-6 py-6 space-y-5">
             {/* First Name */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -128,14 +128,14 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
             </div>
 
             {/* Last Name */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -153,14 +153,14 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
             </div>
 
             {/* Phone */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -177,17 +177,17 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
-              <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-2">
+              <p className="text-[11px] text-gray-400 font-inter mt-2">
                 Changing phone may require verification
               </p>
             </div>
 
             {/* Email */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-2">
+              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -205,10 +205,10 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-['DM_Sans',sans-serif] focus:outline-none focus:border-[#1C2A3A] focus:ring-2 focus:ring-[#1C2A3A]/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
-              <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] mt-2">
+              <p className="text-[11px] text-gray-400 font-inter mt-2">
                 Changing email may require verification
               </p>
             </div>
@@ -219,14 +219,14 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 type="button"
                 onClick={handleCancel}
                 disabled={updateMutation.isPending}
-                className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[#1C2A3A] font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-primary font-semibold text-[15px] font-inter hover:bg-gray-50 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={updateMutation.isPending}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-[#1C2A3A] text-white font-semibold text-[15px] font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-primary text-white font-semibold text-[15px] font-inter hover:bg-primary-light transition-all shadow-lg active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {updateMutation.isPending ? (
                   <>

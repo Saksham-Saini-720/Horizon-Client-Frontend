@@ -38,7 +38,7 @@ const EmailVerificationPage = memo(() => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-[#F7F6F2] to-amber-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-surface to-amber-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         
         {/* Card */}
@@ -55,14 +55,14 @@ const EmailVerificationPage = memo(() => {
           </div>
 
           {/* Heading */}
-          <h1 className="text-[26px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-3">
+          <h1 className="text-[26px] font-black text-primary font-playfair mb-3">
             Check Your Email
           </h1>
 
           {/* Message */}
-          <p className="text-[15px] text-gray-600 font-['DM_Sans',sans-serif] leading-relaxed mb-6">
+          <p className="text-[16px] text-gray-600 font-inter leading-relaxed mb-6">
             We've sent a verification email to{" "}
-            <span className="font-semibold text-[#1C2A3A]">
+            <span className="font-semibold text-primary">
               {user?.email || "your email address"}
             </span>
             . Click the link in the email to verify your account.
@@ -70,7 +70,7 @@ const EmailVerificationPage = memo(() => {
 
           {/* Info Box */}
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-            <p className="text-[13px] text-amber-800 font-['DM_Sans',sans-serif] leading-relaxed">
+            <p className="text-[14px] text-amber-800 font-inter leading-relaxed">
               💡 <strong>Tip:</strong> Can't find the email? Check your spam or junk folder.
             </p>
           </div>
@@ -79,7 +79,7 @@ const EmailVerificationPage = memo(() => {
           <button
             onClick={handleResend}
             disabled={!canResend || resendMutation.isPending || countdown > 0}
-            className="w-full px-6 py-3.5 rounded-xl text-[15px] font-semibold font-['DM_Sans',sans-serif] transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mb-3"
+            className="w-full px-6 py-3.5 rounded-xl text-[16px] font-semibold font-inter transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mb-3"
             style={{ 
               background: canResend && countdown === 0 && !resendMutation.isPending
                 ? "linear-gradient(135deg, #F5B731, #E8A020)" 
@@ -104,7 +104,7 @@ const EmailVerificationPage = memo(() => {
           {/* Back to Login */}
           <button
             onClick={handleGoToLogin}
-            className="w-full px-6 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] hover:bg-gray-50 active:scale-95 transition-all"
+            className="w-full px-6 py-3 rounded-xl border border-gray-200 text-[16px] font-semibold text-gray-700 font-inter hover:bg-gray-50 active:scale-95 transition-all"
           >
             Back to Login
           </button>
@@ -112,7 +112,7 @@ const EmailVerificationPage = memo(() => {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-[13px] text-gray-500 mt-6 font-['DM_Sans',sans-serif]">
+        <p className="text-center text-[16px] text-gray-500 mt-6 font-inter">
           Already verified?{" "}
           <button
             onClick={handleGoToLogin}

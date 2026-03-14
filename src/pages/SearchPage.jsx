@@ -60,7 +60,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F6F2] pb-28">
+    <div className="min-h-screen bg-surface pb-28">
       
       {/* Header with Search Bar */}
       <SearchHeader
@@ -80,9 +80,9 @@ const SearchPage = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => handleTabChange('buy')}
-              className={`px-4 py-2 rounded-lg text-[14px] font-semibold font-['DM_Sans',sans-serif] transition-colors ${
+              className={`px-4 py-2 rounded-lg text-[14px] font-semibold font-inter transition-colors ${
                 activeTab === 'buy'
-                  ? 'bg-[#1C2A3A] text-white'
+                  ? 'bg-primary text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -90,15 +90,15 @@ const SearchPage = () => {
             </button>
             <button
               onClick={() => handleTabChange('rent')}
-              className={`px-4 py-2 rounded-lg text-[14px] font-semibold font-['DM_Sans',sans-serif] transition-colors ${
+              className={`px-4 py-2 rounded-lg text-[14px] font-semibold font-inter transition-colors ${
                 activeTab === 'rent'
-                  ? 'bg-[#1C2A3A] text-white'
+                  ? 'bg-primary text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               Rent
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-[14px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] hover:border-gray-300 transition-colors">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-[14px] font-semibold text-gray-700 font-inter hover:border-gray-300 transition-colors">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="4" y1="6" x2="20" y2="6" />
                 <line x1="8" y1="12" x2="16" y2="12" />
@@ -111,7 +111,7 @@ const SearchPage = () => {
           {/* Right: Sort, Map Icon, Grid Icon */}
           <div className="flex items-center gap-2">
             {/* Sort Dropdown */}
-            <select className="px-3 py-2 rounded-lg border border-gray-200 text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] bg-white focus:outline-none focus:border-gray-300">
+            <select className="px-3 py-2 rounded-lg border border-gray-200 text-[13px] font-semibold text-gray-700 font-inter bg-white focus:outline-none focus:border-gray-300">
               <option>Newest First</option>
               <option>Price: Low to High</option>
               <option>Price: High to Low</option>
@@ -120,7 +120,7 @@ const SearchPage = () => {
             {/* Map Icon (3 lines) - Navigate to Map */}
             <button
               onClick={() => navigate('/map')}
-              className="p-2 rounded-lg bg-[#1C2A3A] text-white hover:bg-[#2A3A4A] transition-colors"
+              className="p-2 rounded-lg bg-primary text-white hover:bg-primary-light transition-colors"
               aria-label="Map view"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -152,7 +152,7 @@ const SearchPage = () => {
         {activeQuery.isLoading ? (
           <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
         ) : (
-          <p className="text-[14px] text-gray-600 font-['DM_Sans',sans-serif]">
+          <p className="text-[14px] text-gray-600 font-inter">
             {activeQuery.data?.length ?? 0} properties
           </p>
         )}
@@ -189,7 +189,7 @@ const SearchPage = () => {
               query ? (
                 <button
                   onClick={handleClearSearch}
-                  className="mt-4 px-6 py-3 rounded-xl bg-white border-2 border-gray-200 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] hover:bg-gray-50 transition-all"
+                  className="mt-4 px-6 py-3 rounded-xl bg-white border-2 border-gray-200 text-[15px] font-semibold text-primary font-inter hover:bg-gray-50 transition-all"
                 >
                   Clear Filters
                 </button>

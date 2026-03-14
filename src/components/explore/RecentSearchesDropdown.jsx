@@ -8,12 +8,12 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest font-['DM_Sans',sans-serif]">
+        <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest font-inter">
           Recent Searches
         </p>
         <button
           onClick={onClearAll}
-          className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-['DM_Sans',sans-serif]"
+          className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-inter"
         >
           Clear all
         </button>
@@ -40,7 +40,7 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
             {/* Term — click pe select */}
             <span
               onClick={() => onSelect(term)}
-              className="flex-1 text-[14px] font-medium text-[#1C2A3A] font-['DM_Sans',sans-serif] truncate"
+              className="flex-1 text-[14px] font-medium text-primary font-inter truncate"
             >
               {term}
             </span>
@@ -72,7 +72,7 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
 
       {/* ── Footer hint ── */}
       <div className="px-4 py-2 border-t border-gray-50">
-        <p className="text-[11px] text-gray-300 font-['DM_Sans',sans-serif]">
+        <p className="text-[11px] text-gray-300 font-inter">
           Tap to search · ✕ to remove
         </p>
       </div>

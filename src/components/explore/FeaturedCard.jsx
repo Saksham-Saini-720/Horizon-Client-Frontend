@@ -21,7 +21,7 @@ const FeaturedCard = memo(({ id, price, title, location, img }) => {
         {/* Dark gradient so price text is readable */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-        <p className="absolute bottom-2 left-3 text-white text-[13px] font-bold font-['DM_Sans',sans-serif]">
+        <p className="absolute bottom-2 left-3 text-white text-[14px] font-bold font-inter">
           {price}
         </p>
 
@@ -31,7 +31,7 @@ const FeaturedCard = memo(({ id, price, title, location, img }) => {
       </div>
 
       {/* Title + Location */}
-      <p className="px-2 text-[13px] font-semibold text-[#1C2A3A] mt-2 leading-snug font-['DM_Sans',sans-serif] line-clamp-1">
+      <p className="px-2 text-[14px] font-black text-primary mt-2 leading-snug font-playfair line-clamp-1">
         {title}
       </p>
 
@@ -40,7 +40,7 @@ const FeaturedCard = memo(({ id, price, title, location, img }) => {
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
           <circle cx="12" cy="10" r="3" />
         </svg>
-        <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif] line-clamp-1">{location}</p>
+        <p className="text-[12px] text-gray-400 font-inter line-clamp-1">{location}</p>
       </div>
 
     </div>

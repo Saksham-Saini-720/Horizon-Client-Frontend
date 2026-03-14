@@ -59,11 +59,13 @@ const Navbar = () => {
             </svg>
           </button>
         )}
-        <h1 className="text-[17px] font-bold text-[#1C2A3A] tracking-tight m-0 truncate font-['DM_Sans',sans-serif]">
+        <h1 className="text-[24px] font-black text-primary  m-0 truncate font-playfair">
           {title}
         </h1>
       </div>
-      <HorizonLogo size={40} />
+      <div onClick={()=> navigate("/")} className="cursor-pointer">
+        <HorizonLogo size={50} />
+      </div>
     </header>
   );
 };

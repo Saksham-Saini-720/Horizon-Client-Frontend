@@ -23,13 +23,13 @@ const MessageBubble = memo(({ message, showTime = true }) => {
             className="px-4 py-2.5 rounded-[18px] rounded-tr-[4px]"
             style={{ backgroundColor: '#1C2A3A' }}
           >
-            <p className="text-[14px] text-white font-['DM_Sans',sans-serif] leading-[1.4]">
+            <p className="text-[14px] text-white font-inter leading-[1.4]">
               {content}
             </p>
           </div>
           {showTime && (
             <div className="flex items-center justify-end gap-1 mt-0.5 pr-0.5">
-              <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">
+              <span className="text-[12px] text-gray-400 font-inter">
                 {timeStr}
               </span>
               {/* Read tick marks */}
@@ -57,13 +57,13 @@ const MessageBubble = memo(({ message, showTime = true }) => {
     <div className="flex justify-start mb-1.5 px-4">
       <div className="max-w-[75%]">
         <div className="px-4 py-2.5 rounded-[18px] rounded-tl-[4px] bg-white shadow-sm border border-gray-100">
-          <p className="text-[14px] text-[#1C2A3A] font-['DM_Sans',sans-serif] leading-[1.4]">
+          <p className="text-[14px] text-primary font-inter leading-[1.4]">
             {content}
           </p>
         </div>
         {showTime && (
           <div className="mt-0.5 pl-0.5">
-            <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">
+            <span className="text-[11px] text-gray-400 font-inter">
               {timeStr}
             </span>
           </div>
@@ -80,7 +80,7 @@ MessageBubble.displayName = 'MessageBubble';
 export const DateSeparator = memo(({ date }) => (
   <div className="flex items-center justify-center py-3 px-4">
     <div className="px-4 py-1 bg-gray-200 rounded-full">
-      <span className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif] font-medium">
+      <span className="text-[12px] text-gray-500 font-inter font-medium">
         {date}
       </span>
     </div>
