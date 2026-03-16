@@ -1,16 +1,15 @@
-
+// src/api/conversationApi.js
 import axiosInstance from './axiosInstance';
 
 /**
  * Start a new conversation
  * POST /api/v1/conversations
+ * Backend returns: { conversation, thread }
  */
-export const startConversation = async ({ recipientId, propertyId, leadId, subject, initialMessage }) => {
+export const startConversation = async ({ propertyId, subject, initialMessage }) => {
   try {
     const response = await axiosInstance.post('/conversations', {
-      recipientId,
       propertyId,
-      leadId,
       subject,
       initialMessage,
     });
@@ -60,17 +59,47 @@ export const getConversationById = async (id, params = {}) => {
 };
 
 /**
- * Send a message in a conversation
- * POST /api/v1/conversations/:id/messages
+ * Send a message in a thread
+ * POST /api/v1/conversations/:conversationId/threads/:threadId/messages
  */
-export const sendMessage = async (conversationId, content) => {
+export const sendMessage = async (conversationId, threadId, content) => {
   try {
-    const response = await axiosInstance.post(`/conversations/${conversationId}/messages`, {
-      content,
-    });
+    const response = await axiosInstance.post(
+      `/conversations/${conversationId}/threads/${threadId}/messages`,
+      { content }
+    );
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to send message');
+  }
+};
+
+/**
+ * Get messages for a thread
+ * GET /api/v1/conversations/:conversationId/threads/:threadId/messages
+ */
+export const getThreadMessages = async (conversationId, threadId, params = {}) => {
+  try {
+    const response = await axiosInstance.get(
+      `/conversations/${conversationId}/threads/${threadId}/messages`,
+      { params }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch messages');
+  }
+};
+
+/**
+ * Get threads for a conversation
+ * GET /api/v1/conversations/:conversationId/threads
+ */
+export const getThreads = async (conversationId) => {
+  try {
+    const response = await axiosInstance.get(`/conversations/${conversationId}/threads`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch threads');
   }
 };
 

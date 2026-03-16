@@ -1,6 +1,6 @@
-// src/pages/ConversationPage.jsx
+
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useConversationById } from '../hooks/conversations/useConversationById';
 import { useSendMessage } from '../hooks/conversations/useSendMessage';
@@ -11,12 +11,14 @@ import PropertyBanner from '../components/chat/PropertyBanner';
 const ConversationPage = () => {
   const { id: conversationId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const threadId = searchParams.get('thread') || null;
   const messagesEndRef = useRef(null);
   const hasMarkedRead = useRef(false);
   const [text, setText] = useState('');
   const textareaRef = useRef(null);
 
-  const { messages, participant, property, isLoading, isError, error, refetch } = useConversationById(conversationId);
+  const { messages, participant, property, isLoading, isError, error, refetch } = useConversationById(conversationId, { threadId });
   const { sendMsg, isSending } = useSendMessage(conversationId);
   const { markRead } = useMarkAsRead();
   const optimisticMessages = useSelector(selectOptimisticMessages(conversationId));
@@ -28,7 +30,6 @@ const ConversationPage = () => {
     }
   }, [conversationId, isLoading, markRead]);
 
-  // Merge real + optimistic messages
   const allMessages = useCallback(() => {
     const optimisticIds = new Set(optimisticMessages.map(m => m.id));
     const serverMessages = messages.filter(m => !optimisticIds.has(m.id));
@@ -48,16 +49,11 @@ const ConversationPage = () => {
     if (!trimmed || isSending) return;
     sendMsg(trimmed);
     setText('');
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
+    if (textareaRef.current) textareaRef.current.style.height = 'auto';
   }, [text, isSending, sendMsg]);
 
   const handleKeyDown = useCallback((e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   }, [handleSend]);
 
   const handleTextChange = useCallback((e) => {
@@ -96,7 +92,7 @@ const ConversationPage = () => {
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
-          <p className="text-[15px] font-semibold text-primary mb-1 font-['DM_Sans',sans-serif]">Couldn't load conversation</p>
+          <p className="text-[15px] font-semibold text-[#1C2A3A] mb-1 font-['DM_Sans',sans-serif]">Couldn't load conversation</p>
           <p className="text-[13px] text-gray-400 text-center mb-5 font-['DM_Sans',sans-serif]">{error?.message || 'Something went wrong'}</p>
           <button onClick={refetch} className="px-6 py-2.5 rounded-xl bg-amber-500 text-white text-[14px] font-semibold font-['DM_Sans',sans-serif]">
             Try Again
@@ -112,7 +108,6 @@ const ConversationPage = () => {
       {/* ── Fixed Header ── */}
       <div className="fixed top-0 left-0 right-0 z-50 shadow-md" style={{ backgroundColor: '#1C2A3A' }}>
         <div className="flex items-center gap-3 px-3 pt-12 pb-3">
-          {/* Back */}
           <button onClick={() => navigate('/chat')} className="p-1.5 rounded-xl hover:bg-white/10 active:bg-white/20 transition-colors flex-shrink-0">
             <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -120,7 +115,7 @@ const ConversationPage = () => {
           </button>
 
           {/* Avatar */}
-          <div className="relative flex-shrink-0">
+          <div className="flex-shrink-0">
             <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center"
               style={{ backgroundColor: participant?.avatar ? 'transparent' : avatarColor }}>
               {participant?.avatar ? (
@@ -129,27 +124,18 @@ const ConversationPage = () => {
                 <span className="text-white text-[15px] font-bold font-['DM_Sans',sans-serif]">{avatarInitials}</span>
               )}
             </div>
-            {participant?.isOnline && (
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-primary"/>
-            )}
           </div>
 
-          {/* Name & status */}
+          {/* Name — no online/offline status */}
           <div className="flex-1 min-w-0">
             <p className="text-[15px] font-bold text-white font-['DM_Sans',sans-serif] truncate leading-tight">
-              {participant?.name || 'Unknown'}
+              {participant?.name || 'Support'}
             </p>
-            <p className="text-[12px] font-['DM_Sans',sans-serif] leading-tight">
-              {participant?.isOnline
-                ? <span className="text-green-400">Active now</span>
-                : participant?.lastSeen
-                  ? <span className="text-white/50">Last seen {formatLastSeen(participant.lastSeen)}</span>
-                  : <span className="text-white/50">Offline</span>
-              }
+            <p className="text-[12px] text-white/50 font-['DM_Sans',sans-serif] leading-tight">
+              Property Support
             </p>
           </div>
 
-          {/* More */}
           <button className="p-2 rounded-xl hover:bg-white/10 transition-colors">
             <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <circle cx="12" cy="5" r="1" fill="currentColor"/>
@@ -163,14 +149,12 @@ const ConversationPage = () => {
       {/* ── Messages ── */}
       <div className="flex-1 overflow-y-auto" style={{ paddingTop: '96px', paddingBottom: '76px' }}>
 
-        {/* Property banner */}
         {property && (
           <div className="pt-3 pb-1">
             <PropertyBanner property={property}/>
           </div>
         )}
 
-        {/* Empty state */}
         {allMessages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 px-6">
             <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm">
@@ -184,23 +168,18 @@ const ConversationPage = () => {
           </div>
         )}
 
-        {/* Message groups by date */}
         {messageGroups.map((group) => (
           <div key={group.date}>
-            {/* Date separator */}
             <div className="flex items-center justify-center py-3 px-4">
               <span className="px-4 py-1 bg-white/80 backdrop-blur-sm rounded-full text-[11px] text-gray-500 font-['DM_Sans',sans-serif] font-medium shadow-sm">
                 {group.date}
               </span>
             </div>
-
             {group.messages.map((msg, idx) => {
               const nextMsg = group.messages[idx + 1];
               const showTime = !nextMsg || nextMsg.isFromMe !== msg.isFromMe || isTimeDiffSignificant(msg.createdAt, nextMsg?.createdAt);
               const isFirst = idx === 0 || group.messages[idx - 1]?.isFromMe !== msg.isFromMe;
-              return (
-                <MessageBubble key={msg.id} message={msg} showTime={showTime} isFirst={isFirst}/>
-              );
+              return <MessageBubble key={msg.id} message={msg} showTime={showTime} isFirst={isFirst}/>;
             })}
           </div>
         ))}
@@ -208,10 +187,9 @@ const ConversationPage = () => {
         <div ref={messagesEndRef} className="h-2"/>
       </div>
 
-      {/* ── Message Input ── */}
+      {/* ── Input ── */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 px-3 py-2.5">
         <div className="flex items-end gap-2">
-          {/* Text area */}
           <div className="flex-1 flex items-end bg-gray-100 rounded-2xl px-3.5 py-2.5 min-h-[44px]">
             <textarea
               ref={textareaRef}
@@ -220,7 +198,7 @@ const ConversationPage = () => {
               onKeyDown={handleKeyDown}
               placeholder="Type a message..."
               rows={1}
-              className="flex-1 bg-transparent text-[14px] text-primary placeholder-gray-400 font-['DM_Sans',sans-serif] resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
+              className="flex-1 bg-transparent text-[14px] text-[#1C2A3A] placeholder-gray-400 font-['DM_Sans',sans-serif] resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
               style={{ scrollbarWidth: 'none' }}
             />
             <button className="ml-1.5 flex-shrink-0 mb-0.5 hover:opacity-75 transition-opacity">
@@ -232,15 +210,11 @@ const ConversationPage = () => {
               </svg>
             </button>
           </div>
-
-          {/* Send button */}
           <button
             onClick={handleSend}
             disabled={!text.trim() || isSending}
             className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-              text.trim() && !isSending
-                ? 'bg-primary hover:bg-[#2E4057] active:scale-95 shadow-md'
-                : 'bg-gray-200'
+              text.trim() && !isSending ? 'bg-[#1C2A3A] hover:bg-[#2E4057] active:scale-95 shadow-md' : 'bg-gray-200'
             }`}
           >
             {isSending ? (
@@ -253,43 +227,28 @@ const ConversationPage = () => {
           </button>
         </div>
       </div>
-
     </div>
   );
 };
 
-// ── MessageBubble ──
+// ── MessageBubble — no double tick ──
 const MessageBubble = ({ message, showTime, isFirst }) => {
-  const { content, isFromMe, createdAt, isRead, isOptimistic } = message;
+  const { content, isFromMe, createdAt, isOptimistic } = message;
   const timeStr = formatTime(createdAt);
 
   if (isFromMe) {
     return (
       <div className="flex justify-end mb-1 px-3">
         <div className="max-w-[75%]" style={{ opacity: isOptimistic ? 0.7 : 1 }}>
-          <div
-            className="px-4 py-2.5 shadow-sm"
-            style={{
-              backgroundColor: '#1C2A3A',
-              borderRadius: isFirst ? '18px 18px 4px 18px' : '18px 4px 4px 18px',
-            }}
-          >
-            <p className="text-[14px] text-white font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">
-              {content}
-            </p>
+          <div className="px-4 py-2.5 shadow-sm" style={{
+            backgroundColor: '#1C2A3A',
+            borderRadius: isFirst ? '18px 18px 4px 18px' : '18px 4px 4px 18px',
+          }}>
+            <p className="text-[14px] text-white font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">{content}</p>
           </div>
           {showTime && (
-            <div className="flex items-center justify-end gap-1 mt-0.5 pr-0.5">
+            <div className="flex justify-end mt-0.5 pr-0.5">
               <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">{timeStr}</span>
-              {isOptimistic ? (
-                <svg className="w-3.5 h-3.5 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-              ) : isRead ? (
-                <DoubleCheck color="#F59E0B"/>
-              ) : (
-                <DoubleCheck color="#9CA3AF"/>
-              )}
             </div>
           )}
         </div>
@@ -300,15 +259,10 @@ const MessageBubble = ({ message, showTime, isFirst }) => {
   return (
     <div className="flex justify-start mb-1 px-3">
       <div className="max-w-[75%]">
-        <div
-          className="px-4 py-2.5 bg-white shadow-sm border border-gray-100"
-          style={{
-            borderRadius: isFirst ? '18px 18px 18px 4px' : '4px 18px 18px 18px',
-          }}
-        >
-          <p className="text-[14px] text-primary font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">
-            {content}
-          </p>
+        <div className="px-4 py-2.5 bg-white shadow-sm border border-gray-100" style={{
+          borderRadius: isFirst ? '18px 18px 18px 4px' : '4px 18px 18px 18px',
+        }}>
+          <p className="text-[14px] text-[#1C2A3A] font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">{content}</p>
         </div>
         {showTime && (
           <div className="mt-0.5 pl-0.5">
@@ -319,13 +273,6 @@ const MessageBubble = ({ message, showTime, isFirst }) => {
     </div>
   );
 };
-
-const DoubleCheck = ({ color }) => (
-  <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
-    <polyline points="1,5.5 4.5,9 9,2" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <polyline points="6,5.5 9.5,9 15,2" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 const HeaderSkeleton = () => (
   <div className="fixed top-0 left-0 right-0 z-50 pt-12 pb-3 px-4 flex items-center gap-3 animate-pulse" style={{ backgroundColor: '#1C2A3A' }}>
@@ -368,17 +315,6 @@ function getDateLabel(dateStr) {
 function formatTime(dateStr) {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-}
-
-function formatLastSeen(dateStr) {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMins = Math.floor((now - date) / 60000);
-  if (diffMins < 60) return `${diffMins}m ago`;
-  const diffHrs = Math.floor(diffMins / 60);
-  if (diffHrs < 24) return `${diffHrs}h ago`;
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function isTimeDiffSignificant(date1, date2) {

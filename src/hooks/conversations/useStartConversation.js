@@ -12,34 +12,31 @@ export const useStartConversation = () => {
 
   const mutation = useMutation({
     mutationFn: async ({ agent, property, message, name, email, phone }) => {
-      const recipientId = agent?.id || agent?._id;
-      if (!recipientId) throw new Error('Agent ID missing');
-
-      // Step 1: Start conversation
+      // Backend no longer needs recipientId — it's determined by property owner
       const conversationResponse = await startConversation({
-        recipientId,
-        propertyId: property?.id || property?._id,
-        subject: `Enquiry: ${property?.title || 'Property'}`,
+        propertyId:     property?.id || property?._id,
+        subject:        `Enquiry: ${property?.title || 'Property'}`,
         initialMessage: message,
       });
 
-      // Step 2: Submit enquiry (non-blocking)
+      // Submit enquiry (non-blocking)
       await submitPropertyEnquiry(property?.id || property?._id, {
         name, email, phone, message,
       }).catch((e) => console.warn('⚠️ Enquiry API failed:', e.message));
 
-      const conv =
-        conversationResponse?.data?.conversation ||
-        conversationResponse?.data ||
-        conversationResponse;
+      // Backend now returns { conversation, thread }
+      const conv   = conversationResponse?.data?.conversation || conversationResponse?.data;
+      const thread = conversationResponse?.data?.thread;
 
       const conversationId = conv?._id || conv?.id;
+      const threadId       = thread?._id || thread?.id;
+
       if (!conversationId) throw new Error('No conversationId in response');
 
-      return { conversationId };
+      return { conversationId, threadId };
     },
 
-    onSuccess: ({ conversationId }, variables) => {
+    onSuccess: ({ conversationId, threadId }, variables) => {
       const agentData = {
         name:   variables.agent?.name || 'Agent',
         avatar: variables.agent?.photo || variables.agent?.avatar || null,
@@ -53,7 +50,7 @@ export const useStartConversation = () => {
         price:    variables.property?.price || '',
       };
 
-      // Save to localStorage so it persists after refresh
+      // Save to localStorage
       const newInquiry = {
         id:        'local-' + Date.now(),
         property:  propertyData,
@@ -70,11 +67,9 @@ export const useStartConversation = () => {
         localStorage.setItem('localEnquiries', JSON.stringify([newInquiry, ...existing]));
       } catch(e) { console.warn('localStorage failed', e); }
 
-      // Update Redux
-      dispatch(addMessage({ id: conversationId, conversationId, agent: agentData, property: propertyData, message: variables.message }));
+      dispatch(addMessage({ id: conversationId, conversationId, threadId, agent: agentData, property: propertyData, message: variables.message }));
       dispatch(addInquiry({ ...newInquiry }));
 
-      // Refresh queries
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
       queryClient.invalidateQueries({ queryKey: ['enquiries'] });
 

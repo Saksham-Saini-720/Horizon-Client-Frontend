@@ -1,32 +1,62 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { getConversations } from '../../api/conversationApi';
+import { getConversations, getThreads } from '../../api/conversationApi';
 
 export const useConversations = (filters = {}) => {
   const { status, search, page = 1, limit = 20 } = filters;
 
-  // Get current user ID to find the "other" participant
   const currentUserId = useSelector(
     (state) => state.auth?.user?._id || state.auth?.user?.id
+  );
+  const currentUserRole = useSelector(
+    (state) => state.auth?.user?.role
   );
 
   const query = useQuery({
     queryKey: ['conversations', { status, search, page, limit }],
-    queryFn: () => getConversations({ status, search, page, limit }),
-    select: (data) => {
+    queryFn: async () => {
+      const data = await getConversations({ status, search, page, limit });
       const conversations = data?.data?.conversations || data?.data || [];
-      const pagination    = data?.data?.pagination || null;
+
+      // Each conversation can have MULTIPLE threads (one per property)
+      // Show one list item per thread — not per conversation
+      const allItems = [];
+
+      await Promise.all(
+        conversations.map(async (conv) => {
+          try {
+            const threadsResp = await getThreads(conv._id || conv.id);
+            const threads = threadsResp?.data?.threads || [];
+
+            if (threads.length === 0) {
+              // Conversation with no threads — show as one item
+              allItems.push(normalizeItem(conv, null, currentUserId, currentUserRole));
+            } else {
+              // One item per thread
+              threads.forEach(thread => {
+                allItems.push(normalizeItem(conv, thread, currentUserId, currentUserRole));
+              });
+            }
+          } catch {
+            allItems.push(normalizeItem(conv, null, currentUserId, currentUserRole));
+          }
+        })
+      );
+
+      // Sort by latest message
+      allItems.sort((a, b) => {
+        if (!a.lastMessageAt) return 1;
+        if (!b.lastMessageAt) return -1;
+        return new Date(b.lastMessageAt) - new Date(a.lastMessageAt);
+      });
+
       return {
-        conversations: conversations.map((conv) =>
-          normalizeConversation(conv, currentUserId)
-        ),
-        pagination,
-        total: pagination?.total || conversations.length,
+        conversations: allItems,
+        total: allItems.length,
       };
     },
-    placeholderData: { conversations: [], pagination: null, total: 0 },
-    keepPreviousData: true,
+    placeholderData: { conversations: [], total: 0 },
     staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 5,
     refetchOnWindowFocus: true,
@@ -35,7 +65,6 @@ export const useConversations = (filters = {}) => {
 
   return {
     conversations: query.data?.conversations ?? [],
-    pagination:    query.data?.pagination    ?? null,
     total:         query.data?.total         ?? 0,
     isLoading:     query.isLoading,
     isFetching:    query.isFetching,
@@ -45,57 +74,70 @@ export const useConversations = (filters = {}) => {
   };
 };
 
-// ─── Normalize ────────────────────────────────────────────────────────────────
+// ─── Normalize one thread → one list item ────────────────────────────────────
 
-const normalizeConversation = (conv, currentUserId) => {
-  // participants is an array — find the OTHER person (not current user)
-  const participants = conv.participants || [];
-  
-  const otherParticipantObj = participants.find(
-    (p) => {
-      const uid = p.user?._id || p.user?.id;
-      return uid !== currentUserId;
-    }
-  ) || participants[0]; // fallback to first if can't determine
+const normalizeItem = (conv, thread, currentUserId, currentUserRole) => {
+  const client = conv.client || {};
+  const isAdmin = currentUserRole === 'admin' || currentUserRole === 'manager';
 
-  const otherUser = otherParticipantObj?.user || {};
+  const participant = isAdmin
+    ? {
+        id:     client._id || client.id || '',
+        name:   [client.firstName, client.lastName].filter(Boolean).join(' ') || 'Client',
+        avatar: client.avatar || null,
+        isOnline: false,
+      }
+    : {
+        id:     'support',
+        name:   'Support',
+        avatar: null,
+        isOnline: false,
+      };
 
-  // unreadCounts is { [userId]: count } — get current user's unread
-  const unreadCount = currentUserId
-    ? (conv.unreadCounts?.[currentUserId] ?? 0)
+  // Property from thread
+  const prop = thread?.property;
+  const property = prop
+    ? {
+        id:       prop._id || prop.id,
+        title:    prop.title || 'Property',
+        location: prop.location || '',
+        image:    prop.images?.featured?.thumbnail?.url ||
+                  prop.images?.featured?.original?.url || null,
+      }
+    : null;
+
+  // lastMessage from thread
+  const lastMsg = thread?.lastMessage;
+  const lastSenderId = lastMsg?.sender?._id || lastMsg?.sender?.id || lastMsg?.sender || '';
+  const lastMessageIsFromMe = lastSenderId.toString() === currentUserId?.toString();
+
+  // unreadCounts from thread
+  const clientId = client._id || client.id || '';
+  const isClient = clientId.toString() === currentUserId?.toString();
+  const unreadCount = thread
+    ? isClient
+      ? (thread.unreadCounts?.[currentUserId] ?? 0)
+      : (thread.unreadCounts?.['staff'] ?? 0)
     : 0;
 
+  //Use conversationId for navigation — ConversationPage will find the right thread
+  const conversationId = conv._id || conv.id;
+  const threadId = thread?._id || thread?.id;
+
   return {
-    id: conv._id || conv.id,
-
-    participant: {
-      id:       otherUser._id  || otherUser.id  || '',
-      name:     otherUser.name ||
-                [otherUser.firstName, otherUser.lastName].filter(Boolean).join(' ') ||
-                'Unknown',
-      avatar:   otherUser.avatar || otherUser.profileImage || null,
-      isOnline: otherUser.isOnline || false,
-    },
-
-    property: (conv.property && conv.property !== null)
-      ? {
-          id:       conv.property._id || conv.property.id,
-          title:    conv.property.title || 'Property',
-          location: conv.property.location || conv.property.address || '',
-          image:    conv.property.images?.featured?.thumbnail?.url ||
-                    conv.property.images?.[0] || null,
-        }
-      : null,
-
-    lastMessage:          conv.lastMessage?.content || '',
-    lastMessageAt:        conv.lastMessage?.sentAt  || conv.updatedAt,
-    lastMessageIsFromMe:  conv.lastMessage?.sender === currentUserId,
-
+    // Unique ID per thread item
+    id:                  threadId || conversationId,
+    conversationId,
+    threadId,
+    participant,
+    property,
+    lastMessage:         lastMsg?.content || '',
+    lastMessageAt:       lastMsg?.sentAt  || thread?.updatedAt || conv.updatedAt,
+    lastMessageIsFromMe,
     unreadCount,
-    hasUnread: unreadCount > 0,
-
-    status:  conv.status  || 'active',
-    subject: conv.subject || '',
+    hasUnread:           unreadCount > 0,
+    status:              thread?.status || conv.status || 'active',
+    subject:             thread?.subject || '',
   };
 };
 
