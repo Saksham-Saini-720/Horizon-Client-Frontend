@@ -30,7 +30,7 @@ const SuccessState = memo(({
       </div>
 
       {/* Title */}
-      <h3 className="text-[24px] font-bold text-gray-900 mb-2">
+      <h3 className="text-[24px] font-semibold text-gray-900 mb-2">
         {title}
       </h3>
 
@@ -44,7 +44,7 @@ const SuccessState = memo(({
       {/* Loading Indicator (for auto-redirect) */}
       {showRedirectIndicator && (
         <div className="flex items-center justify-center gap-2 mb-6">
-          <p className="text-[14px] text-gray-500">Redirecting</p>
+          <p className="text-[15px] text-gray-500">Redirecting</p>
           <div className="flex gap-1">
             <div className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0s' }} />
             <div className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0.2s' }} />

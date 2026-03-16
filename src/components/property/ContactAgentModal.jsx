@@ -50,7 +50,7 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
       {/* Backdrop */}
       <div
           className={`
-            fixed inset-0 bg-black/50 backdrop-blur-sm z-40
+            fixed inset-0 bg-bold/50 backdrop-blur-sm z-40
             transition-opacity duration-300
             ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
           `}
@@ -71,7 +71,7 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
         {/* Header */}
         <div className="px-6 pt-6 pb-4">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-[22px] font-black text-primary font-playfair">
+            <h2 className="text-[22px] font-semibold text-primary font-inter">
               Contact Agent
             </h2>
             <button
@@ -104,7 +104,7 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-400 to-amber-600 text-white text-[22px] font-black font-playfair">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-secondary text-white text-[22px] font-semibold font-inter">
                   {agent?.name?.charAt(0) || 'S'}
                 </div>
               )}
@@ -112,25 +112,25 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
 
             {/* Agent Details */}
             <div className="flex-1">
-              <h3 className="text-[18px] font-black text-primary font-playfair mb-0.5">
+              <h3 className="text-[18px] font-semibold text-primary font-inter mb-0.5">
                 {agent?.name || 'Sarah Mulenga'}
               </h3>
-              <p className="text-[14px] text-gray-500 font-inter mb-1.5">
+              <p className="text-[15px] text-gray-500 font-inter mb-1.5">
                 {agent?.title || 'Property Agent'}
               </p>
               
               {/* Rating */}
               <div className="flex items-center gap-1.5">
                 <svg
-                  className="w-4 h-4 text-amber-400 fill-current"
+                  className="w-4 h-4 text-secondary fill-current"
                   viewBox="0 0 24 24"
                 >
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
-                <span className="text-[13px] font-semibold text-primary font-inter">
+                <span className="text-[15px] font-semibold text-primary font-inter">
                   {agent?.rating || '4.9'}
                 </span>
-                <span className="text-[13px] text-gray-400 font-inter">
+                <span className="text-[15px] text-gray-400 font-inter">
                   ({agent?.reviews || '127'} reviews)
                 </span>
               </div>
@@ -159,7 +159,7 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
 
             {/* Property Details */}
             <div className="flex-1 min-w-0">
-              <h4 className="text-[14px] font-black text-primary font-playfair line-clamp-1 mb-1">
+              <h4 className="text-[15px] font-semibold text-primary font-inter line-clamp-1 mb-1">
                 {property?.title || 'Modern Executive Villa in Kabulonga'}
               </h4>
               <p className="text-[12px] text-gray-500 font-inter truncate">
@@ -189,10 +189,10 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
               </svg>
             </div>
             <div className="flex-1 text-left">
-              <p className="text-[16px] font-bold font-inter mb-0.5">
+              <p className="text-[16px] font-semibold font-inter mb-0.5">
                 Call Now
               </p>
-              <p className="text-[13px] text-white/80 font-inter">
+              <p className="text-[15px] text-white/80 font-inter">
                 {agent?.phone || '+260 977 123 456'}
               </p>
             </div>
@@ -213,10 +213,10 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
               </svg>
             </div>
             <div className="flex-1 text-left">
-              <p className="text-[16px] font-bold text-primary font-inter mb-0.5">
+              <p className="text-[16px] font-semibold text-primary font-inter mb-0.5">
                 WhatsApp
               </p>
-              <p className="text-[13px] text-gray-500 font-inter">
+              <p className="text-[15px] text-gray-500 font-inter">
                 Send a message via WhatsApp
               </p>
             </div>
@@ -225,7 +225,7 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
           {/* Copy Phone Number - White by default, Yellow on hover */}
           <button
             onClick={handleCopyPhone}
-            className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl bg-white border border-gray-200 text-primary hover:bg-amber-400 hover:border-amber-400 transition-all active:scale-[0.98] shadow-sm"
+            className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl bg-white border border-gray-200 text-primary hover:bg-secondary hover:border-secondary transition-all active:scale-[0.98] shadow-sm"
           >
             <svg
               className="w-5 h-5"
@@ -238,7 +238,7 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
-            <span className="text-[15px] font-bold font-inter">
+            <span className="text-[15px] font-semibold font-inter">
               Copy phone number
             </span>
           </button>

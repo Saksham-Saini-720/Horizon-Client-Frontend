@@ -40,7 +40,7 @@ const ToursTab = memo(() => {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h3 className="text-[12px] font-bold text-gray-600 font-inter mb-2">
+        <h3 className="text-[12px] font-semibold text-gray-600 font-inter mb-2">
           Failed to Load Tours
         </h3>
         <p className="text-[16px] text-gray-400 font-inter mb-4">
@@ -48,7 +48,7 @@ const ToursTab = memo(() => {
         </p>
         <button
           onClick={() => refetch()}
-          className="px-6 py-2 bg-amber-500 text-white rounded-xl font-semibold hover:bg-amber-600 transition-colors"
+          className="px-6 py-2 bg-secondary text-white rounded-xl font-semibold hover:bg-secondary transition-colors"
         >
           Try Again
         </button>
@@ -74,7 +74,7 @@ const ToursTab = memo(() => {
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
         </div>
-        <h3 className="text-[20px] font-bold text-gray-600 font-inter mb-2">
+        <h3 className="text-[20px] font-semibold text-gray-600 font-inter mb-2">
           No Tour Requests Yet
         </h3>
         <p className="text-[16px] text-gray-400 font-inter">

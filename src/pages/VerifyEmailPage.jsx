@@ -16,13 +16,13 @@ const VerifyingState = memo(() => (
       
       {/* Animated Icon */}
       <div className="mb-6 flex justify-center">
-        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg animate-pulse">
+        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-lg animate-pulse">
           <Spinner size="lg" color="white" />
         </div>
       </div>
 
       {/* Heading */}
-      <h1 className="text-[26px] font-black text-primary font-playfair mb-3">
+      <h1 className="text-[26px] font-semibold text-primary font-inter mb-3">
         Verifying Your Email
       </h1>
 
@@ -49,7 +49,7 @@ const VerificationError = memo(({ onRetry, onGoHome }) => (
         </div>
 
         {/* Heading */}
-        <h1 className="text-[26px] font-balck text-primary font-playfair mb-3">
+        <h1 className="text-[26px] font-balck text-primary font-inter mb-3">
           Verification Failed
         </h1>
 
@@ -77,9 +77,9 @@ const VerificationError = memo(({ onRetry, onGoHome }) => (
         </div>
 
         {/* Help Text */}
-        <p className="text-[13px] text-gray-500 mt-6 font-inter">
+        <p className="text-[15px] text-gray-500 mt-6 font-inter">
           Need help?{" "}
-          <a href="/support" className="text-amber-600 font-semibold hover:underline">
+          <a href="/support" className="text-secondary font-semibold hover:underline">
             Contact Support
           </a>
         </p>

@@ -8,7 +8,7 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest font-inter">
+        <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-inter">
           Recent Searches
         </p>
         <button
@@ -40,7 +40,7 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
             {/* Term — click pe select */}
             <span
               onClick={() => onSelect(term)}
-              className="flex-1 text-[14px] font-medium text-primary font-inter truncate"
+              className="flex-1 text-[15px] font-medium text-primary font-inter truncate"
             >
               {term}
             </span>

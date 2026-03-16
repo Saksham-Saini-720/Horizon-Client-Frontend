@@ -30,12 +30,12 @@ const ConversationList = memo(({ conversations, isLoading, isError, error, onRet
         <p className="text-[16px] font-semibold text-primary mb-1 font-inter">
           Couldn't load messages
         </p>
-        <p className="text-[14px] text-gray-400 text-center mb-4 font-inter">
+        <p className="text-[15px] text-gray-400 text-center mb-4 font-inter">
           {error?.message || 'Something went wrong'}
         </p>
         <button
           onClick={onRetry}
-          className="px-5 py-2 rounded-xl bg-amber-500 text-white text-[14px] font-semibold font-inter"
+          className="px-5 py-2 rounded-xl bg-secondary text-white text-[15px] font-semibold font-inter"
         >
           Try Again
         </button>
@@ -54,7 +54,7 @@ const ConversationList = memo(({ conversations, isLoading, isError, error, onRet
         <p className="text-[16px] font-semibold text-primary mb-1 font-inter">
           No messages yet
         </p>
-        <p className="text-[14px] text-gray-400 text-center font-inter">
+        <p className="text-[15px] text-gray-400 text-center font-inter">
           Start a conversation by inquiring about a property
         </p>
       </div>

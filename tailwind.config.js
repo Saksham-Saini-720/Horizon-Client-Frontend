@@ -10,10 +10,10 @@ export default {
           DEFAULT: '#171C26',
           light:   '#2A3A4A',
         },
+        secondary: '#DB143C',
         surface: '#F7F6F2',
       },
       fontFamily: {
-        playfair: ['Playfair Display', 'serif'],
         inter: ['Inter', 'sans-serif'],
       },
     },

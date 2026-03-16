@@ -6,10 +6,10 @@ const PropertyInfo = memo(({ property }) => {
     <div className="px-5 pt-5">
       {/* Tag + Type */}
       <div className="flex items-center gap-2 mb-3">
-        <span className={`text-[12px] font-bold px-3 py-1 rounded-full ${
+        <span className={`text-[12px] font-semibold px-3 py-1 rounded-full ${
           property.tag === "For Sale" 
-            ? "bg-primary text-white" 
-            : "bg-amber-400 text-primary"
+            ? "bg-secondary text-white" 
+            : "bg-secondary text-white"
         }`}>
           {property.tag}
         </span>
@@ -19,12 +19,12 @@ const PropertyInfo = memo(({ property }) => {
       </div>
 
       {/* Price */}
-      <p className="text-[28px] font-black text-primary font-playfair mb-2">
+      <p className="text-[28px] font-semibold text-primary font-inter mb-2">
         {property.price}
       </p>
 
       {/* Title */}
-      <h1 className="text-[20px] font-black text-primary font-playfair mb-2">
+      <h1 className="text-[20px] font-semibold text-primary font-inter mb-2">
         {property.title}
       </h1>
 
@@ -34,7 +34,7 @@ const PropertyInfo = memo(({ property }) => {
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
           <circle cx="12" cy="10" r="3"/>
         </svg>
-        <p className="text-[14px] text-gray-600 font-inter">
+        <p className="text-[15px] text-gray-600 font-inter">
           {property.location}
         </p>
       </div>

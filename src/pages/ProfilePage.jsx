@@ -38,11 +38,11 @@ const NotLoggedInState = () => {
         </svg>
       </div>
 
-      <h2 className="text-[24px] font-black text-primary font-playfair mb-2">
+      <h2 className="text-[24px] font-semibold text-primary font-inter mb-2">
         Welcome to Horizon
       </h2>
 
-      <p className="text-[14px] text-gray-500 font-inter text-center max-w-xs mb-8">
+      <p className="text-[15px] text-gray-500 font-inter text-center max-w-xs mb-8">
         Log in to manage your profile, saved properties, inquiries, and more
       </p>
 
@@ -145,10 +145,10 @@ const ProfilePage = memo(() => {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h2 className="text-[24px] font-bold text-primary font-inter mb-2">
+        <h2 className="text-[24px] font-semibold text-primary font-inter mb-2">
           Failed to Load Profile
         </h2>
-        <p className="text-[14px] text-gray-500 font-inter text-center max-w-xs mb-8">
+        <p className="text-[15px] text-gray-500 font-inter text-center max-w-xs mb-8">
           {error?.message || 'Something went wrong'}
         </p>
         <button
@@ -167,7 +167,7 @@ const ProfilePage = memo(() => {
   if (!displayUser) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 pb-28">
-        <h2 className="text-[24px] font-bold text-primary mb-4">No User Data</h2>
+        <h2 className="text-[24px] font-semibold text-primary mb-4">No User Data</h2>
         <button
           onClick={() => navigate('/login')}
           className="px-8 py-3.5 rounded-xl bg-primary text-white"

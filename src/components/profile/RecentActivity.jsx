@@ -56,7 +56,7 @@ const RecentActivity = memo(() => {
             <line x1="3" y1="10" x2="21" y2="10"/>
           </svg>
         ),
-        iconColor: isConfirmed ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600',
+        iconColor: isConfirmed ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-secondary',
         title:     isConfirmed ? 'Tour Confirmed' : 'Tour Requested',
         subtitle:  t.property?.title || 'Property',
         timestamp: t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Recently',
@@ -98,7 +98,7 @@ const RecentActivity = memo(() => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-[16px] font-black text-primary font-playfair">Recent Activity</h2>
+        <h2 className="text-[16px] font-semibold text-primary font-inter">Recent Activity</h2>
         {/* <button onClick={() => navigate('/activity')} className="text-[12px] font-semibold text-accent hover:text-accent-dark transition-colors font-inter">
           View All
         </button> */}
@@ -107,7 +107,7 @@ const RecentActivity = memo(() => {
       <div className="px-1 py-2 bg-white border-t border-gray-100 rounded-2xl mb-6 shadow-xl">
         {activities.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10">
-            <p className="text-[14px] text-gray-400 font-inter">No activity yet</p>
+            <p className="text-[15px] text-gray-400 font-inter">No activity yet</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -121,8 +121,8 @@ const RecentActivity = memo(() => {
                   {activity.icon}
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="text-[14px] font-bold text-primary font-inter">{activity.title}</h3>
-                  <p className="text-[13px] text-gray-600 font-inter mb-1">{activity.subtitle}</p>
+                  <h3 className="text-[15px] font-semibold text-primary font-inter">{activity.title}</h3>
+                  <p className="text-[15px] text-gray-600 font-inter mb-1">{activity.subtitle}</p>
                   <p className="text-[12px] text-gray-400 font-inter">{activity.timestamp}</p>
                 </div>
                 <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

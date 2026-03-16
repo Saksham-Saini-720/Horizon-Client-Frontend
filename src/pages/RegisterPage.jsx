@@ -68,7 +68,7 @@ export default function RegisterPage() {
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
         
         {/* Header */}
-        <h2 className="text-2xl font-black font-playfair text-gray-900 mb-1">Create an account</h2>
+        <h2 className="text-2xl font-semibold font-inter text-gray-900 mb-1">Create an account</h2>
         <p className="text-sm text-gray-500 mb-6">Join Horizon Properties today.</p>
 
         {/* Google OAuth */}

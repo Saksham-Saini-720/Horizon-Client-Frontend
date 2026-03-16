@@ -4,9 +4,9 @@ import { memo } from 'react';
 const FilterButton = memo(({ active, onClick, children, count }) => (
   <button
     onClick={onClick}
-    className={`px-4 py-2 rounded-full text-[14px] font-semibold font-inter transition-all active:scale-95 whitespace-nowrap ${
+    className={`px-4 py-2 rounded-full text-[15px] font-semibold font-inter transition-all active:scale-95 whitespace-nowrap ${
       active
-        ? 'bg-primary text-white shadow-md'
+        ? 'bg-secondary text-white shadow-md'
         : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'
     }`}
   >

@@ -90,7 +90,7 @@ const PasswordInput = memo(({
               />
             ))}
           </div>
-          <p className={`text-[14px] ${
+          <p className={`text-[15px] ${
             strength <= 2 ? "text-orange-600" : "text-green-600"
           }`}>
             {strengthLabels[strength - 1]}
@@ -99,11 +99,11 @@ const PasswordInput = memo(({
       )}
 
       {fieldError && (
-        <p className="text-[14px] text-red-500 mt-1.5">{fieldError}</p>
+        <p className="text-[15px] text-red-500 mt-1.5">{fieldError}</p>
       )}
       
       {hint && !fieldError && (
-        <p className="text-[14px] text-gray-400 mt-1">{hint}</p>
+        <p className="text-[15px] text-gray-400 mt-1">{hint}</p>
       )}
     </div>
   );

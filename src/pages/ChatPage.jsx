@@ -32,11 +32,11 @@ const ChatPage = () => {
       {/* ── Header ── */}
       <div style={{ backgroundColor: '#1C2A3A' }} className="px-4 pt-12 pb-4">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-[24px] font-bold text-white font-['DM_Sans',sans-serif]">
+          <h1 className="text-[24px] font-semibold text-white font-inter">
             Messages
           </h1>
           {unreadCount > 0 && (
-            <span className="bg-amber-500 text-white text-[12px] font-bold px-3 py-1 rounded-full font-['DM_Sans',sans-serif]">
+            <span className="bg-secondary text-white text-[12px] font-semibold px-3 py-1 rounded-full font-inter">
               {unreadCount} unread
             </span>
           )}
@@ -53,7 +53,7 @@ const ChatPage = () => {
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search conversations..."
-            className="flex-1 bg-transparent text-[14px] text-white placeholder-white/50 outline-none font-['DM_Sans',sans-serif]"
+            className="flex-1 bg-transparent text-[15px] text-white placeholder-white/50 outline-none font-inter"
           />
           {searchQuery.length > 0 && (
             <button onClick={() => { setSearchQuery(''); setDebouncedSearch(''); }}>
@@ -83,9 +83,9 @@ const ChatPage = () => {
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
             </div>
-            <p className="text-[15px] font-semibold text-primary mb-2 font-['DM_Sans',sans-serif]">Couldn't load messages</p>
-            <p className="text-[13px] text-gray-400 mb-5 font-['DM_Sans',sans-serif]">{error?.message}</p>
-            <button onClick={refetch} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[14px] font-semibold font-['DM_Sans',sans-serif]">
+            <p className="text-[15px] font-semibold text-primary mb-2 font-inter">Couldn't load messages</p>
+            <p className="text-[15px] text-gray-400 mb-5 font-inter">{error?.message}</p>
+            <button onClick={refetch} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[15px] font-semibold font-inter">
               Try Again
             </button>
           </div>
@@ -96,8 +96,8 @@ const ChatPage = () => {
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p className="text-[17px] font-bold text-primary mb-1 font-['DM_Sans',sans-serif]">No messages yet</p>
-            <p className="text-[13px] text-gray-400 text-center font-['DM_Sans',sans-serif]">
+            <p className="text-[17px] font-semibold text-primary mb-1 font-inter">No messages yet</p>
+            <p className="text-[15px] text-gray-400 text-center font-inter">
               Inquire about a property to start a conversation
             </p>
           </div>
@@ -105,7 +105,7 @@ const ChatPage = () => {
           <div className="mt-2">
             {/* Section label */}
             <div className="px-4 py-2">
-              <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-['DM_Sans',sans-serif]">
+              <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-inter">
                 All conversations
               </p>
             </div>

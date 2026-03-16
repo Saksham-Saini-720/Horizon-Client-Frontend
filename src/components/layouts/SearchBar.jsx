@@ -11,7 +11,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <p className="text-[12px] font-bold text-gray-400 uppercase tracking-widest font-inter">
+        <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-inter">
           {label}
         </p>
         {!query && (
@@ -64,7 +64,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
                   return (
                     <>
                       {term.slice(0, idx)}
-                      <span className="font-bold text-amber-500">{term.slice(idx, idx + query.length)}</span>
+                      <span className="font-semibold text-secondary">{term.slice(idx, idx + query.length)}</span>
                       {term.slice(idx + query.length)}
                     </>
                   );
@@ -158,7 +158,7 @@ const SearchBar = memo(({
     <div className="relative">
       {/* Input row */}
       <div className={`flex items-center gap-2 bg-white rounded-xl px-4 py-3 shadow-sm border transition-all duration-150
-        ${isFocused ? "border-amber-400 shadow-[0_0_0_3px_rgba(245,158,11,0.12)]" : "border-gray-200"}`}
+        ${isFocused ? "border-secondary shadow-[0_0_0_3px_rgba(245,158,11,0.12)]" : "border-gray-200"}`}
       >
         {/* Search icon */}
         <svg className="w-5 h-5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -197,8 +197,8 @@ const SearchBar = memo(({
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleSubmit}
-          className="flex-shrink-0 h-8 px-3 rounded-lg text-[14px] font-semibold text-white transition-all active:scale-95"
-          style={{ background: "linear-gradient(135deg, #F5B731, #E8A020)" }}
+          className="flex-shrink-0 h-8 px-3 rounded-lg text-[15px] font-semibold text-white transition-all active:scale-95"
+          style={{ background: "linear-gradient(135deg, #F5B731, #DB143C)" }}
         >
           Search
         </button>

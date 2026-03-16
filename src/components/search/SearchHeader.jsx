@@ -64,7 +64,7 @@ const SearchHeader = memo(({
         {/* Search Bar */}
         <div className="flex-1 relative">
           <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
-            isFocused ? 'border-amber-400 bg-amber-50/30' : 'border-gray-200 bg-white'
+            isFocused ? 'border-secondary bg-amber-50/30' : 'border-gray-200 bg-white'
           }`}>
             {/* Search Icon */}
             <svg

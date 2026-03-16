@@ -72,8 +72,8 @@ const ConversationPage = () => {
         <HeaderSkeleton />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 border-4 border-gray-200 border-t-amber-500 rounded-full animate-spin"/>
-            <p className="text-[13px] text-gray-400 font-['DM_Sans',sans-serif]">Loading messages...</p>
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-secondary rounded-full animate-spin"/>
+            <p className="text-[15px] text-gray-400 font-inter">Loading messages...</p>
           </div>
         </div>
       </div>
@@ -92,9 +92,9 @@ const ConversationPage = () => {
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
-          <p className="text-[15px] font-semibold text-[#1C2A3A] mb-1 font-['DM_Sans',sans-serif]">Couldn't load conversation</p>
-          <p className="text-[13px] text-gray-400 text-center mb-5 font-['DM_Sans',sans-serif]">{error?.message || 'Something went wrong'}</p>
-          <button onClick={refetch} className="px-6 py-2.5 rounded-xl bg-amber-500 text-white text-[14px] font-semibold font-['DM_Sans',sans-serif]">
+          <p className="text-[15px] font-semibold text-primary mb-1 font-inter">Couldn't load conversation</p>
+          <p className="text-[15px] text-gray-400 text-center mb-5 font-inter">{error?.message || 'Something went wrong'}</p>
+          <button onClick={refetch} className="px-6 py-2.5 rounded-xl bg-secondary text-white text-[15px] font-semibold font-inter">
             Try Again
           </button>
         </div>
@@ -121,17 +121,17 @@ const ConversationPage = () => {
               {participant?.avatar ? (
                 <img src={participant.avatar} alt={participant.name} className="w-full h-full object-cover"/>
               ) : (
-                <span className="text-white text-[15px] font-bold font-['DM_Sans',sans-serif]">{avatarInitials}</span>
+                <span className="text-white text-[15px] font-semibold font-inter">{avatarInitials}</span>
               )}
             </div>
           </div>
 
           {/* Name — no online/offline status */}
           <div className="flex-1 min-w-0">
-            <p className="text-[15px] font-bold text-white font-['DM_Sans',sans-serif] truncate leading-tight">
+            <p className="text-[15px] font-semibold text-white font-inter truncate leading-tight">
               {participant?.name || 'Support'}
             </p>
-            <p className="text-[12px] text-white/50 font-['DM_Sans',sans-serif] leading-tight">
+            <p className="text-[12px] text-white/50 font-inter leading-tight">
               Property Support
             </p>
           </div>
@@ -162,7 +162,7 @@ const ConversationPage = () => {
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p className="text-[14px] text-gray-400 font-['DM_Sans',sans-serif] text-center">
+            <p className="text-[15px] text-gray-400 font-inter text-center">
               No messages yet. Say hello! 👋
             </p>
           </div>
@@ -171,7 +171,7 @@ const ConversationPage = () => {
         {messageGroups.map((group) => (
           <div key={group.date}>
             <div className="flex items-center justify-center py-3 px-4">
-              <span className="px-4 py-1 bg-white/80 backdrop-blur-sm rounded-full text-[11px] text-gray-500 font-['DM_Sans',sans-serif] font-medium shadow-sm">
+              <span className="px-4 py-1 bg-white/80 backdrop-blur-sm rounded-full text-[11px] text-gray-500 font-inter font-medium shadow-sm">
                 {group.date}
               </span>
             </div>
@@ -198,7 +198,7 @@ const ConversationPage = () => {
               onKeyDown={handleKeyDown}
               placeholder="Type a message..."
               rows={1}
-              className="flex-1 bg-transparent text-[14px] text-[#1C2A3A] placeholder-gray-400 font-['DM_Sans',sans-serif] resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
+              className="flex-1 bg-transparent text-[15px] text-primary placeholder-gray-400 font-inter resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
               style={{ scrollbarWidth: 'none' }}
             />
             <button className="ml-1.5 flex-shrink-0 mb-0.5 hover:opacity-75 transition-opacity">
@@ -214,7 +214,7 @@ const ConversationPage = () => {
             onClick={handleSend}
             disabled={!text.trim() || isSending}
             className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-              text.trim() && !isSending ? 'bg-[#1C2A3A] hover:bg-[#2E4057] active:scale-95 shadow-md' : 'bg-gray-200'
+              text.trim() && !isSending ? 'bg-primary hover:bg-[#2E4057] active:scale-95 shadow-md' : 'bg-gray-200'
             }`}
           >
             {isSending ? (
@@ -244,11 +244,11 @@ const MessageBubble = ({ message, showTime, isFirst }) => {
             backgroundColor: '#1C2A3A',
             borderRadius: isFirst ? '18px 18px 4px 18px' : '18px 4px 4px 18px',
           }}>
-            <p className="text-[14px] text-white font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">{content}</p>
+            <p className="text-[15px] text-white font-inter leading-[1.5] whitespace-pre-wrap">{content}</p>
           </div>
           {showTime && (
             <div className="flex justify-end mt-0.5 pr-0.5">
-              <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">{timeStr}</span>
+              <span className="text-[11px] text-gray-400 font-inter">{timeStr}</span>
             </div>
           )}
         </div>
@@ -262,11 +262,11 @@ const MessageBubble = ({ message, showTime, isFirst }) => {
         <div className="px-4 py-2.5 bg-white shadow-sm border border-gray-100" style={{
           borderRadius: isFirst ? '18px 18px 18px 4px' : '4px 18px 18px 18px',
         }}>
-          <p className="text-[14px] text-[#1C2A3A] font-['DM_Sans',sans-serif] leading-[1.5] whitespace-pre-wrap">{content}</p>
+          <p className="text-[15px] text-primary font-inter leading-[1.5] whitespace-pre-wrap">{content}</p>
         </div>
         {showTime && (
           <div className="mt-0.5 pl-0.5">
-            <span className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">{timeStr}</span>
+            <span className="text-[11px] text-gray-400 font-inter">{timeStr}</span>
           </div>
         )}
       </div>

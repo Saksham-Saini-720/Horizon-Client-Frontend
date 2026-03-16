@@ -55,7 +55,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in duration-300"
+        className="fixed inset-0 bg-bold/50 backdrop-blur-sm z-50 animate-in fade-in duration-300"
         onClick={onClose}
       />
 
@@ -67,7 +67,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
         {/* Header */}
         <div className="sticky top-0 bg-white px-6 pt-6 pb-4 border-b border-gray-100 z-10">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-bold text-primary font-inter">
+            <h2 className="text-[22px] font-semibold text-primary font-inter">
               All Filters
             </h2>
             <button
@@ -85,7 +85,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
         <div className="px-6 pb-6">
           {/* Property Type */}
           <div className="py-4 border-b border-gray-100">
-            <h3 className="text-[15px] font-bold text-primary mb-3 font-inter">
+            <h3 className="text-[15px] font-semibold text-primary mb-3 font-inter">
               Property Type
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -94,9 +94,9 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   key={type}
                   onClick={() => setFilters(prev => ({ ...prev, type: prev.type === type.toLowerCase() ? null : type.toLowerCase() }))}
                   className={`
-                    px-4 py-2 rounded-lg border text-[13px] font-semibold font-inter transition-all active:scale-95
+                    px-4 py-2 rounded-lg border text-[15px] font-semibold font-inter transition-all active:scale-95
                     ${filters.type === type.toLowerCase()
-                      ? 'border-amber-400 bg-amber-50 text-primary'
+                      ? 'border-secondary bg-amber-50 text-primary'
                       : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     }
                   `}
@@ -109,7 +109,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
           {/* Price Range */}
           <div className="py-4 border-b border-gray-100">
-            <h3 className="text-[15px] font-bold text-primary mb-3 font-inter">
+            <h3 className="text-[15px] font-semibold text-primary mb-3 font-inter">
               Price Range
             </h3>
             <div className="grid grid-cols-2 gap-3">
@@ -122,7 +122,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   value={filters.minPrice}
                   onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
                   placeholder="e.g. 100000"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] font-inter focus:outline-none focus:border-amber-400"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-inter focus:outline-none focus:border-secondary"
                 />
               </div>
               <div>
@@ -134,7 +134,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   value={filters.maxPrice}
                   onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
                   placeholder="e.g. 500000"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] font-inter focus:outline-none focus:border-amber-400"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-inter focus:outline-none focus:border-secondary"
                 />
               </div>
             </div>
@@ -142,7 +142,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
           {/* Bedrooms */}
           <div className="py-4 border-b border-gray-100">
-            <h3 className="text-[15px] font-bold text-primary mb-3 font-inter">
+            <h3 className="text-[15px] font-semibold text-primary mb-3 font-inter">
               Bedrooms
             </h3>
             <div className="flex gap-2">
@@ -151,9 +151,9 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   key={bed}
                   onClick={() => setFilters(prev => ({ ...prev, bedrooms: prev.bedrooms === bed ? null : bed }))}
                   className={`
-                    flex-1 py-3 rounded-xl border text-[14px] font-bold font-inter transition-all active:scale-95
+                    flex-1 py-3 rounded-xl border text-[15px] font-semibold font-inter transition-all active:scale-95
                     ${filters.bedrooms === bed
-                      ? 'border-amber-400 bg-amber-50 text-primary'
+                      ? 'border-secondary bg-amber-50 text-primary'
                       : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     }
                   `}
@@ -166,7 +166,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
           {/* Bathrooms */}
           <div className="py-4 border-b border-gray-100">
-            <h3 className="text-[15px] font-bold text-primary mb-3 font-inter">
+            <h3 className="text-[15px] font-semibold text-primary mb-3 font-inter">
               Bathrooms
             </h3>
             <div className="flex gap-2">
@@ -175,9 +175,9 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   key={bath}
                   onClick={() => setFilters(prev => ({ ...prev, bathrooms: prev.bathrooms === bath ? null : bath }))}
                   className={`
-                    flex-1 py-3 rounded-xl border text-[14px] font-bold font-inter transition-all active:scale-95
+                    flex-1 py-3 rounded-xl border text-[15px] font-semibold font-inter transition-all active:scale-95
                     ${filters.bathrooms === bath
-                      ? 'border-amber-400 bg-amber-50 text-primary'
+                      ? 'border-secondary bg-amber-50 text-primary'
                       : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     }
                   `}
@@ -190,7 +190,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
           {/* Amenities */}
           <div className="py-4">
-            <h3 className="text-[15px] font-bold text-primary mb-3 font-inter">
+            <h3 className="text-[15px] font-semibold text-primary mb-3 font-inter">
               Amenities
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -199,9 +199,9 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   key={amenity}
                   onClick={() => toggleAmenity(amenity.toLowerCase())}
                   className={`
-                    px-4 py-2 rounded-lg border text-[13px] font-semibold font-inter transition-all active:scale-95
+                    px-4 py-2 rounded-lg border text-[15px] font-semibold font-inter transition-all active:scale-95
                     ${filters.amenities.includes(amenity.toLowerCase())
-                      ? 'border-amber-400 bg-amber-50 text-primary'
+                      ? 'border-secondary bg-amber-50 text-primary'
                       : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                     }
                   `}
@@ -217,13 +217,13 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
         <div className="sticky bottom-0 bg-white px-6 pb-6 pt-4 border-t border-gray-100 flex gap-3">
           <button
             onClick={handleClear}
-            className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-bold font-inter hover:bg-gray-50 transition-all active:scale-[0.98]"
+            className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-semibold font-inter hover:bg-gray-50 transition-all active:scale-[0.98]"
           >
             Clear All
           </button>
           <button
             onClick={handleApply}
-            className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-bold font-inter hover:bg-primary-light transition-all active:scale-[0.98] shadow-lg"
+            className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-inter hover:bg-primary-light transition-all active:scale-[0.98] shadow-lg"
           >
             Show Results
           </button>

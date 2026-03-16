@@ -66,7 +66,7 @@ export default function ForgotPasswordPage() {
           >
             {/* Info Box */}
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-              <p className="text-[14px] text-amber-800">
+              <p className="text-[15px] text-amber-800">
                 💡 <strong>Tip:</strong> Check your spam folder if you don't see the email
               </p>
             </div>
@@ -88,11 +88,11 @@ export default function ForgotPasswordPage() {
             </div>
 
             {/* Footer */}
-            <p className="text-[14px] text-center text-gray-400 mt-6">
+            <p className="text-[15px] text-center text-gray-400 mt-6">
               Didn't receive the email?{" "}
               <button
                 onClick={() => forgotPasswordMutation.mutate(submittedEmail)}
-                className="text-amber-600 font-semibold hover:underline"
+                className="text-secondary font-semibold hover:underline"
               >
                 Resend
               </button>
@@ -111,7 +111,7 @@ export default function ForgotPasswordPage() {
         {/* Back Button */}
         <button
           onClick={handleBackToLogin}
-          className="flex items-center gap-2 text-[14px] text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          className="flex items-center gap-2 text-[15px] text-gray-600 hover:text-gray-900 mb-6 transition-colors"
         >
           <Icon name="arrowLeft" size={16} />
           Back to Login
@@ -120,12 +120,12 @@ export default function ForgotPasswordPage() {
         {/* Icon */}
         <div className="mb-6 flex justify-center">
           <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center">
-            <Icon name="alert" size={32} className="text-amber-600" />
+            <Icon name="alert" size={32} className="text-secondary" />
           </div>
         </div>
 
         {/* Header */}
-        <h2 className="text-[24px] font-black text-gray-900 mb-2 text-center font-playfair">
+        <h2 className="text-[24px] font-semibold text-gray-900 mb-2 text-center font-inter">
           Forgot Password?
         </h2>
         <p className="text-[16px] text-gray-500 mb-6 text-center">
@@ -134,7 +134,7 @@ export default function ForgotPasswordPage() {
 
         {/* Error Banner */}
         {forgotPasswordMutation.error && (
-          <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-[14px] rounded-xl px-4 py-3 mb-5">
+          <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-[15px] rounded-xl px-4 py-3 mb-5">
             <Icon name="error" size={16} className="flex-shrink-0 mt-0.5" />
             {forgotPasswordMutation.error.response?.data?.message || "Failed to send reset link"}
           </div>
@@ -161,11 +161,11 @@ export default function ForgotPasswordPage() {
         </form>
 
         {/* Footer */}
-        <p className="text-[14px] text-center text-gray-400 mt-6">
+        <p className="text-[15px] text-center text-gray-400 mt-6">
           Remember your password?{" "}
           <button
             onClick={handleBackToLogin}
-            className="text-amber-600 font-semibold hover:underline"
+            className="text-secondary font-semibold hover:underline"
           >
             Log in
           </button>

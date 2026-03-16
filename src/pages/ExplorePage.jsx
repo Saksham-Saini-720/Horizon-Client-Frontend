@@ -124,17 +124,17 @@ const ExplorePage = () => {
         <div className="px-4 py-3 bg-amber-50 border-b border-amber-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-amber-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4 text-secondary flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              <p className="text-[13px] font-medium text-amber-800 font-inter">
-                Showing properties near <span className="font-bold">{selectedLocation.name}</span>
+              <p className="text-[15px] font-medium text-amber-800 font-inter">
+                Showing properties near <span className="font-semibold">{selectedLocation.name}</span>
               </p>
             </div>
             <button
               onClick={() => { setSelectedLocation(null); localStorage.removeItem('selectedLocation'); }}
-              className="text-[12px] font-semibold text-amber-600 hover:text-amber-700 ml-2"
+              className="text-[12px] font-semibold text-secondary hover:text-amber-700 ml-2"
             >
               Clear
             </button>

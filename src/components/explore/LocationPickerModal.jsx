@@ -117,7 +117,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center sm:justify-center">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-bold/50"
         onClick={onClose}
       />
 
@@ -125,7 +125,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
       <div className="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col animate-slide-up">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-[20px] font-bold text-primary font-inter">
+          <h2 className="text-[20px] font-semibold text-primary font-inter">
             Select Location
           </h2>
           <button
@@ -176,9 +176,9 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
               className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 active:bg-amber-200 transition-colors disabled:opacity-50"
             >
               {isGettingLocation ? (
-                <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
               ) : (
-                <svg className="w-5 h-5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg className="w-5 h-5 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <circle cx="12" cy="12" r="10" />
                   <circle cx="12" cy="12" r="3" />
                   <path d="M12 2v4M12 18v4M2 12h4M18 12h4" />
@@ -203,7 +203,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
               </p>
               {isSearching ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : searchResults.length > 0 ? (
                 <div className="space-y-1">
@@ -230,7 +230,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-[14px] text-gray-400 font-inter">
+                  <p className="text-[15px] text-gray-400 font-inter">
                     No locations found
                   </p>
                 </div>
@@ -247,7 +247,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
                 </p>
                 <button
                   onClick={handleClearRecent}
-                  className="text-[12px] font-semibold text-amber-500 hover:text-amber-600"
+                  className="text-[12px] font-semibold text-secondary hover:text-secondary"
                 >
                   Clear All
                 </button>

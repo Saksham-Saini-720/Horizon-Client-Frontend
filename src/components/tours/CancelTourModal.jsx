@@ -34,7 +34,7 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bold/50 animate-fadeIn">
       <div
         className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-slideUp"
         onClick={(e) => e.stopPropagation()}
@@ -51,10 +51,10 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
                 </svg>
               </div>
               <div>
-                <h2 className="text-[18px] font-black text-primary font-playfair">
+                <h2 className="text-[18px] font-semibold text-primary font-inter">
                   Cancel Tour Request
                 </h2>
-                <p className="text-[12px] text-gray-500 font-playfair">
+                <p className="text-[12px] text-gray-500 font-inter">
                   {tour?.property?.title}
                 </p>
               </div>
@@ -77,13 +77,13 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
           {/* Warning Message */}
           <div className="mb-5 p-4 rounded-xl bg-amber-50 border border-amber-100">
             <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                 <line x1="12" y1="9" x2="12" y2="13" />
                 <line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
               <div>
-                <p className="text-[14px] font-semibold text-amber-800 font-inter mb-1">
+                <p className="text-[15px] font-semibold text-amber-800 font-inter mb-1">
                   Are you sure?
                 </p>
                 <p className="text-[12px] text-amber-700 font-inter">
@@ -95,7 +95,7 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
 
           {/* Reason (Optional) */}
           <div className="mb-6">
-            <label className="block text-[13px] font-semibold text-gray-700 font-inter mb-2">
+            <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-2">
               Reason for Cancellation 
             </label>
             <textarea
@@ -104,7 +104,7 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
               placeholder="e.g., Found another property, Schedule conflict..."
               rows={4}
               disabled={cancelMutation.isPending}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-800 font-inter resize-none focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-800 font-inter resize-none focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               maxLength={500}
             />
             {reason.length > 0 && (
@@ -120,14 +120,14 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
               type="button"
               onClick={handleClose}
               disabled={cancelMutation.isPending}
-              className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-[14px] font-semibold text-gray-700 font-inter hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-inter hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Keep Tour
             </button>
             <button
               type="submit"
               disabled={cancelMutation.isPending}
-              className="flex-1 px-6 py-3 rounded-xl bg-red-600 text-white text-[14px] font-semibold font-inter hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 rounded-xl bg-red-600 text-white text-[15px] font-semibold font-inter hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {cancelMutation.isPending ? (
                 <>

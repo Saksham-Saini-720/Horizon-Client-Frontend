@@ -57,7 +57,7 @@ const ValidatedInput = memo(({
       />
       
       {fieldError && (
-        <p className="text-[14px] text-red-500 mt-1.5">{fieldError}</p>
+        <p className="text-[15px] text-red-500 mt-1.5">{fieldError}</p>
       )}
       
       {hint && !fieldError && (

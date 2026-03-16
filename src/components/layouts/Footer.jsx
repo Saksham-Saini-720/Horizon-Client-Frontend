@@ -8,7 +8,7 @@ const NavItem = ({ to, icon, label, badge }) => (
     to={to}
     className={({ isActive }) =>
       `flex flex-col items-center gap-1 py-2 px-3 transition-colors ${
-        isActive ? "text-amber-500" : "text-gray-400 hover:text-gray-600"
+        isActive ? "text-secondary" : "text-gray-400 hover:text-gray-600"
       }`
     }
   >
@@ -18,17 +18,17 @@ const NavItem = ({ to, icon, label, badge }) => (
           {icon}
           {/* Unread badge */}
           {badge > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 bg-amber-500 rounded-full flex items-center justify-center px-1">
-              <span className="text-white text-[10px] font-bold leading-none">
+            <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 bg-secondary rounded-full flex items-center justify-center px-1">
+              <span className="text-white text-[10px] font-semibold leading-none">
                 {badge > 9 ? '9+' : badge}
               </span>
             </span>
           )}
           {isActive && (
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-500" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary" />
           )}
         </div>
-        <span className={`text-[12px] font-semibold font-inter ${isActive ? "text-amber-500" : "text-gray-500"}`}>
+        <span className={`text-[12px] font-semibold font-inter ${isActive ? "text-secondary" : "text-gray-500"}`}>
           {label}
         </span>
       </>

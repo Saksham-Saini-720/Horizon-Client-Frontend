@@ -66,7 +66,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-in fade-in duration-200"
+        className="fixed inset-0 bg-bold/60 backdrop-blur-sm z-50 animate-in fade-in duration-200"
         onClick={onClose}
       />
 
@@ -80,10 +80,10 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
           <div className="px-6 pt-6 pb-4 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-[22px] font-black text-primary font-playfair">
+                <h2 className="text-[22px] font-semibold text-primary font-inter">
                   Edit Profile
                 </h2>
-                <p className="text-[14px] text-gray-500 font-inter mt-1">
+                <p className="text-[15px] text-gray-500 font-inter mt-1">
                   Update your personal information
                 </p>
               </div>
@@ -110,7 +110,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
           <form onSubmit={handleSave} className="px-6 py-6 space-y-5">
             {/* First Name */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
+              <label className="flex items-center gap-2 text-[15px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -128,14 +128,14 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
             </div>
 
             {/* Last Name */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
+              <label className="flex items-center gap-2 text-[15px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -153,14 +153,14 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
             </div>
 
             {/* Phone */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
+              <label className="flex items-center gap-2 text-[15px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -177,7 +177,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
               <p className="text-[11px] text-gray-400 font-inter mt-2">
@@ -187,7 +187,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
 
             {/* Email */}
             <div>
-              <label className="flex items-center gap-2 text-[13px] font-semibold text-gray-700 font-inter mb-2">
+              <label className="flex items-center gap-2 text-[15px] font-semibold text-gray-700 font-inter mb-2">
                 <svg
                   className="w-4 h-4 text-gray-400"
                   viewBox="0 0 24 24"
@@ -205,7 +205,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-inter focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all"
                 required
               />
               <p className="text-[11px] text-gray-400 font-inter mt-2">

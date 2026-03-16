@@ -9,11 +9,11 @@ const AuthTerms = memo(() => {
   return (
     <p className="text-xs text-center text-gray-400 mt-5">
       By continuing, you agree to our{" "}
-      <a href="/terms" className="text-amber-600 hover:underline">
+      <a href="/terms" className="text-secondary hover:underline">
         Terms
       </a>{" "}
       and{" "}
-      <a href="/privacy" className="text-amber-600 hover:underline">
+      <a href="/privacy" className="text-secondary hover:underline">
         Privacy Policy
       </a>
     </p>

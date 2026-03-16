@@ -61,7 +61,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
 
         {/* Header */}
-        <h2 className="text-2xl font-black font-playfair text-gray-900 mb-1">Log in to continue</h2>
+        <h2 className="text-2xl font-semibold font-inter text-gray-900 mb-1">Log in to continue</h2>
         <p className="text-sm text-gray-500 mb-6">
           Access your saved properties, inquiries, and more.
         </p>
@@ -103,7 +103,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => navigate("/forgot-password")}
-              className="text-xs text-amber-600 hover:underline"
+              className="text-xs text-secondary hover:underline"
             >
               Forgot password?
             </button>

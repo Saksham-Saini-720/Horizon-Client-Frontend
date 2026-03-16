@@ -26,7 +26,7 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           ) : (
-            <span className="text-white text-[16px] font-bold font-['DM_Sans',sans-serif]">{avatarInitials}</span>
+            <span className="text-white text-[16px] font-semibold font-inter">{avatarInitials}</span>
           )}
         </div>
 
@@ -39,10 +39,10 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className={`text-[15px] font-['DM_Sans',sans-serif] truncate ${hasUnread ? 'font-bold text-[#1C2A3A]' : 'font-semibold text-[#1C2A3A]'}`}>
+          <span className={`text-[15px] font-inter truncate ${hasUnread ? 'font-semibold text-primary' : 'font-semibold text-primary'}`}>
             {participant?.name || 'Unknown'}
           </span>
-          <span className={`text-[12px] ml-2 flex-shrink-0 font-['DM_Sans',sans-serif] ${hasUnread ? 'text-amber-500 font-semibold' : 'text-gray-400'}`}>
+          <span className={`text-[12px] ml-2 flex-shrink-0 font-inter ${hasUnread ? 'text-secondary font-semibold' : 'text-gray-400'}`}>
             {formattedDate}
           </span>
         </div>
@@ -50,23 +50,23 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
         {/* Property tag */}
         {property && (
           <div className="flex items-center gap-1 mb-0.5">
-            <svg className="w-3 h-3 text-amber-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg className="w-3 h-3 text-secondary flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            <span className="text-[11px] text-amber-600 font-semibold font-['DM_Sans',sans-serif] truncate">{property.title}</span>
+            <span className="text-[11px] text-secondary font-semibold font-inter truncate">{property.title}</span>
           </div>
         )}
 
         {/* Last message + unread badge */}
         <div className="flex items-center justify-between gap-2">
-          <p className={`text-[13px] truncate font-['DM_Sans',sans-serif] flex-1 ${hasUnread ? 'text-[#1C2A3A] font-medium' : 'text-gray-500'}`}>
+          <p className={`text-[15px] truncate font-inter flex-1 ${hasUnread ? 'text-primary font-medium' : 'text-gray-500'}`}>
             {lastMessageIsFromMe && <span className="text-gray-400">You: </span>}
             {lastMessage || 'No messages yet'}
           </p>
           {hasUnread && (
-            <span className="w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-[10px] font-bold leading-none">
+            <span className="w-5 h-5 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-[10px] font-semibold leading-none">
                 {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             </span>

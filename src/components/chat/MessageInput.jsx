@@ -65,7 +65,7 @@ const MessageInput = memo(({ onSend, isSending = false, disabled = false }) => {
             placeholder="Type a message..."
             disabled={disabled}
             rows={1}
-            className="flex-1 bg-transparent text-[14px] text-primary placeholder-gray-400 font-inter resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
+            className="flex-1 bg-transparent text-[15px] text-primary placeholder-gray-400 font-inter resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
             style={{ scrollbarWidth: 'none' }}
           />
           {/* Emoji button */}

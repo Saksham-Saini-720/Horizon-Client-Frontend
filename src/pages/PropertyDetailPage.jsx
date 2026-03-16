@@ -32,11 +32,11 @@ const PropertyNotFound = ({ onRetry, onGoBack }) => (
       </svg>
     </div>
 
-    <h2 className="text-[20px] font-bold text-primary font-inter mb-2">
+    <h2 className="text-[20px] font-semibold text-primary font-inter mb-2">
       Property Not Found
     </h2>
 
-    <p className="text-[14px] text-gray-500 font-inter text-center mb-6 max-w-sm">
+    <p className="text-[15px] text-gray-500 font-inter text-center mb-6 max-w-sm">
       The property you're looking for doesn't exist or has been removed.
     </p>
 

@@ -35,14 +35,14 @@ const ExploreHeader = memo(({
               onClick={() => setShowLocationPicker(true)}
               className="flex items-center gap-1 group max-w-full"
             >
-              <svg className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <svg className="w-3.5 h-3.5 text-secondary flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              <span className="text-[16px] font-bold text-primary font-inter truncate">
+              <span className="text-[16px] font-semibold text-primary font-inter truncate">
                 {currentLocation?.name || 'Lusaka, Zambia'}
               </span>
-              <svg className="w-4 h-4 text-gray-400 group-hover:text-amber-500 transition-colors flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <svg className="w-4 h-4 text-gray-400 group-hover:text-secondary transition-colors flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M9 18l6-6-6-6"/>
               </svg>
             </button>

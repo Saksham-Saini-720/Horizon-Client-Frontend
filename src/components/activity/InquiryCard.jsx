@@ -15,7 +15,7 @@ const InquiryCard = memo(({ inquiry }) => {
   const { property, message, agent, status, timestamp } = inquiry;
 
   const statusConfig = {
-    'in-progress': { label: 'In Progress', color: 'text-amber-600 bg-amber-50' },
+    'in-progress': { label: 'In Progress', color: 'text-secondary bg-amber-50' },
     'submitted':   { label: 'Submitted',   color: 'text-blue-600 bg-blue-50'   },
   };
   const currentStatus = statusConfig[status] || statusConfig['submitted'];
@@ -42,7 +42,7 @@ const InquiryCard = memo(({ inquiry }) => {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-[14px] text-primary font-playfair font-bold mb-1 line-clamp-1">
+          <h3 className="text-[15px] text-primary font-inter font-semibold mb-1 line-clamp-1">
             {property?.title}
           </h3>
           <div className="flex items-center gap-1.5 mb-2">
@@ -54,7 +54,7 @@ const InquiryCard = memo(({ inquiry }) => {
               {formatLocation(property?.location)}
             </p>
           </div>
-          <p className="text-[16px] font-black text-primary font-playfair">ZWM {property?.price}</p>
+          <p className="text-[16px] font-semibold text-primary font-inter">ZWM {property?.price}</p>
         </div>
 
         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold font-inter ${currentStatus.color}`}>
@@ -75,7 +75,7 @@ const InquiryCard = memo(({ inquiry }) => {
       {/* Agent Info */}
       <div className="px-4 py-3 bg-gray-50 border-t-2 border-gray-300 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-[16px] font-bold font-['DM_Sans',sans-serif] overflow-hidden">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[16px] font-semibold font-inter overflow-hidden">
             {agent?.avatar
               ? <img className="w-8 h-8 rounded-full object-cover" src={agent.avatar} alt={agent.name} />
               : agent?.name?.charAt(0) || 'A'

@@ -251,7 +251,7 @@ const TermsPage = () => {
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-[18px] font-black text-primary font-playfair">
+          <h1 className="text-[18px] font-semibold text-primary font-inter">
             Terms & Conditions
           </h1>
         </div>
@@ -280,7 +280,7 @@ const TermsPage = () => {
             </svg>
           </div>
           <div>
-            <h2 className="text-[20px] font-black text-primary font-playfair mb-1">
+            <h2 className="text-[20px] font-semibold text-primary font-inter mb-1">
               Terms & Conditions
             </h2>
             <div className="flex items-center gap-1.5 mb-2">
@@ -297,11 +297,11 @@ const TermsPage = () => {
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
-              <span className="text-[13px] text-gray-400 font-inter">
+              <span className="text-[15px] text-gray-400 font-inter">
                 Last updated: March 1, 2026
               </span>
             </div>
-            <p className="text-[13px] text-gray-500 font-inter leading-[1.5]">
+            <p className="text-[15px] text-gray-500 font-inter leading-[1.5]">
               Please read these terms carefully before using the Horizon Properties application.
             </p>
           </div>
@@ -316,7 +316,7 @@ const TermsPage = () => {
 
         {/* Divider + Footer */}
         <div className="border-t border-gray-200 mt-10 pt-6 text-center">
-          <p className="text-[13px] text-gray-400 font-inter">
+          <p className="text-[15px] text-gray-400 font-inter">
             © 2026 Horizon Properties Ltd. All rights reserved.
           </p>
         </div>
@@ -329,7 +329,7 @@ const TermsPage = () => {
 
 const Section = ({ section }) => (
   <div>
-    <h3 className="text-[16px] font-bold text-primary font-inter mb-3">
+    <h3 className="text-[16px] font-semibold text-primary font-inter mb-3">
       {section.title}
     </h3>
     <div className="space-y-3">
@@ -338,7 +338,7 @@ const Section = ({ section }) => (
           return (
             <p
               key={idx}
-              className="text-[14px] text-gray-600 font-inter leading-[1.7]"
+              className="text-[15px] text-gray-600 font-inter leading-[1.7]"
             >
               {block.text}
             </p>
@@ -351,7 +351,7 @@ const Section = ({ section }) => (
               {block.items.map((item, i) => (
                 <p
                   key={i}
-                  className="text-[14px] text-gray-600 font-inter leading-[1.7]"
+                  className="text-[15px] text-gray-600 font-inter leading-[1.7]"
                 >
                   • {item}
                 </p>
@@ -369,7 +369,7 @@ const Section = ({ section }) => (
                 ) : (
                   <p
                     key={i}
-                    className="text-[14px] text-gray-600 font-inter leading-[1.7]"
+                    className="text-[15px] text-gray-600 font-inter leading-[1.7]"
                   >
                     {line}
                   </p>

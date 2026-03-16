@@ -1,24 +1,25 @@
 
 import { memo } from "react";
 import { HorizonLogo } from "../layouts/Navbar";
+import logo from "../../assets/icons/logo.png";
 
 const LoadingScreen = memo(() => {
   return (
-    <div className="min-h-screen bg-[#2C3E50] flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center">
       
       {/* Logo */}
       <div className="mb-8">
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-2xl">
-          <HorizonLogo size={140}/>
+        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-500 to-secondary flex items-center justify-center shadow-2xl">
+          <img src={logo} alt="logo" className="w-5/5 h-auto object-contain p-[1px]" />
         </div>
       </div>
 
       {/* Brand Name */}
-      <h1 className="text-white text-[36px] font-balck font-playfair mb-1">
+      <h1 className="text-white text-[36px] font-balck font-inter mb-1">
         Horizon
       </h1>
       
-      <p className="text-white/60 text-[14px] font-inter tracking-widest uppercase mb-12">
+      <p className="text-white/60 text-[15px] font-inter tracking-widest uppercase mb-12">
         PROPERTIES
       </p>
 

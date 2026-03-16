@@ -43,7 +43,7 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
                 }}
               />
             ) : (
-              <span className="text-white text-[14px] font-black font-playfair">
+              <span className="text-white text-[15px] font-semibold font-inter">
                 {avatarInitials}
               </span>
             )}
@@ -57,7 +57,7 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
 
         {/* Name & Status */}
         <div className="flex-1 min-w-0">
-          <p className="text-[16px] font-black text-primary font-playfair truncate">
+          <p className="text-[16px] font-semibold text-primary font-inter truncate">
             {participant?.name || 'Unknown'}
           </p>
           <p className="text-[12px] font-inter text-gray-500">

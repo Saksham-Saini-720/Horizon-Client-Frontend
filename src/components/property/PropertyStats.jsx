@@ -6,7 +6,7 @@ const StatCard = memo(({ icon, value, label }) => (
     <svg className="w-6 h-6 text-gray-400 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
       {icon}
     </svg>
-    <p className="text-[20px] font-bold text-primary font-inter mb-0.5">
+    <p className="text-[20px] font-semibold text-primary font-inter mb-0.5">
       {value}
     </p>
     <p className="text-[12px] text-gray-500 font-inter">

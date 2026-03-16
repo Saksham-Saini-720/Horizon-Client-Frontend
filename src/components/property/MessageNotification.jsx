@@ -39,7 +39,7 @@ const MessageNotification = memo(({ show, onClose, agent }) => {
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h4 className="text-[14px] font-bold text-primary font-inter mb-0.5">
+            <h4 className="text-[15px] font-semibold text-primary font-inter mb-0.5">
               Message sent!
             </h4>
             <p className="text-[12px] text-gray-500 font-inter">

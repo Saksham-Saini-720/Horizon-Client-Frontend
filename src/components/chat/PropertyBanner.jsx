@@ -37,7 +37,7 @@ const PropertyBanner = memo(({ property }) => {
       </div>
 
       <div className="flex-1 min-w-0 text-left">
-        <p className="text-[14px] font-black text-primary font-playfair truncate">
+        <p className="text-[15px] font-semibold text-primary font-inter truncate">
           {property.title}
         </p>
         <p className="text-[12px] text-gray-500 font-inter truncate">

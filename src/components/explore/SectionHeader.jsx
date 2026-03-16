@@ -8,14 +8,14 @@ import { memo } from "react";
 const SectionHeader = memo(({ title, onSeeAll }) => {
   return (
     <div className="flex items-center justify-between px-4 py-2 my-3">
-      <h2 className="text-xl font-black text-primary font-playfair">
+      <h2 className="text-xl font-semibold text-primary font-inter">
         {title}
       </h2>
       
       {onSeeAll && (
         <button 
           onClick={onSeeAll} 
-          className="flex items-center gap-0.5 text-[14px] font-semibold text-amber-500 font-inter hover:text-amber-600 transition-colors"
+          className="flex items-center gap-0.5 text-[15px] font-semibold text-secondary font-inter hover:text-secondary transition-colors"
         >
           See all
           <svg 

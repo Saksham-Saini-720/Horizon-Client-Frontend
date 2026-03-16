@@ -10,7 +10,7 @@ const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 bg-bold/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
       onClick={onCancel}
     >
       <div 
@@ -34,11 +34,11 @@ const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
         </div>
 
         {/* Content */}
-        <h3 className="text-[22px] font-bold text-primary font-playfair mb-2 text-center">
+        <h3 className="text-[22px] font-semibold text-primary font-inter mb-2 text-center">
           Log Out
         </h3>
         
-        <p className="text-[14px] text-gray-500 font-['DM_Sans',sans-serif] text-center mb-6 leading-relaxed">
+        <p className="text-[15px] text-gray-500 font-inter text-center mb-6 leading-relaxed">
           Are you sure you want to log out? You'll need to log in again to access your account.
         </p>
 
@@ -47,14 +47,14 @@ const LogoutModal = memo(({ isOpen, onConfirm, onCancel, isLoading }) => {
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[15px] font-semibold text-primary font-['DM_Sans',sans-serif] hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3.5 rounded-xl border-2 border-gray-200 text-[15px] font-semibold text-primary font-inter hover:bg-gray-50 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-3.5 rounded-xl bg-red-500 text-white text-[15px] font-semibold font-['DM_Sans',sans-serif] hover:bg-red-600 active:scale-95 transition-all shadow-lg shadow-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-3.5 rounded-xl bg-red-500 text-white text-[15px] font-semibold font-inter hover:bg-red-600 active:scale-95 transition-all shadow-lg shadow-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>

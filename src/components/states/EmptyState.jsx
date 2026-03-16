@@ -30,7 +30,7 @@ const EmptyState = memo(({
     <div className="flex flex-col items-center py-12 text-center px-4">
       <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mb-3">
         <svg 
-          className="w-7 h-7 text-amber-300" 
+          className="w-7 h-7 text-secondary" 
           viewBox="0 0 24 24" 
           fill="none" 
           stroke="currentColor" 
@@ -41,11 +41,11 @@ const EmptyState = memo(({
         </svg>
       </div>
       
-      <p className="text-[16px] font-bold text-primary font-inter">
+      <p className="text-[16px] font-semibold text-primary font-inter">
         {title}
       </p>
       
-      <p className="text-[14px] text-gray-400 mt-1 font-inter">
+      <p className="text-[15px] text-gray-400 mt-1 font-inter">
         {message}
       </p>
 

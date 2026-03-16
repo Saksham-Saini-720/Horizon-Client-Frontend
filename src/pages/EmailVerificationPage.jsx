@@ -46,7 +46,7 @@ const EmailVerificationPage = memo(() => {
           
           {/* Email Icon */}
           <div className="mb-6 flex justify-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-lg">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-lg">
               <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
@@ -55,7 +55,7 @@ const EmailVerificationPage = memo(() => {
           </div>
 
           {/* Heading */}
-          <h1 className="text-[26px] font-black text-primary font-playfair mb-3">
+          <h1 className="text-[26px] font-semibold text-primary font-inter mb-3">
             Check Your Email
           </h1>
 
@@ -70,7 +70,7 @@ const EmailVerificationPage = memo(() => {
 
           {/* Info Box */}
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-            <p className="text-[14px] text-amber-800 font-inter leading-relaxed">
+            <p className="text-[15px] text-amber-800 font-inter leading-relaxed">
               💡 <strong>Tip:</strong> Can't find the email? Check your spam or junk folder.
             </p>
           </div>
@@ -116,7 +116,7 @@ const EmailVerificationPage = memo(() => {
           Already verified?{" "}
           <button
             onClick={handleGoToLogin}
-            className="text-amber-600 font-semibold hover:text-amber-700 hover:underline"
+            className="text-secondary font-semibold hover:text-amber-700 hover:underline"
           >
             Log in here
           </button>

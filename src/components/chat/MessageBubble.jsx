@@ -23,7 +23,7 @@ const MessageBubble = memo(({ message, showTime = true }) => {
             className="px-4 py-2.5 rounded-[18px] rounded-tr-[4px]"
             style={{ backgroundColor: '#1C2A3A' }}
           >
-            <p className="text-[14px] text-white font-inter leading-[1.4]">
+            <p className="text-[15px] text-white font-inter leading-[1.4]">
               {content}
             </p>
           </div>
@@ -57,7 +57,7 @@ const MessageBubble = memo(({ message, showTime = true }) => {
     <div className="flex justify-start mb-1.5 px-4">
       <div className="max-w-[75%]">
         <div className="px-4 py-2.5 rounded-[18px] rounded-tl-[4px] bg-white shadow-sm border border-gray-100">
-          <p className="text-[14px] text-primary font-inter leading-[1.4]">
+          <p className="text-[15px] text-primary font-inter leading-[1.4]">
             {content}
           </p>
         </div>

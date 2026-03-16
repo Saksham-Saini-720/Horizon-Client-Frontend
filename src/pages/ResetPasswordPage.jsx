@@ -32,7 +32,7 @@ const InvalidTokenState = ({ onBackClick }) => (
       </div>
     </div>
 
-    <h3 className="text-[22px] font-bold text-gray-900 mb-2">Invalid or Expired Link</h3>
+    <h3 className="text-[22px] font-semibold text-gray-900 mb-2">Invalid or Expired Link</h3>
     <p className="text-[15px] text-gray-600 mb-6">
       This password reset link is invalid or has expired. Please request a new one.
     </p>
@@ -117,12 +117,12 @@ export default function ResetPasswordPage() {
         {/* Icon */}
         <div className="mb-6 flex justify-center">
           <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center">
-            <Icon name="lock" size={32} className="text-amber-600" />
+            <Icon name="lock" size={32} className="text-secondary" />
           </div>
         </div>
 
         {/* Header */}
-        <h2 className="text-[24px] font-black font-playfair text-gray-900 mb-2 text-center">
+        <h2 className="text-[24px] font-semibold font-inter text-gray-900 mb-2 text-center">
           Reset Your Password
         </h2>
         <p className="text-[16px] text-gray-500 mb-6 text-center">
@@ -131,7 +131,7 @@ export default function ResetPasswordPage() {
 
         {/* Error Banner */}
         {resetPasswordMutation.error && resetPasswordMutation.error?.response?.status !== 401 && (
-          <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-[14px] rounded-xl px-4 py-3 mb-5">
+          <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 text-[15px] rounded-xl px-4 py-3 mb-5">
             <Icon name="error" size={16} className="flex-shrink-0 mt-0.5" />
             {resetPasswordMutation.error.response?.data?.message || "Failed to reset password"}
           </div>
@@ -181,11 +181,11 @@ export default function ResetPasswordPage() {
         </form>
 
         {/* Footer */}
-        <p className="text-[13px] text-center text-gray-400 mt-6">
+        <p className="text-[15px] text-center text-gray-400 mt-6">
           Remember your password?{" "}
           <button
             onClick={handleBackToLogin}
-            className="text-amber-600 font-semibold hover:underline"
+            className="text-secondary font-semibold hover:underline"
           >
             Log in
           </button>

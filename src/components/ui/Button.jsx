@@ -21,7 +21,7 @@ const Button = memo(({
     secondary: "bg-white text-gray-900 border border-gray-200 hover:bg-gray-50",
     danger: "bg-red-600 text-white hover:bg-red-700",
     ghost: "bg-transparent text-gray-700 hover:bg-gray-100",
-    amber: "bg-amber-500 text-white hover:bg-amber-600",
+    amber: "bg-secondary text-white hover:bg-amber-600",
   };
 
   const sizes = {

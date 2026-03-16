@@ -31,7 +31,7 @@ const DeleteTourModal = memo(({ isOpen, onClose, tour }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bold/50 animate-fadeIn">
       <div
         className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-slideUp"
         onClick={(e) => e.stopPropagation()}
@@ -49,10 +49,10 @@ const DeleteTourModal = memo(({ isOpen, onClose, tour }) => {
                 </svg>
               </div>
               <div>
-                <h2 className="text-[18px] font-black text-primary font-playfair">
+                <h2 className="text-[18px] font-semibold text-primary font-inter">
                   Delete Tour Request
                 </h2>
-                <p className="text-[12px] text-gray-500 font-playfair">
+                <p className="text-[12px] text-gray-500 font-inter">
                   {tour?.property?.title}
                 </p>
               </div>
@@ -81,7 +81,7 @@ const DeleteTourModal = memo(({ isOpen, onClose, tour }) => {
                 <line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
               <div>
-                <p className="text-[13px] font-semibold text-red-800 font-inter mb-1">
+                <p className="text-[15px] font-semibold text-red-800 font-inter mb-1">
                   Permanently Delete?
                 </p>
                 <p className="text-[12px] text-red-700 font-inter">
@@ -100,7 +100,7 @@ const DeleteTourModal = memo(({ isOpen, onClose, tour }) => {
                 className="w-12 h-12 rounded-lg object-cover"
               />
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-semibold text-gray-700 font-inter truncate">
+                <p className="text-[15px] font-semibold text-gray-700 font-inter truncate">
                   {tour?.property?.title}
                 </p>
                 <p className="text-[11px] text-gray-500 font-inter">
@@ -116,14 +116,14 @@ const DeleteTourModal = memo(({ isOpen, onClose, tour }) => {
               type="button"
               onClick={handleClose}
               disabled={deleteMutation.isPending}
-              className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-[14px] font-semibold text-gray-700 font-inter hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-inter hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Keep
             </button>
             <button
               type="submit"
               disabled={deleteMutation.isPending}
-              className="flex-1 px-6 py-3 rounded-xl bg-red-600 text-white text-[14px] font-semibold font-inter hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 rounded-xl bg-red-600 text-white text-[15px] font-semibold font-inter hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {deleteMutation.isPending ? (
                 <>

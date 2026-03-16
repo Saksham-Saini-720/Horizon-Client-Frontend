@@ -12,9 +12,9 @@ const ActionButton = memo(({ icon, label, onClick, primary = false, variant = 'd
     onClick={onClick}
     className={`flex-1 flex max-w-40 items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-semibold text-[15px] font-inter transition-all active:scale-95 ${
       primary
-        ? 'bg-primary text-white shadow-lg hover:bg-primary-light'
+        ? 'bg-secondary text-white shadow-lg hover:bg-secondary/90'
         : variant === 'yellow'
-        ? 'bg-white text-primary border border-gray-200 hover:bg-amber-400 hover:border-amber-400 hover:text-white'
+        ? 'bg-white text-primary border border-gray-200 hover:bg-secondary hover:border-secondary hover:text-white'
         : 'bg-white text-primary border border-gray-200 hover:bg-gray-50'
     }`}
   >

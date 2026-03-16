@@ -89,7 +89,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 animate-in fade-in duration-300"
+        className="fixed inset-0 bg-bold/50 backdrop-blur-sm z-50 animate-in fade-in duration-300"
         onClick={onClose}
       />
 
@@ -101,7 +101,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-black text-primary font-playfair">
+            <h2 className="text-[22px] font-semibold text-primary font-inter">
               Request a Tour
             </h2>
             <button
@@ -119,7 +119,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
         <div className="px-6 py-6 space-y-6">
           {/* Visit Type */}
           <div>
-            <label className="block text-[13px] font-semibold text-gray-700 font-inter mb-3">
+            <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-3">
               Visit Type
             </label>
             <div className="grid grid-cols-2 gap-4">
@@ -137,7 +137,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                   <circle cx="12" cy="12" r="3" />
                 </svg>
                 <div className="text-center">
-                  <p className="text-[15px] font-bold text-primary font-inter">
+                  <p className="text-[15px] font-semibold text-primary font-inter">
                     In Person
                   </p>
                   <p className="text-[12px] text-gray-500 font-inter">
@@ -160,7 +160,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                   <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                 </svg>
                 <div className="text-center">
-                  <p className="text-[15px] font-bold text-primary font-inter">
+                  <p className="text-[15px] font-semibold text-primary font-inter">
                     Virtual Tour
                   </p>
                   <p className="text-[12px] text-gray-500 font-inter">
@@ -173,7 +173,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
 
           {/* Select Date */}
           <div>
-            <label className="block text-[13px] font-semibold text-gray-700 font-inter mb-3">
+            <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-3">
               Select Date
             </label>
             <div className="grid grid-cols-6 gap-3">
@@ -190,7 +190,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                   <span className="text-[11px] text-gray-500 font-inter mb-1">
                     {d.day}
                   </span>
-                  <span className="text-[18px] font-bold text-primary font-inter mb-1">
+                  <span className="text-[18px] font-semibold text-primary font-inter mb-1">
                     {d.date}
                   </span>
                   <span className="text-[10px] text-gray-400 font-inter">
@@ -205,7 +205,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
           {showTimeSlots && (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="text-[13px] font-semibold text-gray-700 font-inter">
+                <label className="text-[15px] font-semibold text-gray-700 font-inter">
                   Select Time (up to 3)
                 </label>
                 <span className="text-[12px] text-gray-500 font-inter">
@@ -228,7 +228,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                       <circle cx="12" cy="12" r="10" />
                       <polyline points="12 6 12 12 16 14" />
                     </svg>
-                    <span className="text-[14px] font-semibold font-inter">
+                    <span className="text-[15px] font-semibold font-inter">
                       {time}
                     </span>
                   </button>
@@ -239,7 +239,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
 
           {/* Note */}
           <div>
-            <label className="block text-[13px] font-semibold text-gray-700 font-inter mb-2">
+            <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-2">
               Note for Agent (optional)
             </label>
             <textarea
@@ -248,7 +248,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
               placeholder="Any specific areas you'd like to see, accessibility needs, etc."
               rows={3}
               maxLength={500}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[14px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-amber-400 resize-none"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-secondary resize-none"
             />
             <p className="text-[11px] text-gray-400 font-inter mt-1">
               {note.length}/500 characters
@@ -271,7 +271,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
           <button
             onClick={handleReview}
             disabled={!selectedDate || selectedTimes.length === 0}
-            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-400 text-white text-[16px] font-bold font-inter hover:bg-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed enabled:bg-primary enabled:hover:bg-primary-light shadow-lg"
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-400 text-white text-[16px] font-semibold font-inter hover:bg-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed enabled:bg-primary enabled:hover:bg-primary-light shadow-lg"
           >
             Review & Request Tour
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

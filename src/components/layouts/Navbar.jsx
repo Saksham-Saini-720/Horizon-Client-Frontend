@@ -20,11 +20,11 @@ export const HorizonLogo = ({ size = 40 }) => (
     style={{
       width: size,
       height: size,
-      background: "linear-gradient(145deg, #F5B731 0%, #E8A020 100%)",
-      boxShadow: "0 2px 8px rgba(232,160,32,0.35)",
+      background: "linear-gradient(145deg, #F5F5F5 0%, #F5F5F5 100%)",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
     }}
   >
-    <img src={logo} alt="logo" className="w-4/5 h-auto object-contain" />
+    <img src={logo} alt="logo" className="w-5/5 h-auto object-contain p-[1px]" />
   </div>
 );
 
@@ -59,7 +59,7 @@ const Navbar = () => {
             </svg>
           </button>
         )}
-        <h1 className="text-[24px] font-black text-primary  m-0 truncate font-playfair">
+        <h1 className="text-[24px] font-bold text-primary  m-0 truncate font-inter">
           {title}
         </h1>
       </div>

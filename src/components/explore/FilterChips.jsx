@@ -40,7 +40,7 @@ const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => (
           onClick={() => onToggle(id)}
           className={`
             flex items-center gap-1.5 flex-shrink-0 px-4 py-2 rounded-full border
-            text-[14px] font-semibold font-inter transition-all active:scale-95
+            text-[15px] font-semibold font-inter transition-all active:scale-95
             ${isActive
               ? "bg-primary text-white border-primary"
               : "bg-white text-primary border-gray-200"
