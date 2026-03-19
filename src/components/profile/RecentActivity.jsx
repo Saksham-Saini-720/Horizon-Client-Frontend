@@ -98,8 +98,8 @@ const RecentActivity = memo(() => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-[16px] font-semibold text-primary font-inter">Recent Activity</h2>
-        {/* <button onClick={() => navigate('/activity')} className="text-[12px] font-semibold text-accent hover:text-accent-dark transition-colors font-inter">
+        <h2 className="text-[16px] font-semibold text-primary font-myriad">Recent Activity</h2>
+        {/* <button onClick={() => navigate('/activity')} className="text-[12px] font-semibold text-accent hover:text-accent-dark transition-colors font-myriad">
           View All
         </button> */}
       </div>
@@ -107,7 +107,7 @@ const RecentActivity = memo(() => {
       <div className="px-1 py-2 bg-white border-t border-gray-100 rounded-2xl mb-6 shadow-xl">
         {activities.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10">
-            <p className="text-[15px] text-gray-400 font-inter">No activity yet</p>
+            <p className="text-[15px] text-gray-400 font-myriad">No activity yet</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -121,9 +121,9 @@ const RecentActivity = memo(() => {
                   {activity.icon}
                 </div>
                 <div className="flex-1 text-left">
-                  <h3 className="text-[15px] font-semibold text-primary font-inter">{activity.title}</h3>
-                  <p className="text-[15px] text-gray-600 font-inter mb-1">{activity.subtitle}</p>
-                  <p className="text-[12px] text-gray-400 font-inter">{activity.timestamp}</p>
+                  <h3 className="text-[15px] font-semibold text-primary font-myriad">{activity.title}</h3>
+                  <p className="text-[15px] text-gray-600 font-myriad mb-1">{activity.subtitle}</p>
+                  <p className="text-[12px] text-gray-400 font-myriad">{activity.timestamp}</p>
                 </div>
                 <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="9 18 15 12 9 6"/>

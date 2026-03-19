@@ -39,10 +39,10 @@ const TourNotification = memo(({ show, onClose, agent }) => {
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h4 className="text-[15px] font-semibold text-primary font-inter mb-0.5">
+            <h4 className="text-[15px] font-semibold text-primary font-myriad mb-0.5">
               Tour requested!
             </h4>
-            <p className="text-[12px] text-gray-500 font-inter">
+            <p className="text-[12px] text-gray-500 font-myriad">
               {agent?.name || 'Grace Tembo'} will confirm your preferred slot.
             </p>
           </div>

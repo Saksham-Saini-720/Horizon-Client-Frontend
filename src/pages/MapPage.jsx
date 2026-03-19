@@ -112,8 +112,8 @@ const MapPage = () => {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-gray-50">
         <div className="w-16 h-16 rounded-full border-4 border-gray-200 border-t-blue-500 animate-spin mb-4" />
-        <p className="text-[16px] font-semibold text-gray-700 font-inter">Getting your location…</p>
-        <p className="text-[15px] text-gray-400 mt-1 font-inter">Please allow location access</p>
+        <p className="text-[16px] font-semibold text-gray-700 font-myriad">Getting your location…</p>
+        <p className="text-[15px] text-gray-400 mt-1 font-myriad">Please allow location access</p>
       </div>
     );
   }
@@ -130,8 +130,8 @@ const MapPage = () => {
             </svg>
           </button>
           <div className="flex-1 mx-4 text-center">
-            <h1 className="text-[16px] font-semibold text-primary font-inter">Nearby Properties</h1>
-            <p className="text-[11px] text-gray-500 font-inter">
+            <h1 className="text-[16px] font-semibold text-primary font-myriad">Nearby Properties</h1>
+            <p className="text-[11px] text-gray-500 font-myriad">
               {locationName} • {searchRadius / 1000}km radius
             </p>
           </div>
@@ -177,7 +177,7 @@ const MapPage = () => {
           <p className="text-[9px] font-semibold text-gray-400 tracking-widest text-center mb-1.5 px-1">RADIUS</p>
           {[2000, 5000, 10000].map((r) => (
             <button key={r} onClick={() => handleRadiusChange(r)}
-              className={`w-full px-3 py-2 rounded-xl text-[12px] font-semibold font-inter transition-colors mb-1 last:mb-0 ${
+              className={`w-full px-3 py-2 rounded-xl text-[12px] font-semibold font-myriad transition-colors mb-1 last:mb-0 ${
                 searchRadius === r ? 'bg-primary text-white' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -192,14 +192,14 @@ const MapPage = () => {
         {propertiesLoading ? (
           <div className="bg-white px-5 py-2.5 rounded-full shadow-lg flex items-center gap-3">
             <div className="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
-            <span className="text-[15px] font-semibold text-gray-600 font-inter">
+            <span className="text-[15px] font-semibold text-gray-600 font-myriad">
               Finding nearby properties…
             </span>
           </div>
         ) : !selectedProperty ? (
           <div className="bg-primary text-white px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-secondary" />
-            <span className="text-[15px] font-semibold font-inter">
+            <span className="text-[15px] font-semibold font-myriad">
               {propertiesError
                 ? 'Failed to load properties'
                 : `${properties.length} ${properties.length === 1 ? 'property' : 'properties'} nearby`}

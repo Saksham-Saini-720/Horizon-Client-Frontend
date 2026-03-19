@@ -19,12 +19,12 @@ const PropertyInfo = memo(({ property }) => {
       </div>
 
       {/* Price */}
-      <p className="text-[28px] font-semibold text-primary font-inter mb-2">
+      <p className="text-[28px] font-semibold text-primary font-myriad mb-2">
         {property.price}
       </p>
 
       {/* Title */}
-      <h1 className="text-[20px] font-semibold text-primary font-inter mb-2">
+      <h1 className="text-[20px] font-semibold text-primary font-myriad mb-2">
         {property.title}
       </h1>
 
@@ -34,7 +34,7 @@ const PropertyInfo = memo(({ property }) => {
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
           <circle cx="12" cy="10" r="3"/>
         </svg>
-        <p className="text-[15px] text-gray-600 font-inter">
+        <p className="text-[15px] text-gray-600 font-myriad">
           {property.location}
         </p>
       </div>

@@ -27,16 +27,16 @@ const ChatPage = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
+    <div className="min-h-screen flex flex-col">
 
       {/* ── Header ── */}
-      <div style={{ backgroundColor: '#1C2A3A' }} className="px-4 pt-12 pb-4">
+      <div className="px-4 pt-12 pb-4 bg-secondary">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-[24px] font-semibold text-white font-inter">
+          <h1 className="text-[24px] font-semibold text-white font-myriad">
             Messages
           </h1>
           {unreadCount > 0 && (
-            <span className="bg-secondary text-white text-[12px] font-semibold px-3 py-1 rounded-full font-inter">
+            <span className="bg-secondary text-white text-[12px] font-semibold px-3 py-1 rounded-full font-myriad">
               {unreadCount} unread
             </span>
           )}
@@ -53,7 +53,7 @@ const ChatPage = () => {
             value={searchQuery}
             onChange={handleSearchChange}
             placeholder="Search conversations..."
-            className="flex-1 bg-transparent text-[15px] text-white placeholder-white/50 outline-none font-inter"
+            className="flex-1 bg-transparent text-[15px] text-white placeholder-white/50 outline-none font-myriad"
           />
           {searchQuery.length > 0 && (
             <button onClick={() => { setSearchQuery(''); setDebouncedSearch(''); }}>
@@ -83,9 +83,9 @@ const ChatPage = () => {
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
             </div>
-            <p className="text-[15px] font-semibold text-primary mb-2 font-inter">Couldn't load messages</p>
-            <p className="text-[15px] text-gray-400 mb-5 font-inter">{error?.message}</p>
-            <button onClick={refetch} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[15px] font-semibold font-inter">
+            <p className="text-[15px] font-semibold text-primary mb-2 font-myriad">Couldn't load messages</p>
+            <p className="text-[15px] text-gray-400 mb-5 font-myriad">{error?.message}</p>
+            <button onClick={refetch} className="px-6 py-2.5 bg-primary text-white rounded-xl text-[15px] font-semibold font-myriad">
               Try Again
             </button>
           </div>
@@ -96,8 +96,8 @@ const ChatPage = () => {
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <p className="text-[17px] font-semibold text-primary mb-1 font-inter">No messages yet</p>
-            <p className="text-[15px] text-gray-400 text-center font-inter">
+            <p className="text-[17px] font-semibold text-primary mb-1 font-myriad">No messages yet</p>
+            <p className="text-[15px] text-gray-400 text-center font-myriad">
               Inquire about a property to start a conversation
             </p>
           </div>
@@ -105,7 +105,7 @@ const ChatPage = () => {
           <div className="mt-2">
             {/* Section label */}
             <div className="px-4 py-2">
-              <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-inter">
+              <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-myriad">
                 All conversations
               </p>
             </div>

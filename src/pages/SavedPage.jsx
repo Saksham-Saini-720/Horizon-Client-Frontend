@@ -22,15 +22,15 @@ const NotLoggedInState = () => {
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </div>
-      <h2 className="text-[24px] font-semibold text-primary font-inter mb-2">
+      <h2 className="text-[24px] font-semibold text-primary font-myriad mb-2">
         No saved properties
       </h2>
-      <p className="text-[15px] text-gray-500 font-inter text-center max-w-xs mb-8">
+      <p className="text-[15px] text-gray-500 font-myriad text-center max-w-xs mb-8">
         Log in to save your favorite properties
       </p>
       <button
         onClick={() => navigate('/login')}
-        className="px-8 py-3.5 rounded-xl bg-secondary text-white text-[15px] font-semibold font-inter hover:bg-secondary/90 active:scale-95 transition-all shadow-lg"
+        className="px-8 py-3.5 rounded-xl bg-secondary text-white text-[15px] font-semibold font-myriad hover:bg-secondary/90 active:scale-95 transition-all shadow-lg"
       >
         Log In
       </button>
@@ -50,10 +50,10 @@ const EmptySaved = () => {
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </div>
-      <h3 className="text-[22px] font-semibold text-primary font-inter mb-2">
+      <h3 className="text-[22px] font-semibold text-primary font-myriad mb-2">
         No saved properties yet
       </h3>
-      <p className="text-[15px] text-gray-500 font-inter mb-8 max-w-sm">
+      <p className="text-[15px] text-gray-500 font-myriad mb-8 max-w-sm">
         Start exploring and save your favorites
       </p>
       <button
@@ -78,7 +78,7 @@ const ErrorState = ({ onRetry }) => (
         <line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
     </div>
-    <p className="text-[17px] font-semibold text-primary font-inter mb-2">
+    <p className="text-[17px] font-semibold text-primary font-myriad mb-2">
       Failed to load saved properties
     </p>
     <button
@@ -100,10 +100,10 @@ const EmptyFilterResult = ({ filterName }) => (
         <path d="M21 21l-4.35-4.35"/>
       </svg>
     </div>
-    <p className="text-[16px] font-semibold text-primary font-inter mb-1">
+    <p className="text-[16px] font-semibold text-primary font-myriad mb-1">
       No {filterName} properties
     </p>
-    <p className="text-[15px] text-gray-400 font-inter">
+    <p className="text-[15px] text-gray-400 font-myriad">
       Try a different filter
     </p>
   </div>
@@ -129,24 +129,24 @@ const ClearAllModal = ({ isOpen, onClose, onConfirm, count }) => {
           </svg>
         </div>
 
-        <h3 className="text-[19px] font-semibold text-primary font-inter mb-2">
+        <h3 className="text-[19px] font-semibold text-primary font-myriad mb-2">
           Clear all saved properties?
         </h3>
 
-        <p className="text-[15px] text-gray-500 font-inter mb-6">
+        <p className="text-[15px] text-gray-500 font-myriad mb-6">
           This will remove all {count} saved {count === 1 ? 'property' : 'properties'}. This action cannot be undone.
         </p>
 
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-primary font-inter hover:bg-gray-50 active:scale-95 transition-all"
+            className="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-primary font-myriad hover:bg-gray-50 active:scale-95 transition-all"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-4 py-3 rounded-xl bg-red-500 text-white text-[15px] font-semibold font-inter hover:bg-red-600 active:scale-95 transition-all shadow-lg shadow-red-500/30"
+            className="flex-1 px-4 py-3 rounded-xl bg-red-500 text-white text-[15px] font-semibold font-myriad hover:bg-red-600 active:scale-95 transition-all shadow-lg shadow-red-500/30"
           >
             Clear All
           </button>
@@ -263,10 +263,10 @@ const SavedPage = () => {
       <div className="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 pt-4 pb-3 shadow-sm">
         <div className="flex items-center justify-between mb-3">
           <div>
-            {/* <h1 className="text-[24px] font-semibold text-primary font-inter mb-0.5">
+            {/* <h1 className="text-[24px] font-semibold text-primary font-myriad mb-0.5">
               Saved
             </h1> */}
-            <p className="text-[15px] text-gray-500 font-inter">
+            <p className="text-[15px] text-gray-500 font-myriad">
               {filterCounts.all} {filterCounts.all === 1 ? 'property' : 'properties'} saved
             </p>
           </div>
@@ -329,7 +329,7 @@ const SavedPage = () => {
 
             <button
               onClick={() => setShowClearConfirm(true)}
-              className="text-[12px] font-semibold text-red-500 hover:text-red-600 font-inter transition-colors whitespace-nowrap"
+              className="text-[12px] font-semibold text-red-500 hover:text-red-600 font-myriad transition-colors whitespace-nowrap"
             >
               Clear all
             </button>

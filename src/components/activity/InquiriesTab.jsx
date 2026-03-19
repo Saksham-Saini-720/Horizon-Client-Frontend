@@ -40,10 +40,10 @@ const InquiriesTab = memo(() => {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h3 className="text-[20px] font-semibold text-gray-600 font-inter mb-2">
+        <h3 className="text-[20px] font-semibold text-gray-600 font-myriad mb-2">
           Failed to Load Inquiries
         </h3>
-        <p className="text-[16px] text-gray-400 font-inter mb-4">
+        <p className="text-[16px] text-gray-400 font-myriad mb-4">
           {error?.message || 'Something went wrong'}
         </p>
         <button
@@ -74,10 +74,10 @@ const InquiriesTab = memo(() => {
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
         </div>
-        <h3 className="text-[20px] font-semibold text-gray-600 font-inter mb-2">
+        <h3 className="text-[20px] font-semibold text-gray-600 font-myriad mb-2">
           No Inquiries Yet
         </h3>
-        <p className="text-[16px] text-gray-400 font-inter">
+        <p className="text-[16px] text-gray-400 font-myriad">
           Your property inquiries will appear here
         </p>
       </div>

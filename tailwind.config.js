@@ -8,13 +8,13 @@ export default {
       colors: {
         primary: {
           DEFAULT: '#171C26',
-          light:   '#2A3A4A',
+          light:   '#2D368E',
         },
-        secondary: '#DB143C',
+        secondary: '#C96C38',
         surface: '#F7F6F2',
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
+        myriad: ['MyriadPro', 'sans-serif'],
       },
     },
   },

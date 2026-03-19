@@ -28,11 +28,11 @@ const ErrorState = memo(({
         </svg>
       </div>
       
-      <p className="text-[16px] font-semibold text-primary font-inter mb-1">
+      <p className="text-[16px] font-semibold text-primary font-myriad mb-1">
         {title}
       </p>
       
-      <p className="text-[15px] text-gray-400 font-inter mb-4">
+      <p className="text-[15px] text-gray-400 font-myriad mb-4">
         {message || "Something went wrong"}
       </p>
 

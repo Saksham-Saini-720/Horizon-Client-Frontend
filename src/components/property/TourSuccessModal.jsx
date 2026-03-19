@@ -48,7 +48,7 @@ const TourSuccessModal = memo(({ onClose, property, agent, visitType, selectedTi
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-semibold text-primary font-inter">
+            <h2 className="text-[22px] font-semibold text-primary font-myriad">
               Tour Requested
             </h2>
             <button
@@ -80,18 +80,18 @@ const TourSuccessModal = memo(({ onClose, property, agent, visitType, selectedTi
           </div>
 
           {/* Success Text */}
-          <h3 className="text-[24px] font-semibold text-primary text-center font-inter mb-3">
+          <h3 className="text-[24px] font-semibold text-primary text-center font-myriad mb-3">
             Tour Request Sent!
           </h3>
 
-          <p className="text-[15px] text-gray-500 text-center font-inter mb-8 max-w-sm">
+          <p className="text-[15px] text-gray-500 text-center font-myriad mb-8 max-w-sm">
             {agent?.name || 'Grace Tembo'} will review your preferred times and confirm shortly.
           </p>
 
           {/* Details */}
           <div className="w-full space-y-3 mb-8">
             {/* Time Slot */}
-            <div className="flex items-center gap-3 text-[15px] text-gray-600 font-inter">
+            <div className="flex items-center gap-3 text-[15px] text-gray-600 font-myriad">
               <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
@@ -105,7 +105,7 @@ const TourSuccessModal = memo(({ onClose, property, agent, visitType, selectedTi
 
             {/* Virtual Tour */}
             {visitType === 'virtual' && (
-              <div className="flex items-center gap-3 text-[15px] text-gray-600 font-inter">
+              <div className="flex items-center gap-3 text-[15px] text-gray-600 font-myriad">
                 <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polygon points="23 7 16 12 23 17 23 7" />
                   <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
@@ -118,7 +118,7 @@ const TourSuccessModal = memo(({ onClose, property, agent, visitType, selectedTi
           {/* Done Button */}
           <button
             onClick={onClose}
-            className="w-full max-w-xs px-8 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-inter hover:bg-primary-light transition-all shadow-lg"
+            className="w-full max-w-xs px-8 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-myriad hover:bg-primary-light transition-all shadow-lg"
           >
             Done
           </button>

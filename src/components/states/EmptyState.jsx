@@ -41,11 +41,11 @@ const EmptyState = memo(({
         </svg>
       </div>
       
-      <p className="text-[16px] font-semibold text-primary font-inter">
+      <p className="text-[16px] font-semibold text-primary font-myriad">
         {title}
       </p>
       
-      <p className="text-[15px] text-gray-400 mt-1 font-inter">
+      <p className="text-[15px] text-gray-400 mt-1 font-myriad">
         {message}
       </p>
 

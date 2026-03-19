@@ -21,10 +21,10 @@ const MembershipBadge = memo(({ memberSince }) => {
 
         {/* Text */}
         <div className="flex-1">
-          <h3 className="text-[15px] font-semibold text-white font-inter ">
+          <h3 className="text-[15px] font-semibold text-white font-myriad ">
             Horizon Member
           </h3>
-          <p className="text-[12px] text-white/70 font-inter">
+          <p className="text-[12px] text-white/70 font-myriad">
             Member since {memberSince}
           </p>
         </div>

@@ -43,7 +43,7 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
                 }}
               />
             ) : (
-              <span className="text-white text-[15px] font-semibold font-inter">
+              <span className="text-white text-[15px] font-semibold font-myriad">
                 {avatarInitials}
               </span>
             )}
@@ -57,10 +57,10 @@ const ConversationHeader = memo(({ participant, onCallPress, onVideoPress, onMor
 
         {/* Name & Status */}
         <div className="flex-1 min-w-0">
-          <p className="text-[16px] font-semibold text-primary font-inter truncate">
+          <p className="text-[16px] font-semibold text-primary font-myriad truncate">
             {participant?.name || 'Unknown'}
           </p>
-          <p className="text-[12px] font-inter text-gray-500">
+          <p className="text-[12px] font-myriad text-gray-500">
             {participant?.isOnline ? (
               <span className="text-green-500 font-medium">Active now</span>
             ) : participant?.lastSeen ? (

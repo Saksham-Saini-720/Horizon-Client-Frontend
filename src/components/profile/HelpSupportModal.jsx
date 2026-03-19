@@ -100,10 +100,10 @@ const HelpSupportModal = memo(({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-start justify-between px-6 pt-6 pb-4">
           <div>
-            <h2 className="text-[18px] font-semibold text-primary font-inter">
+            <h2 className="text-[18px] font-semibold text-primary font-myriad">
               Contact Support
             </h2>
-            <p className="text-[15px] text-gray-500 font-inter mt-0.5">
+            <p className="text-[15px] text-gray-500 font-myriad mt-0.5">
               Have a question or issue? We're here to help.
             </p>
           </div>
@@ -122,7 +122,7 @@ const HelpSupportModal = memo(({ isOpen, onClose }) => {
 
           {/* Subject */}
           <div>
-            <label className="block text-[15px] font-semibold text-primary font-inter mb-2">
+            <label className="block text-[15px] font-semibold text-primary font-myriad mb-2">
               Subject
             </label>
             <input
@@ -130,13 +130,13 @@ const HelpSupportModal = memo(({ isOpen, onClose }) => {
               type="text"
               placeholder="What can we help with?"
               disabled={mutation.isPending}
-              className="w-full bg-white border-2 border-secondary rounded-xl px-4 py-3 text-[15px] text-primary placeholder-gray-400 font-inter outline-none focus:border-secondary transition-colors disabled:opacity-60"
+              className="w-full bg-white border-2 border-secondary rounded-xl px-4 py-3 text-[15px] text-primary placeholder-gray-400 font-myriad outline-none focus:border-secondary transition-colors disabled:opacity-60"
             />
           </div>
 
           {/* Message */}
           <div>
-            <label className="block text-[15px] font-semibold text-primary font-inter mb-2">
+            <label className="block text-[15px] font-semibold text-primary font-myriad mb-2">
               Message
             </label>
             <textarea
@@ -144,7 +144,7 @@ const HelpSupportModal = memo(({ isOpen, onClose }) => {
               placeholder="Describe your issue or question..."
               rows={4}
               disabled={mutation.isPending}
-              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[15px] text-primary placeholder-gray-400 font-inter outline-none focus:border-secondary transition-colors resize-none disabled:opacity-60"
+              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[15px] text-primary placeholder-gray-400 font-myriad outline-none focus:border-secondary transition-colors resize-none disabled:opacity-60"
             />
           </div>
 
@@ -152,7 +152,7 @@ const HelpSupportModal = memo(({ isOpen, onClose }) => {
           <button
             onClick={handleSubmit}
             disabled={mutation.isPending}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-[15px] font-semibold text-white font-inter transition-all active:scale-[0.98] disabled:opacity-70"
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-[15px] font-semibold text-white font-myriad transition-all active:scale-[0.98] disabled:opacity-70"
             style={{ backgroundColor: '#1C2A3A' }}
           >
             {mutation.isPending ? (

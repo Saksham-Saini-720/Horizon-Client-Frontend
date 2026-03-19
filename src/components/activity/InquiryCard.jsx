@@ -42,7 +42,7 @@ const InquiryCard = memo(({ inquiry }) => {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-[15px] text-primary font-inter font-semibold mb-1 line-clamp-1">
+          <h3 className="text-[15px] text-primary font-myriad font-semibold mb-1 line-clamp-1">
             {property?.title}
           </h3>
           <div className="flex items-center gap-1.5 mb-2">
@@ -50,14 +50,14 @@ const InquiryCard = memo(({ inquiry }) => {
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
               <circle cx="12" cy="10" r="3"/>
             </svg>
-            <p className="text-[12px] text-gray-500 font-inter">
+            <p className="text-[12px] text-gray-500 font-myriad">
               {formatLocation(property?.location)}
             </p>
           </div>
-          <p className="text-[16px] font-semibold text-primary font-inter">ZWM {property?.price}</p>
+          <p className="text-[16px] font-semibold text-primary font-myriad">ZWM {property?.price}</p>
         </div>
 
-        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold font-inter ${currentStatus.color}`}>
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold font-myriad ${currentStatus.color}`}>
           <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="10"/>
           </svg>
@@ -67,7 +67,7 @@ const InquiryCard = memo(({ inquiry }) => {
 
       {/* Message */}
       <div className="px-5 pb-4">
-        <p className="text-[12px] bg-gray-100 rounded-md py-2 px-3 text-gray-500 font-inter italic leading-relaxed">
+        <p className="text-[12px] bg-gray-100 rounded-md py-2 px-3 text-gray-500 font-myriad italic leading-relaxed">
           {message}
         </p>
       </div>
@@ -75,18 +75,18 @@ const InquiryCard = memo(({ inquiry }) => {
       {/* Agent Info */}
       <div className="px-4 py-3 bg-gray-50 border-t-2 border-gray-300 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[16px] font-semibold font-inter overflow-hidden">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[16px] font-semibold font-myriad overflow-hidden">
             {agent?.avatar
               ? <img className="w-8 h-8 rounded-full object-cover" src={agent.avatar} alt={agent.name} />
               : agent?.name?.charAt(0) || 'A'
             }
           </div>
           <div>
-            <p className="text-[12px] font-semibold text-primary font-inter">{agent?.name}</p>
-            <p className="text-[10px] text-gray-500 font-inter">{agent?.role || 'Property Agent'}</p>
+            <p className="text-[12px] font-semibold text-primary font-myriad">{agent?.name}</p>
+            <p className="text-[10px] text-gray-500 font-myriad">{agent?.role || 'Property Agent'}</p>
           </div>
         </div>
-        <p className="text-[12px] text-gray-400 font-inter">{timestamp}</p>
+        <p className="text-[12px] text-gray-400 font-myriad">{timestamp}</p>
       </div>
     </div>
   );

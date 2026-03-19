@@ -89,7 +89,7 @@ const SearchHeader = memo(({
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder="villa"
-              className="flex-1 bg-transparent outline-none border-none text-[15px] text-gray-700 placeholder-gray-400 font-inter"
+              className="flex-1 bg-transparent outline-none border-none text-[15px] text-gray-700 placeholder-gray-400 font-myriad"
             />
 
             {/* Clear X */}

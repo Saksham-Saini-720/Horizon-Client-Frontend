@@ -122,7 +122,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[22px] font-semibold text-primary font-inter">Send Message</h2>
+            <h2 className="text-[22px] font-semibold text-primary font-myriad">Send Message</h2>
             <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors active:scale-90">
               <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -136,19 +136,19 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
               {agent?.photo ? (
                 <img src={agent.photo} alt={agent.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-secondary text-white text-[20px] font-semibold font-inter">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-secondary text-white text-[20px] font-semibold font-myriad">
                   {agent?.name?.charAt(0) || 'G'}
                 </div>
               )}
             </div>
             <div className="flex-1">
-              <h3 className="text-[16px] font-semibold text-primary font-inter mb-0.5">{agent?.name || 'Agent'}</h3>
+              <h3 className="text-[16px] font-semibold text-primary font-myriad mb-0.5">{agent?.name || 'Agent'}</h3>
               <div className="flex items-center gap-1.5">
                 <svg className="w-4 h-4 text-secondary fill-current" viewBox="0 0 24 24">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
-                <span className="text-[15px] font-semibold text-primary font-inter">{agent?.rating || '4.7'}</span>
-                <span className="text-[15px] text-gray-400 font-inter">• {agent?.reviews || '64'} reviews</span>
+                <span className="text-[15px] font-semibold text-primary font-myriad">{agent?.rating || '4.7'}</span>
+                <span className="text-[15px] text-gray-400 font-myriad">• {agent?.reviews || '64'} reviews</span>
               </div>
             </div>
           </div>
@@ -165,20 +165,20 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="text-[15px] font-semibold text-primary font-inter line-clamp-1 mb-1">{property?.title}</h4>
-              <p className="text-[12px] text-gray-500 font-inter mb-1">{formatLocation(property?.location)}</p>
-              <p className="text-[15px] font-semibold text-primary font-inter">{property?.price}</p>
+              <h4 className="text-[15px] font-semibold text-primary font-myriad line-clamp-1 mb-1">{property?.title}</h4>
+              <p className="text-[12px] text-gray-500 font-myriad mb-1">{formatLocation(property?.location)}</p>
+              <p className="text-[15px] font-semibold text-primary font-myriad">{property?.price}</p>
             </div>
           </div>
         </div>
 
         {/* Quick Messages */}
         <div className="px-6 pb-4">
-          <p className="text-[12px] text-gray-500 font-inter mb-3">Quick messages</p>
+          <p className="text-[12px] text-gray-500 font-myriad mb-3">Quick messages</p>
           <div className="flex flex-wrap gap-2">
             {quickMessages.map((msg, i) => (
               <button key={i} type="button" onClick={() => handleQuickMessage(msg)}
-                className="px-3 py-2 rounded-lg bg-white border border-gray-200 text-[12px] text-gray-700 font-inter hover:border-secondary hover:bg-amber-50 transition-all active:scale-95">
+                className="px-3 py-2 rounded-lg bg-white border border-gray-200 text-[12px] text-gray-700 font-myriad hover:border-secondary hover:bg-amber-50 transition-all active:scale-95">
                 {msg}
               </button>
             ))}
@@ -190,42 +190,42 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
           {/* Name & Phone */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-2">Your Name <span className="text-red-500">*</span></label>
+              <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Your Name <span className="text-red-500">*</span></label>
               <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Mwamba" required
-                className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
+                className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
               {errors.name && <p className="text-[11px] text-red-500 mt-1">{errors.name}</p>}
             </div>
             <div>
-              <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-2">Phone <span className="text-red-500">*</span></label>
+              <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Phone <span className="text-red-500">*</span></label>
               <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="+260977888999" required
-                className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
+                className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
               {errors.phone && <p className="text-[11px] text-red-500 mt-1">{errors.phone}</p>}
             </div>
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-2">Email <span className="text-red-500">*</span></label>
+            <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Email <span className="text-red-500">*</span></label>
             <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="john.mwamba@email.com" required
-              className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
+              className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
             {errors.email && <p className="text-[11px] text-red-500 mt-1">{errors.email}</p>}
           </div>
 
           {/* Message */}
           <div>
-            <label className="block text-[15px] font-semibold text-gray-700 font-inter mb-2">
+            <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">
               Message <span className="text-gray-400">(max 500 chars)</span>
             </label>
             <textarea name="message" value={formData.message} onChange={handleChange}
               placeholder="Is this property still available?&#10;Can I schedule a viewing?" rows={5} maxLength={500}
-              className={`w-full px-4 py-3 rounded-xl border ${errors.message ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-secondary resize-none transition-colors`} />
+              className={`w-full px-4 py-3 rounded-xl border ${errors.message ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary resize-none transition-colors`} />
             {errors.message && <p className="text-[11px] text-red-500 mt-1">{errors.message}</p>}
-            <p className="text-[11px] text-gray-400 font-inter mt-1 text-right">{formData.message.length}/500</p>
+            <p className="text-[11px] text-gray-400 font-myriad mt-1 text-right">{formData.message.length}/500</p>
           </div>
 
           {/* Send Button */}
           <button type="submit" disabled={isStarting}
-            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-inter hover:bg-[#2A3A4A] transition-all active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-myriad hover:bg-[#2A3A4A] transition-all active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
             {isStarting ? (
               <>
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
@@ -244,7 +244,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
             )}
           </button>
 
-          <p className="text-[11px] text-center text-gray-400 font-inter">By sending, you agree to our Terms of Service</p>
+          <p className="text-[11px] text-center text-gray-400 font-myriad">By sending, you agree to our Terms of Service</p>
         </form>
       </div>
     </>

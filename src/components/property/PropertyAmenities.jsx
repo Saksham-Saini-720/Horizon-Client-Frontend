@@ -2,7 +2,7 @@
 import { memo } from "react";
 
 const AmenityChip = memo(({ label }) => (
-  <div className="px-4 py-2 rounded-full bg-gray-100 text-[15px] font-semibold text-gray-700 font-inter">
+  <div className="px-4 py-2 rounded-full bg-gray-100 text-[15px] font-semibold text-gray-700 font-myriad">
     {label}
   </div>
 ));
@@ -12,7 +12,7 @@ const PropertyAmenities = memo(({ amenities }) => {
 
   return (
     <div className="px-5 pt-4 pb-5 border-t border-gray-100">
-      <h2 className="text-[16px] font-semibold text-primary font-inter mb-3">
+      <h2 className="text-[16px] font-semibold text-primary font-myriad mb-3">
         Amenities
       </h2>
       <div className="flex flex-wrap gap-2">

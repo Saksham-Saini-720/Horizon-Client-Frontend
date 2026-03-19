@@ -33,7 +33,7 @@ const LocationSearch = memo(({ locations, onAdd }) => {
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search areas..."
-          className="flex-1 bg-transparent text-[15px] text-primary placeholder-gray-400 outline-none font-inter"
+          className="flex-1 bg-transparent text-[15px] text-primary placeholder-gray-400 outline-none font-myriad"
         />
         {query.length > 0 && (
           <button onClick={() => setQuery('')}>
@@ -48,13 +48,13 @@ const LocationSearch = memo(({ locations, onAdd }) => {
         <div className="flex flex-wrap gap-2 mt-3">
           {filtered.map(loc => (
             <button key={loc} onClick={() => { onAdd(loc); setQuery(''); }}
-              className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-amber-50 hover:text-amber-700 active:bg-amber-100 text-[15px] font-medium text-gray-700 font-inter transition-colors">
+              className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-amber-50 hover:text-amber-700 active:bg-amber-100 text-[15px] font-medium text-gray-700 font-myriad transition-colors">
               + {loc}
             </button>
           ))}
         </div>
       ) : query.trim() ? (
-        <p className="text-[15px] text-gray-400 font-inter mt-3">No areas found for "{query}"</p>
+        <p className="text-[15px] text-gray-400 font-myriad mt-3">No areas found for "{query}"</p>
       ) : null}
     </div>
   );
@@ -170,7 +170,7 @@ const Preferences = memo(({ profile }) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-[16px] font-semibold text-primary font-inter">Preferences</h2>
+        <h2 className="text-[16px] font-semibold text-primary font-myriad">Preferences</h2>
         <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="3"/>
           <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l-4.2 4.2m13.2-5.2h-6m-6 0H1m13.2 5.2l-4.2-4.2m0-6L5.8 1.8"/>
@@ -185,7 +185,7 @@ const Preferences = memo(({ profile }) => {
             <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/>
             </svg>
-            <h3 className="text-[15px] font-semibold text-primary font-inter">Notifications</h3>
+            <h3 className="text-[15px] font-semibold text-primary font-myriad">Notifications</h3>
             <SavingDot isPending={updateNotifications.isPending}/>
           </div>
 
@@ -197,8 +197,8 @@ const Preferences = memo(({ profile }) => {
             ].map(({ key, label, desc }) => (
               <div key={key} className="flex items-center justify-between gap-3">
                 <div className="flex-1">
-                  <p className="text-[15px] font-semibold text-primary font-inter">{label}</p>
-                  <p className="text-[12px] text-gray-400 font-inter">{desc}</p>
+                  <p className="text-[15px] font-semibold text-primary font-myriad">{label}</p>
+                  <p className="text-[12px] text-gray-400 font-myriad">{desc}</p>
                 </div>
                 <Toggle
                   value={contactPrefs[key]}
@@ -217,7 +217,7 @@ const Preferences = memo(({ profile }) => {
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            <h3 className="text-[15px] font-semibold text-primary font-inter">Property Types</h3>
+            <h3 className="text-[15px] font-semibold text-primary font-myriad">Property Types</h3>
             <SavingDot isPending={updatePreferences.isPending}/>
           </div>
 
@@ -227,7 +227,7 @@ const Preferences = memo(({ profile }) => {
                 key={type}
                 onClick={() => toggleInterest(type)}
                 disabled={updatePreferences.isPending}
-                className={`px-5 py-2 rounded-full text-[15px] font-semibold font-inter transition-all capitalize ${
+                className={`px-5 py-2 rounded-full text-[15px] font-semibold font-myriad transition-all capitalize ${
                   interestedIn.includes(type)
                     ? 'bg-secondary text-white shadow-sm'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -237,7 +237,7 @@ const Preferences = memo(({ profile }) => {
               </button>
             ))}
           </div>
-          <p className="text-[11px] text-gray-400 font-inter mt-3">
+          <p className="text-[11px] text-gray-400 font-myriad mt-3">
             Auto-saves after 1.5 seconds
           </p>
         </div>
@@ -250,7 +250,7 @@ const Preferences = memo(({ profile }) => {
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              <h3 className="text-[15px] font-semibold text-primary font-inter">Preferred Areas</h3>
+              <h3 className="text-[15px] font-semibold text-primary font-myriad">Preferred Areas</h3>
               <SavingDot isPending={updatePreferences.isPending}/>
             </div>
             <button
@@ -266,14 +266,14 @@ const Preferences = memo(({ profile }) => {
           </div>
 
           {locations.length === 0 && !showSearch ? (
-            <p className="text-[15px] text-gray-400 font-inter">
+            <p className="text-[15px] text-gray-400 font-myriad">
               No areas added — tap + to add
             </p>
           ) : (
             locations.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {locations.map(loc => (
-                  <div key={loc} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100 text-amber-800 text-[15px] font-medium font-inter">
+                  <div key={loc} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100 text-amber-800 text-[15px] font-medium font-myriad">
                     {loc}
                     <button
                       onClick={() => removeLocation(loc)}

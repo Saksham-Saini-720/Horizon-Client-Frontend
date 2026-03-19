@@ -28,7 +28,7 @@ const NavItem = ({ to, icon, label, badge }) => (
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-secondary" />
           )}
         </div>
-        <span className={`text-[12px] font-semibold font-inter ${isActive ? "text-secondary" : "text-gray-500"}`}>
+        <span className={`text-[12px] font-semibold font-myriad ${isActive ? "text-secondary" : "text-gray-500"}`}>
           {label}
         </span>
       </>

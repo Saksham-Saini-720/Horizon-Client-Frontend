@@ -67,8 +67,8 @@ const ActivityPage = memo(() => {
     <div className="min-h-screen pb-24 bg-gray-100">
       <div className='bg-gray-100 border-b-2 border-gray-300'>
         <div className="border-b border-gray-100 px-4 pt-4">
-          <h1 className="text-[24px] font-bold text-primary font-inter mb-1">Activity</h1>
-          <p className="text-[15px] text-gray-500 font-inter">Manage your property interactions</p>
+          <h1 className="text-[24px] font-bold text-primary font-myriad mb-1">Activity</h1>
+          <p className="text-[15px] text-gray-500 font-myriad">Manage your property interactions</p>
         </div>
 
         <div className="px-3 py-3 rounded-2xl mb-3">
@@ -85,7 +85,7 @@ const ActivityPage = memo(() => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative pb-3 text-[15px] font-semibold font-inter transition-colors ${
+                className={`relative pb-3 text-[15px] font-semibold font-myriad transition-colors ${
                   activeTab === tab.id ? 'text-primary' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >

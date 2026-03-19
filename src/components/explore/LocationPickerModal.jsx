@@ -125,7 +125,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
       <div className="relative w-full max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] flex flex-col animate-slide-up">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-[20px] font-semibold text-primary font-inter">
+          <h2 className="text-[20px] font-semibold text-primary font-myriad">
             Select Location
           </h2>
           <button
@@ -185,10 +185,10 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
                 </svg>
               )}
               <div className="flex-1 text-left">
-                <p className="text-[15px] font-semibold text-primary font-inter">
+                <p className="text-[15px] font-semibold text-primary font-myriad">
                   Use Current Location
                 </p>
-                <p className="text-[12px] text-gray-500 font-inter">
+                <p className="text-[12px] text-gray-500 font-myriad">
                   Find properties near you
                 </p>
               </div>
@@ -218,10 +218,10 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
                         <circle cx="12" cy="10" r="3"/>
                       </svg>
                       <div className="flex-1">
-                        <p className="text-[15px] font-semibold text-primary font-inter">
+                        <p className="text-[15px] font-semibold text-primary font-myriad">
                           {location.name}
                         </p>
-                        <p className="text-[12px] text-gray-500 font-inter">
+                        <p className="text-[12px] text-gray-500 font-myriad">
                           {location.country}
                         </p>
                       </div>
@@ -230,7 +230,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-[15px] text-gray-400 font-inter">
+                  <p className="text-[15px] text-gray-400 font-myriad">
                     No locations found
                   </p>
                 </div>
@@ -264,11 +264,11 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
                       <path d="M12 6v6l4 2" />
                     </svg>
                     <div className="flex-1">
-                      <p className="text-[15px] font-semibold text-primary font-inter">
+                      <p className="text-[15px] font-semibold text-primary font-myriad">
                         {location.name}
                       </p>
                       {location.country && (
-                        <p className="text-[12px] text-gray-500 font-inter">
+                        <p className="text-[12px] text-gray-500 font-myriad">
                           {location.country}
                         </p>
                       )}
@@ -297,10 +297,10 @@ const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLo
                       <circle cx="12" cy="10" r="3"/>
                     </svg>
                     <div className="flex-1">
-                      <p className="text-[15px] font-semibold text-primary font-inter">
+                      <p className="text-[15px] font-semibold text-primary font-myriad">
                         {city.name}
                       </p>
-                      <p className="text-[12px] text-gray-500 font-inter">
+                      <p className="text-[12px] text-gray-500 font-myriad">
                         {city.country}
                       </p>
                     </div>

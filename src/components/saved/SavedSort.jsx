@@ -52,7 +52,7 @@ const SavedSort = memo(({ activeSort, onSortChange }) => {
           <line x1="4" y1="12" x2="13" y2="12"/>
           <line x1="4" y1="18" x2="10" y2="18"/>
         </svg>
-        <span className="text-[15px] font-semibold text-gray-700 font-inter">
+        <span className="text-[15px] font-semibold text-gray-700 font-myriad">
           Sort
         </span>
         <svg
@@ -79,7 +79,7 @@ const SavedSort = memo(({ activeSort, onSortChange }) => {
               }`}
             >
               <span className="text-[16px]">{option.icon}</span>
-              <span className={`text-[15px] font-inter ${
+              <span className={`text-[15px] font-myriad ${
                 activeSort === option.value
                   ? 'font-semibold text-primary'
                   : 'font-medium text-gray-700'

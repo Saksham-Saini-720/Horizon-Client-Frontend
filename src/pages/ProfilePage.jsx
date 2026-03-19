@@ -38,17 +38,17 @@ const NotLoggedInState = () => {
         </svg>
       </div>
 
-      <h2 className="text-[24px] font-semibold text-primary font-inter mb-2">
+      <h2 className="text-[24px] font-semibold text-primary font-myriad mb-2">
         Welcome to Horizon
       </h2>
 
-      <p className="text-[15px] text-gray-500 font-inter text-center max-w-xs mb-8">
+      <p className="text-[15px] text-gray-500 font-myriad text-center max-w-xs mb-8">
         Log in to manage your profile, saved properties, inquiries, and more
       </p>
 
       <button
         onClick={() => navigate('/login')}
-        className="px-8 py-3.5 rounded-xl bg-primary text-white text-[16px] font-semibold font-inter hover:bg-primary-light active:scale-95 transition-all shadow-lg"
+        className="px-8 py-3.5 rounded-xl bg-primary text-white text-[16px] font-semibold font-myriad hover:bg-primary-light active:scale-95 transition-all shadow-lg"
       >
         Log In
       </button>
@@ -145,15 +145,15 @@ const ProfilePage = memo(() => {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h2 className="text-[24px] font-semibold text-primary font-inter mb-2">
+        <h2 className="text-[24px] font-semibold text-primary font-myriad mb-2">
           Failed to Load Profile
         </h2>
-        <p className="text-[15px] text-gray-500 font-inter text-center max-w-xs mb-8">
+        <p className="text-[15px] text-gray-500 font-myriad text-center max-w-xs mb-8">
           {error?.message || 'Something went wrong'}
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="px-8 py-3.5 rounded-xl bg-primary text-white text-[15px] font-semibold font-inter hover:bg-primary-light active:scale-95 transition-all shadow-lg"
+          className="px-8 py-3.5 rounded-xl bg-primary text-white text-[15px] font-semibold font-myriad hover:bg-primary-light active:scale-95 transition-all shadow-lg"
         >
           Retry
         </button>

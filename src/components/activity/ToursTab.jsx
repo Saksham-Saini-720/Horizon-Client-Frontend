@@ -40,10 +40,10 @@ const ToursTab = memo(() => {
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
-        <h3 className="text-[12px] font-semibold text-gray-600 font-inter mb-2">
+        <h3 className="text-[12px] font-semibold text-gray-600 font-myriad mb-2">
           Failed to Load Tours
         </h3>
-        <p className="text-[16px] text-gray-400 font-inter mb-4">
+        <p className="text-[16px] text-gray-400 font-myriad mb-4">
           {error?.message || 'Something went wrong'}
         </p>
         <button
@@ -74,10 +74,10 @@ const ToursTab = memo(() => {
             <line x1="3" y1="10" x2="21" y2="10" />
           </svg>
         </div>
-        <h3 className="text-[20px] font-semibold text-gray-600 font-inter mb-2">
+        <h3 className="text-[20px] font-semibold text-gray-600 font-myriad mb-2">
           No Tour Requests Yet
         </h3>
-        <p className="text-[16px] text-gray-400 font-inter">
+        <p className="text-[16px] text-gray-400 font-myriad">
           Your tour requests will appear here
         </p>
       </div>

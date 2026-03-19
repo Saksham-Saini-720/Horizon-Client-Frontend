@@ -51,7 +51,7 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-semibold text-primary font-inter">
+            <h2 className="text-[22px] font-semibold text-primary font-myriad">
               Price Range
             </h2>
             <button
@@ -68,7 +68,7 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
         {/* Quick Ranges */}
         <div className="px-6 py-4">
-          <p className="text-[15px] font-semibold text-gray-500 mb-3 font-inter">
+          <p className="text-[15px] font-semibold text-gray-500 mb-3 font-myriad">
             Quick Select
           </p>
           <div className="grid grid-cols-2 gap-3">
@@ -76,7 +76,7 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
               <button
                 key={index}
                 onClick={() => handleRangeSelect(range)}
-                className="px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-primary font-inter hover:border-secondary hover:bg-amber-50 transition-all active:scale-95"
+                className="px-4 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-primary font-myriad hover:border-secondary hover:bg-amber-50 transition-all active:scale-95"
               >
                 {range.label}
               </button>
@@ -86,12 +86,12 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
         {/* Custom Range */}
         <div className="px-6 py-4">
-          <p className="text-[15px] font-semibold text-gray-500 mb-3 font-inter">
+          <p className="text-[15px] font-semibold text-gray-500 mb-3 font-myriad">
             Custom Range
           </p>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[12px] font-semibold text-gray-600 mb-2 font-inter">
+              <label className="block text-[12px] font-semibold text-gray-600 mb-2 font-myriad">
                 Min Price
               </label>
               <input
@@ -99,11 +99,11 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
                 placeholder="e.g. 100000"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
               />
             </div>
             <div>
-              <label className="block text-[12px] font-semibold text-gray-600 mb-2 font-inter">
+              <label className="block text-[12px] font-semibold text-gray-600 mb-2 font-myriad">
                 Max Price
               </label>
               <input
@@ -111,7 +111,7 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
                 placeholder="e.g. 500000"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-inter placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
               />
             </div>
           </div>
@@ -121,13 +121,13 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
         <div className="px-6 pb-6 pt-2 flex gap-3">
           <button
             onClick={handleClear}
-            className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-semibold font-inter hover:bg-gray-50 transition-all active:scale-[0.98]"
+            className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-semibold font-myriad hover:bg-gray-50 transition-all active:scale-[0.98]"
           >
             Clear
           </button>
           <button
             onClick={handleApply}
-            className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-inter hover:bg-primary-light transition-all active:scale-[0.98] shadow-lg"
+            className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-myriad hover:bg-primary-light transition-all active:scale-[0.98] shadow-lg"
           >
             Apply
           </button>

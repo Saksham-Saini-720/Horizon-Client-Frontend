@@ -122,7 +122,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {/* Header */}
-        <h2 className="text-[24px] font-semibold font-inter text-gray-900 mb-2 text-center">
+        <h2 className="text-[24px] font-semibold font-myriad text-gray-900 mb-2 text-center">
           Reset Your Password
         </h2>
         <p className="text-[16px] text-gray-500 mb-6 text-center">

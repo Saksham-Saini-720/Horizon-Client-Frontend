@@ -128,7 +128,7 @@ const ExplorePage = () => {
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              <p className="text-[15px] font-medium text-amber-800 font-inter">
+              <p className="text-[15px] font-medium text-amber-800 font-myriad">
                 Showing properties near <span className="font-semibold">{selectedLocation.name}</span>
               </p>
             </div>

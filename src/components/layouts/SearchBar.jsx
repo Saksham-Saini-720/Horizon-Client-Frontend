@@ -11,7 +11,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-inter">
+        <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-myriad">
           {label}
         </p>
         {!query && (
@@ -19,7 +19,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
           <button
             onMouseDown={(e) => e.preventDefault()} 
             onClick={onClearAll}
-            className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-inter"
+            className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-myriad"
           >
             Clear all
           </button>
@@ -54,7 +54,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
             {/* Term */}
             <span
               onClick={() => onSelect(term)}
-              className="flex-1 text-[16px] font-medium text-primary font-inter truncate"
+              className="flex-1 text-[16px] font-medium text-primary font-myriad truncate"
             >
               {/* Bold matching part */}
               {query ? (
@@ -101,7 +101,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
       {/* Footer hint */}
       {!query && (
         <div className="px-4 py-2.5 border-t border-gray-50 bg-gray-50/50">
-          <p className="text-[12px] text-gray-300 font-inter">
+          <p className="text-[12px] text-gray-300 font-myriad">
             Tap to search · ✕ to remove one · Clear all to reset
           </p>
         </div>
@@ -175,7 +175,7 @@ const SearchBar = memo(({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}   // no delay needed — onMouseDown preventDefault handles it
           placeholder={placeholder}
-          className="flex-1 bg-transparent outline-none border-none text-[16px] text-gray-700 placeholder-gray-400 font-inter"
+          className="flex-1 bg-transparent outline-none border-none text-[16px] text-gray-700 placeholder-gray-400 font-myriad"
         />
 
         {/* Clear ✕ */}

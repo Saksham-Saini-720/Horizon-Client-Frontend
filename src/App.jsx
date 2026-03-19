@@ -18,7 +18,7 @@ const PageLoader = () => (
   <div className="min-h-screen bg-surface flex items-center justify-center">
     <div className="flex flex-col items-center">
       <div className="w-16 h-16 border-4 border-gray-200 border-t-secondary rounded-full animate-spin" />
-      <p className="mt-4 text-[15px] text-gray-500 font-inter">
+      <p className="mt-4 text-[15px] text-gray-500 font-myriad">
         Loading...
       </p>
     </div>
@@ -66,10 +66,10 @@ export default function App() {
               path="404" 
               element={
                 <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-4 text-center pb-28">
-                  <h1 className="text-[48px] font-semibold text-primary font-inter mb-2">
+                  <h1 className="text-[48px] font-semibold text-primary font-myriad mb-2">
                     404
                   </h1>
-                  <p className="text-[18px] text-gray-500 font-inter mb-6">
+                  <p className="text-[18px] text-gray-500 font-myriad mb-6">
                     Page not found
                   </p>
                   <a 

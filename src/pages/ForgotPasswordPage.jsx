@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         {/* Header */}
-        <h2 className="text-[24px] font-semibold text-gray-900 mb-2 text-center font-inter">
+        <h2 className="text-[24px] font-semibold text-gray-900 mb-2 text-center font-myriad">
           Forgot Password?
         </h2>
         <p className="text-[16px] text-gray-500 mb-6 text-center">

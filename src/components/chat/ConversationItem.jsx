@@ -26,7 +26,7 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           ) : (
-            <span className="text-white text-[16px] font-semibold font-inter">{avatarInitials}</span>
+            <span className="text-white text-[16px] font-semibold font-myriad">{avatarInitials}</span>
           )}
         </div>
 
@@ -39,10 +39,10 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
       {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
-          <span className={`text-[15px] font-inter truncate ${hasUnread ? 'font-semibold text-primary' : 'font-semibold text-primary'}`}>
+          <span className={`text-[15px] font-myriad truncate ${hasUnread ? 'font-semibold text-primary' : 'font-semibold text-primary'}`}>
             {participant?.name || 'Unknown'}
           </span>
-          <span className={`text-[12px] ml-2 flex-shrink-0 font-inter ${hasUnread ? 'text-secondary font-semibold' : 'text-gray-400'}`}>
+          <span className={`text-[12px] ml-2 flex-shrink-0 font-myriad ${hasUnread ? 'text-secondary font-semibold' : 'text-gray-400'}`}>
             {formattedDate}
           </span>
         </div>
@@ -54,13 +54,13 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
-            <span className="text-[11px] text-secondary font-semibold font-inter truncate">{property.title}</span>
+            <span className="text-[11px] text-secondary font-semibold font-myriad truncate">{property.title}</span>
           </div>
         )}
 
         {/* Last message + unread badge */}
         <div className="flex items-center justify-between gap-2">
-          <p className={`text-[15px] truncate font-inter flex-1 ${hasUnread ? 'text-primary font-medium' : 'text-gray-500'}`}>
+          <p className={`text-[15px] truncate font-myriad flex-1 ${hasUnread ? 'text-primary font-medium' : 'text-gray-500'}`}>
             {lastMessageIsFromMe && <span className="text-gray-400">You: </span>}
             {lastMessage || 'No messages yet'}
           </p>

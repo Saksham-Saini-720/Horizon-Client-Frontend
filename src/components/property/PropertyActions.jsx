@@ -10,7 +10,7 @@ import RequestTourModal from './RequestTourModal';
 const ActionButton = memo(({ icon, label, onClick, primary = false, variant = 'default' }) => (
   <button
     onClick={onClick}
-    className={`flex-1 flex max-w-40 items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-semibold text-[15px] font-inter transition-all active:scale-95 ${
+    className={`flex-1 flex max-w-40 items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-semibold text-[15px] font-myriad transition-all active:scale-95 ${
       primary
         ? 'bg-secondary text-white shadow-lg hover:bg-secondary/90'
         : variant === 'yellow'

@@ -85,7 +85,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-semibold text-primary font-inter">
+            <h2 className="text-[22px] font-semibold text-primary font-myriad">
               Confirm Tour
             </h2>
             <button
@@ -116,7 +116,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="text-[16px] font-semibold text-primary font-inter mb-1 line-clamp-1">
+              <h3 className="text-[16px] font-semibold text-primary font-myriad mb-1 line-clamp-1">
                 {property?.title || 'Property'}
               </h3>
               <div className="flex items-center gap-1.5 mb-2">
@@ -124,11 +124,11 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
-                <p className="text-[12px] text-gray-500 font-inter">
+                <p className="text-[12px] text-gray-500 font-myriad">
                   {property?.location || 'Location'}
                 </p>
               </div>
-              <p className="text-[16px] font-semibold text-primary font-inter">
+              <p className="text-[16px] font-semibold text-primary font-myriad">
                 {property?.price || 'Price'}
               </p>
             </div>
@@ -138,7 +138,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
           <div className="space-y-4">
             {/* Visit Type */}
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <span className="text-[15px] text-gray-500 font-inter">
+              <span className="text-[15px] text-gray-500 font-myriad">
                 Visit Type
               </span>
               <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                     <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                   </svg>
                 )}
-                <span className="text-[15px] font-semibold text-primary font-inter">
+                <span className="text-[15px] font-semibold text-primary font-myriad">
                   {visitType === 'virtual' ? 'Virtual Tour' : 'In Person'}
                 </span>
               </div>
@@ -156,10 +156,10 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
 
             {/* Date */}
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <span className="text-[15px] text-gray-500 font-inter">
+              <span className="text-[15px] text-gray-500 font-myriad">
                 Date
               </span>
-              <span className="text-[15px] font-semibold text-primary font-inter">
+              <span className="text-[15px] font-semibold text-primary font-myriad">
                 {selectedDate.fullDate.toLocaleDateString('en-US', { 
                   year: 'numeric', 
                   month: 'short', 
@@ -170,12 +170,12 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
 
             {/* Preferred Times */}
             <div className="flex items-start justify-between py-3">
-              <span className="text-[15px] text-gray-500 font-inter">
+              <span className="text-[15px] text-gray-500 font-myriad">
                 Preferred Times
               </span>
               <div className="text-right">
                 {selectedTimes.map((time, index) => (
-                  <div key={index} className="text-[15px] font-semibold text-primary font-inter flex items-center gap-1.5 justify-end">
+                  <div key={index} className="text-[15px] font-semibold text-primary font-myriad flex items-center gap-1.5 justify-end">
                     {index === 0 && (
                       <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">
                         Primary
@@ -185,7 +185,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                   </div>
                 ))}
                 {selectedTimes.length > 1 && (
-                  <p className="text-[11px] text-gray-400 font-inter mt-1">
+                  <p className="text-[11px] text-gray-400 font-myriad mt-1">
                     Agent will confirm one slot
                   </p>
                 )}
@@ -195,10 +195,10 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             {/* Note (if provided) */}
             {note && (
               <div className="py-3 border-t border-gray-100">
-                <span className="text-[15px] text-gray-500 font-inter block mb-2">
+                <span className="text-[15px] text-gray-500 font-myriad block mb-2">
                   Note for Agent
                 </span>
-                <p className="text-[15px] text-gray-700 font-inter leading-relaxed p-3 bg-gray-50 rounded-lg">
+                <p className="text-[15px] text-gray-700 font-myriad leading-relaxed p-3 bg-gray-50 rounded-lg">
                   {note}
                 </p>
               </div>
@@ -214,15 +214,15 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                 className="w-12 h-12 rounded-full object-cover"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[18px] font-semibold font-inter">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[18px] font-semibold font-myriad">
                 {agent?.name?.charAt(0) || 'A'}
               </div>
             )}
             <div>
-              <p className="text-[15px] font-semibold text-primary font-inter">
+              <p className="text-[15px] font-semibold text-primary font-myriad">
                 {agent?.name || 'Agent'}
               </p>
-              <p className="text-[12px] text-gray-500 font-inter">
+              <p className="text-[12px] text-gray-500 font-myriad">
                 Will confirm your slot
               </p>
             </div>
@@ -234,7 +234,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             <button
               onClick={onBack}
               disabled={submitMutation.isPending}
-              className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-semibold font-inter hover:bg-secondary hover:border-secondary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-4 rounded-2xl bg-white border-2 border-gray-200 text-primary text-[16px] font-semibold font-myriad hover:bg-secondary hover:border-secondary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Back
             </button>
@@ -243,7 +243,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
             <button
               onClick={handleConfirm}
               disabled={submitMutation.isPending}
-              className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-inter hover:bg-primary-light transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-myriad hover:bg-primary-light transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {submitMutation.isPending ? (
                 <>

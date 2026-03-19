@@ -3,8 +3,16 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@font-face {
+  font-family: 'MyriadPro';
+  src: url('/fonts/MYRIADPRO-REGULAR.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MyriadPro';
+  src: url('/fonts/MYRIADPRO-BOLD.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
 }

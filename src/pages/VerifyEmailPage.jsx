@@ -22,12 +22,12 @@ const VerifyingState = memo(() => (
       </div>
 
       {/* Heading */}
-      <h1 className="text-[26px] font-semibold text-primary font-inter mb-3">
+      <h1 className="text-[26px] font-semibold text-primary font-myriad mb-3">
         Verifying Your Email
       </h1>
 
       {/* Message */}
-      <p className="text-[15px] text-gray-600 font-inter">
+      <p className="text-[15px] text-gray-600 font-myriad">
         Please wait while we verify your email address...
       </p>
     </div>
@@ -49,12 +49,12 @@ const VerificationError = memo(({ onRetry, onGoHome }) => (
         </div>
 
         {/* Heading */}
-        <h1 className="text-[26px] font-balck text-primary font-inter mb-3">
+        <h1 className="text-[26px] font-balck text-primary font-myriad mb-3">
           Verification Failed
         </h1>
 
         {/* Message */}
-        <p className="text-[15px] text-gray-600 font-inter mb-6">
+        <p className="text-[15px] text-gray-600 font-myriad mb-6">
           We couldn't verify your email. The verification link may have expired or is invalid.
         </p>
 
@@ -62,7 +62,7 @@ const VerificationError = memo(({ onRetry, onGoHome }) => (
         <div className="flex flex-col gap-3">
           <button
             onClick={onRetry}
-            className="w-full px-6 py-3.5 rounded-xl text-[15px] font-semibold text-white font-inter hover:opacity-90 active:scale-95 transition-all shadow-lg"
+            className="w-full px-6 py-3.5 rounded-xl text-[15px] font-semibold text-white font-myriad hover:opacity-90 active:scale-95 transition-all shadow-lg"
             style={{ background: "linear-gradient(135deg, #F5B731, #E8A020)" }}
           >
             Try Again
@@ -70,14 +70,14 @@ const VerificationError = memo(({ onRetry, onGoHome }) => (
 
           <button
             onClick={onGoHome}
-            className="w-full px-6 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-inter hover:bg-gray-50 active:scale-95 transition-all"
+            className="w-full px-6 py-3 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-myriad hover:bg-gray-50 active:scale-95 transition-all"
           >
             Go to Home
           </button>
         </div>
 
         {/* Help Text */}
-        <p className="text-[15px] text-gray-500 mt-6 font-inter">
+        <p className="text-[15px] text-gray-500 mt-6 font-myriad">
           Need help?{" "}
           <a href="/support" className="text-secondary font-semibold hover:underline">
             Contact Support

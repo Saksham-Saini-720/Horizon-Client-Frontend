@@ -100,11 +100,11 @@ const TourCard = memo(({ tour }) => {
         <div className={`px-5 py-2 border-b ${currentStatus?.color} flex items-center justify-between`}>
           <div className={`flex items-center gap-2 ${currentStatus?.textColor}`}>
             {currentStatus?.icon}
-            <span className="text-[12px] font-semibold font-inter">
+            <span className="text-[12px] font-semibold font-myriad">
               {currentStatus?.label}
             </span>
             {isCancelled && (
-              <span className="text-[10px] font-medium text-gray-500 font-inter">
+              <span className="text-[10px] font-medium text-gray-500 font-myriad">
                 • Request no longer active
               </span>
             )}
@@ -112,7 +112,7 @@ const TourCard = memo(({ tour }) => {
 
           <div className={`flex items-center gap-2 ${currentStatus?.textColor}`}>
             {currentVisitType?.icon}
-            <span className="text-[12px] font-semibold font-inter">
+            <span className="text-[12px] font-semibold font-myriad">
               {currentVisitType?.label}
             </span>
           </div>
@@ -138,7 +138,7 @@ const TourCard = memo(({ tour }) => {
 
           {/* Property Details */}
           <div className="flex-1 min-w-0">
-            <h3 className={`text-[15px] font-inter mb-1 line-clamp-1 ${
+            <h3 className={`text-[15px] font-myriad mb-1 line-clamp-1 ${
               isCancelled 
                 ? 'text-gray-500 line-through' 
                 : 'text-primary font-semibold'
@@ -156,7 +156,7 @@ const TourCard = memo(({ tour }) => {
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                 <circle cx="12" cy="10" r="3" />
               </svg>
-              <p className="text-[12px] text-gray-500 font-inter">
+              <p className="text-[12px] text-gray-500 font-myriad">
                 {property.location}
               </p>
             </div>
@@ -180,10 +180,10 @@ const TourCard = memo(({ tour }) => {
               </svg>
             </div>
             <div>
-              <p className="text-[15px] font-semibold text-gray-500 font-inter line-through">
+              <p className="text-[15px] font-semibold text-gray-500 font-myriad line-through">
                 {date || 'Tour Request'}
               </p>
-              <p className="text-[12px] text-gray-400 font-inter">
+              <p className="text-[12px] text-gray-400 font-myriad">
                 This tour was cancelled
               </p>
             </div>
@@ -205,24 +205,24 @@ const TourCard = memo(({ tour }) => {
               </svg>
             </div>
             <div>
-              <p className="text-[15px] font-semibold text-primary font-inter">
+              <p className="text-[15px] font-semibold text-primary font-myriad">
                 {date}
               </p>
-              <p className="text-[12px] text-gray-600 font-inter">
+              <p className="text-[12px] text-gray-600 font-myriad">
                 at {time}
               </p>
             </div>
           </div>
         ) : (
           <div className="mx-5 mb-5">
-            <p className="text-[12px] text-gray-500 font-inter mb-2">
+            <p className="text-[12px] text-gray-500 font-myriad mb-2">
               Proposed times:
             </p>
             <div className="flex flex-wrap gap-2">
               {proposedTimes?.map((time, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1.5 rounded-lg bg-amber-50 text-[12px] font-medium text-secondary font-inter"
+                  className="px-3 py-1.5 rounded-lg bg-amber-50 text-[12px] font-medium text-secondary font-myriad"
                 >
                   {time}
                 </span>
@@ -239,7 +239,7 @@ const TourCard = memo(({ tour }) => {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               {/* Agent Photo */}
-              <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[16px] font-semibold font-inter ${
+              <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[16px] font-semibold font-myriad ${
                 isCancelled ? 'opacity-50 grayscale' : ''
               }`}>
                 {agent.avatar ? (
@@ -254,7 +254,7 @@ const TourCard = memo(({ tour }) => {
               </div>
 
               {/* Agent Name */}
-              <p className={`text-[12px] font-semibold font-inter ${
+              <p className={`text-[12px] font-semibold font-myriad ${
                 isCancelled ? 'text-gray-400' : 'text-primary'
               }`}>
                 {agent.name}
@@ -273,7 +273,7 @@ const TourCard = memo(({ tour }) => {
                 >
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
-                <span className="text-[15px] font-semibold text-gray-700 font-inter">
+                <span className="text-[15px] font-semibold text-gray-700 font-myriad">
                   Contact
                 </span>
               </button>
@@ -286,7 +286,7 @@ const TourCard = memo(({ tour }) => {
           //   // Cancelled tour - only show delete button
           //   <button
           //     onClick={() => setShowDeleteModal(true)}
-          //     className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-[15px] font-semibold text-gray-700 font-inter hover:bg-gray-50 hover:border-red-400 hover:text-red-600 transition-all flex items-center justify-center gap-2"
+          //     className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-[15px] font-semibold text-gray-700 font-myriad hover:bg-gray-50 hover:border-red-400 hover:text-red-600 transition-all flex items-center justify-center gap-2"
           //   >
           //     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           //       <polyline points="3 6 5 6 21 6" />
@@ -312,7 +312,7 @@ const TourCard = memo(({ tour }) => {
               </button>
               <button
                 onClick={() => setShowCancelModal(true)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-inter hover:bg-white hover:border-red-500 hover:text-red-600 transition-all flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-[15px] font-semibold text-gray-700 font-myriad hover:bg-white hover:border-red-500 hover:text-red-600 transition-all flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />

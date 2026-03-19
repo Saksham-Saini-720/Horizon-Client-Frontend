@@ -35,7 +35,7 @@ const MessagesTab = memo(() => {
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <p className="text-[15px] font-semibold text-gray-600 font-inter mb-3">Failed to load messages</p>
+        <p className="text-[15px] font-semibold text-gray-600 font-myriad mb-3">Failed to load messages</p>
         <button onClick={refetch} className="px-6 py-2 bg-primary text-white rounded-xl font-semibold text-[14px]">
           Try Again
         </button>
@@ -51,8 +51,8 @@ const MessagesTab = memo(() => {
             <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
           </svg>
         </div>
-        <h3 className="text-[18px] font-bold text-gray-600 font-inter mb-2">No Messages Yet</h3>
-        <p className="text-[14px] text-gray-400 font-inter">Your message threads will appear here</p>
+        <h3 className="text-[18px] font-bold text-gray-600 font-myriad mb-2">No Messages Yet</h3>
+        <p className="text-[14px] text-gray-400 font-myriad">Your message threads will appear here</p>
       </div>
     );
   }
@@ -67,7 +67,7 @@ const MessagesTab = memo(() => {
         >
           <div className="flex items-start gap-4">
             {/* Avatar */}
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-secondary/90 flex items-center justify-center text-white text-[18px] font-bold font-inter flex-shrink-0 overflow-hidden">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-secondary/90 flex items-center justify-center text-white text-[18px] font-bold font-myriad flex-shrink-0 overflow-hidden">
               {conv.participant?.avatar ? (
                 <img src={conv.participant.avatar} alt={conv.participant.name} className="w-full h-full object-cover rounded-full"/>
               ) : (
@@ -77,15 +77,15 @@ const MessagesTab = memo(() => {
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-[14px] font-bold text-primary font-inter mb-1">
+              <h3 className="text-[14px] font-bold text-primary font-myriad mb-1">
                 {conv.participant?.name || 'Support'}
               </h3>
               {conv.property && (
-                <p className="text-[11px] text-secondary font-inter mb-1">
+                <p className="text-[11px] text-secondary font-myriad mb-1">
                   Re: {conv.property.title}
                 </p>
               )}
-              <p className="text-[12px] text-gray-600 font-inter line-clamp-2 leading-relaxed">
+              <p className="text-[12px] text-gray-600 font-myriad line-clamp-2 leading-relaxed">
                 {conv.lastMessageIsFromMe
                   ? `You: ${conv.lastMessage}`
                   : conv.lastMessage || 'No messages yet'}

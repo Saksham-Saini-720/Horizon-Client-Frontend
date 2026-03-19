@@ -37,15 +37,15 @@ const PropertyBanner = memo(({ property }) => {
       </div>
 
       <div className="flex-1 min-w-0 text-left">
-        <p className="text-[15px] font-semibold text-primary font-inter truncate">
+        <p className="text-[15px] font-semibold text-primary font-myriad truncate">
           {property.title}
         </p>
-        <p className="text-[12px] text-gray-500 font-inter truncate">
+        <p className="text-[12px] text-gray-500 font-myriad truncate">
           {formatLocation(property.location)}  
         </p>
       </div>
 
-      <span className={`${badgeColor} text-white text-[11px] font-semibold font-inter px-2.5 py-1 rounded-lg flex-shrink-0`}>
+      <span className={`${badgeColor} text-white text-[11px] font-semibold font-myriad px-2.5 py-1 rounded-lg flex-shrink-0`}>
         {badge}
       </span>
     </button>

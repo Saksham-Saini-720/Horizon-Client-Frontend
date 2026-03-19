@@ -1,7 +1,6 @@
 
 import { memo } from "react";
-import { HorizonLogo } from "../layouts/Navbar";
-import logo from "../../assets/icons/logo.png";
+import logo from "../../assets/icons/white_logo.png";
 
 const LoadingScreen = memo(() => {
   return (
@@ -9,17 +8,17 @@ const LoadingScreen = memo(() => {
       
       {/* Logo */}
       <div className="mb-8">
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-500 to-secondary flex items-center justify-center shadow-2xl">
+        <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-primary-light to-secondary flex items-center justify-center shadow-2xl">
           <img src={logo} alt="logo" className="w-5/5 h-auto object-contain p-[1px]" />
         </div>
       </div>
 
       {/* Brand Name */}
-      <h1 className="text-white text-[36px] font-balck font-inter mb-1">
+      <h1 className="text-white text-[36px] font-balck font-myriad mb-1">
         Horizon
       </h1>
       
-      <p className="text-white/60 text-[15px] font-inter tracking-widest uppercase mb-12">
+      <p className="text-white/60 text-[15px] font-myriad tracking-widest uppercase mb-12">
         PROPERTIES
       </p>
 

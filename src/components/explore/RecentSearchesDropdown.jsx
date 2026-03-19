@@ -8,12 +8,12 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-inter">
+        <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest font-myriad">
           Recent Searches
         </p>
         <button
           onClick={onClearAll}
-          className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-inter"
+          className="text-[12px] font-semibold text-red-400 hover:text-red-500 transition-colors font-myriad"
         >
           Clear all
         </button>
@@ -40,7 +40,7 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
             {/* Term — click pe select */}
             <span
               onClick={() => onSelect(term)}
-              className="flex-1 text-[15px] font-medium text-primary font-inter truncate"
+              className="flex-1 text-[15px] font-medium text-primary font-myriad truncate"
             >
               {term}
             </span>
@@ -72,7 +72,7 @@ const RecentSearchesDropdown = memo(({ searches, onSelect, onRemove, onClearAll 
 
       {/* ── Footer hint ── */}
       <div className="px-4 py-2 border-t border-gray-50">
-        <p className="text-[11px] text-gray-300 font-inter">
+        <p className="text-[11px] text-gray-300 font-myriad">
           Tap to search · ✕ to remove
         </p>
       </div>
