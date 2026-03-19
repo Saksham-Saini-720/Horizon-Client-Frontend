@@ -18,8 +18,7 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
       {/* Avatar */}
       <div className="relative flex-shrink-0">
         <div
-          className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center"
-          style={{ backgroundColor: participant?.avatar ? 'transparent' : avatarColor }}
+          className="w-12 h-12 rounded-full overflow-hidden bg-primary-light flex items-center justify-center"
         >
           {participant?.avatar ? (
             <img src={participant.avatar} alt={participant.name} className="w-full h-full object-cover"

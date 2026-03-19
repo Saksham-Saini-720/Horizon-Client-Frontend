@@ -106,7 +106,7 @@ const ConversationPage = () => {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F0F2F5' }}>
 
       {/* ── Fixed Header ── */}
-      <div className="fixed top-0 left-0 right-0 z-50 shadow-md" style={{ backgroundColor: '#1C2A3A' }}>
+      <div className="fixed top-0 left-0 right-0 z-50 shadow-md bg-secondary" >
         <div className="flex items-center gap-3 px-3 pt-12 pb-3">
           <button onClick={() => navigate('/chat')} className="p-1.5 rounded-xl hover:bg-white/10 active:bg-white/20 transition-colors flex-shrink-0">
             <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -116,8 +116,7 @@ const ConversationPage = () => {
 
           {/* Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center"
-              style={{ backgroundColor: participant?.avatar ? 'transparent' : avatarColor }}>
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center bg-primary-light justify-center">
               {participant?.avatar ? (
                 <img src={participant.avatar} alt={participant.name} className="w-full h-full object-cover"/>
               ) : (
@@ -259,10 +258,10 @@ const MessageBubble = ({ message, showTime, isFirst }) => {
   return (
     <div className="flex justify-start mb-1 px-3">
       <div className="max-w-[75%]">
-        <div className="px-4 py-2.5 bg-white shadow-sm border border-gray-100" style={{
+        <div className="px-4 py-2.5 bg-secondary shadow-sm border border-gray-100" style={{
           borderRadius: isFirst ? '18px 18px 18px 4px' : '4px 18px 18px 18px',
         }}>
-          <p className="text-[15px] text-primary font-myriad leading-[1.5] whitespace-pre-wrap">{content}</p>
+          <p className="text-[15px] text-white font-myriad leading-[1.5] whitespace-pre-wrap">{content}</p>
         </div>
         {showTime && (
           <div className="mt-0.5 pl-0.5">
