@@ -2,7 +2,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useAuth, useSaved } from '../hooks/utils/useRedux';
+import { useAuth } from '../hooks/utils/useRedux';
 import { useSavedProperties, useSavePropertyMutation } from '../hooks/properties/useSavedProperties';
 import {  clearAllSaved } from '../store/slices/savedSlice';
 import SavedPropertyCard from '../components/saved/SavedPropertyCard';
@@ -196,7 +196,6 @@ const sortProperties = (properties, sortType) => {
 
 const SavedPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { unsaveProperty } = useSavePropertyMutation();
   

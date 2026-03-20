@@ -16,7 +16,7 @@ const VALIDATORS = {
   lastName: (v) => !v.trim() ? "Last name required" : null,
   email: (v) => !/\S+@\S+\.\S+/.test(v) ? "Enter a valid email" : null,
   password: (v) => v.length < 8 ? "Min 8 characters required" : null,
-  phone: (v) => !v?.trim() ? "Phone number is required" : !/^\+?[\d\s\-]{7,15}$/.test(v) ? "Enter a valid phone number" : null,
+  phone: (v) => !v?.trim() ? "Phone number is required" : !/^\+?[\d\s-]{7,15}$/.test(v) ? "Enter a valid phone number" : null,
 };
 
 // ─── RegisterPage ─────────────────────────────────────────────────────────────

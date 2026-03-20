@@ -13,14 +13,23 @@ const EmailVerificationPage = memo(() => {
   const [canResend, setCanResend] = useState(true);
 
   // Countdown timer after resend
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setCanResend(true);
-    }
-  }, [countdown]);
+
+useEffect(() => {
+  let timer;
+
+  if (countdown > 0) {
+    timer = setTimeout(() => {
+      setCountdown(prev => prev - 1);
+    }, 1000);
+  } else if (countdown === 0) {
+    setCanResend(true);
+  }
+
+  return () => {
+    if (timer) clearTimeout(timer);
+  };
+}, [countdown]);
+
 
   const handleResend = useCallback(() => {
     if (!canResend || resendMutation.isPending) return;

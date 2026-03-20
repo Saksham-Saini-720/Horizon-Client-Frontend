@@ -1,14 +1,12 @@
 
 import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import ConversationItem from '../components/chat/ConversationItem';
 import { useConversations } from '../hooks/conversations/useConversations';
 import { useUnreadCount } from '../hooks/conversations/useMarkAsRead';
 import { selectUnreadCount } from '../store/slices/conversationSlice';
 
 const ChatPage = () => {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
 

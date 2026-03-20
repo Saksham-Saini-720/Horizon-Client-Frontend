@@ -48,7 +48,7 @@ const MapPage = () => {
   const [useGPS,           setUseGPS]           = useState(!passedLocation);
   const fallbackShown = useRef(false);
 
-  const { location: gpsLocation, error: locationError, loading: locationLoading, requestLocation } =
+  const { location: gpsLocation, error: locationError, loading: locationLoading } =
     useGeolocation();
 
   const effectiveGps   = useGPS

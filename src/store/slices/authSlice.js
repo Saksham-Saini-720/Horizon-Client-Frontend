@@ -14,7 +14,7 @@ const validateToken = (token) => {
 const getInitialState = () => {
   try {
     // Get tokens from your utility
-    const { accessToken, refreshToken } = getTokens();
+    const { accessToken } = getTokens();
     
     // Get user from localStorage
     const userStr = localStorage.getItem('user');
@@ -24,7 +24,9 @@ const getInitialState = () => {
       try {
         user = JSON.parse(userStr);
       } catch (e) {
+        
         localStorage.removeItem('user');
+        
       }
     }
     
@@ -43,7 +45,9 @@ const getInitialState = () => {
       };
     }
   } catch (error) {
+    
     return {
+      error: error instanceof Error ? error.message : 'Unknown error during auth initialization',
       user: null,
       isAuthenticated: false,
     };

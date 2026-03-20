@@ -64,7 +64,6 @@ const ConversationPage = () => {
   }, []);
 
   const avatarInitials = getInitials(participant?.name || '');
-  const avatarColor = getAvatarColor(participant?.name || '');
 
   if (isLoading) {
     return (
@@ -326,9 +325,5 @@ function getInitials(name = '') {
 }
 
 const AVATAR_COLORS = ['#1C2A3A', '#2E4057', '#3D6B8A', '#5B8DB8', '#7B5EA7', '#A06B9A', '#C97B6E'];
-function getAvatarColor(name = '') {
-  const charCode = name?.charCodeAt(0) || 0;
-  return AVATAR_COLORS[charCode % AVATAR_COLORS.length];
-}
 
 export default ConversationPage;

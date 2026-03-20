@@ -1,7 +1,7 @@
 
-import { memo, useState, useCallback, useEffect } from 'react';
+import { memo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import useLogout from '../hooks/auth/useLogout';
 import { useProfile } from '../hooks/profile/useProfile';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
@@ -77,7 +77,6 @@ const ProfileSkeleton = () => (
  */
 const ProfilePage = memo(() => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const logoutMutation = useLogout();
   
   // State
