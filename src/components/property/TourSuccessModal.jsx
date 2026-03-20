@@ -6,7 +6,7 @@ import TourNotification from './TourNotification';
  * TourSuccessModal Component
  * Step 3: Success confirmation screen
  */
-const TourSuccessModal = memo(({ onClose, property, agent, visitType, selectedTimes }) => {
+const TourSuccessModal = memo(({ onClose, agent, visitType, selectedTimes }) => {
   const [showNotification, setShowNotification] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
     

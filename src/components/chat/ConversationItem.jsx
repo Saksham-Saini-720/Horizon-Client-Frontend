@@ -8,7 +8,6 @@ const ConversationItem = memo(({ conversation, isLast = false }) => {
 
   const formattedDate = formatDate(lastMessageAt);
   const avatarInitials = getInitials(participant?.name);
-  const avatarColor = getAvatarColor(participant?.name);
 
   return (
     <button
@@ -93,12 +92,6 @@ function formatDate(dateStr) {
 
 function getInitials(name = '') {
   return name.split(' ').slice(0, 2).map(n => n[0]?.toUpperCase()).join('');
-}
-
-const AVATAR_COLORS = ['#1C2A3A', '#2E4057', '#3D6B8A', '#5B8DB8', '#7B5EA7', '#A06B9A', '#C97B6E', '#D4956A'];
-function getAvatarColor(name = '') {
-  const charCode = name?.charCodeAt(0) || 0;
-  return AVATAR_COLORS[charCode % AVATAR_COLORS.length];
 }
 
 export default ConversationItem;

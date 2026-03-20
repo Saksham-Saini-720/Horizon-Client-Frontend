@@ -38,8 +38,6 @@ const SavedSort = memo(({ activeSort, onSortChange }) => {
     setIsOpen(false);
   };
 
-  const activeOption = SORT_OPTIONS.find(opt => opt.value === activeSort);
-
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Sort Button */}

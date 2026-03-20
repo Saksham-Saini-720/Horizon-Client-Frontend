@@ -40,7 +40,7 @@ const ContactAgentModal = memo(({ isOpen, onClose, agent, property }) => {
         await navigator.clipboard.writeText(agent.phone);
         toast.success('Phone number copied!');
       } catch (error) {
-        toast.error('Failed to copy phone number');
+        toast.error('Failed to copy phone number', error);
       }
     }
   }, [agent]);

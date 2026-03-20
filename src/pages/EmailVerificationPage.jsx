@@ -10,37 +10,29 @@ const EmailVerificationPage = memo(() => {
   const resendMutation = useResendVerification();
   
   const [countdown, setCountdown] = useState(0);
-  const [canResend, setCanResend] = useState(true);
+  const [canResend] = useState(true);
 
   // Countdown timer after resend
 
 useEffect(() => {
-  let timer;
+  if (countdown <= 0) return;
 
-  if (countdown > 0) {
-    timer = setTimeout(() => {
-      setCountdown(prev => prev - 1);
-    }, 1000);
-  } else if (countdown === 0) {
-    setCanResend(true);
-  }
+  const timer = setTimeout(() => {
+    setCountdown(prev => prev - 1);
+  }, 1000);
 
-  return () => {
-    if (timer) clearTimeout(timer);
-  };
+  return () => clearTimeout(timer);
 }, [countdown]);
 
-
   const handleResend = useCallback(() => {
-    if (!canResend || resendMutation.isPending) return;
-    
-    resendMutation.mutate(undefined, {
-      onSuccess: () => {
-        setCountdown(60); // 60 second cooldown
-        setCanResend(false);
-      },
-    });
-  }, [canResend, resendMutation]);
+  if (!canResend || resendMutation.isPending) return;
+
+  resendMutation.mutate(undefined, {
+    onSuccess: () => {
+      setCountdown(60);
+    },
+  });
+}, [canResend, resendMutation]);
 
   const handleGoToLogin = useCallback(() => {
     navigate("/login");

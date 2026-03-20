@@ -6,7 +6,7 @@ import {
   getNewListings, 
   searchProperties 
 } from "../../api/propertyApi";
-import { transformProperties, transformPropertyResponse } from "../../utils/propertyTransform";
+import { transformPropertyResponse } from "../../utils/propertyTransform";
 
 // ─── Query Keys (for cache management) ────────────────────────────────────────
 

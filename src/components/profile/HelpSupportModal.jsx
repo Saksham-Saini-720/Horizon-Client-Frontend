@@ -1,7 +1,6 @@
 
 import { memo, useRef, useCallback, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import axiosInstance from '../../api/axiosInstance';
 import toast from 'react-hot-toast';
 
 // ─── API ──────────────────────────────────────────────────────────────────────

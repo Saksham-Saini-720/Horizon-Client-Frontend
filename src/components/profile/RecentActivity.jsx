@@ -1,19 +1,15 @@
 
 import { memo, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useEnquiries } from '../../hooks/activity/useEnquiries';
 import { useTours } from '../../hooks/activity/useTours';
 import { useConversations } from '../../hooks/conversations/useConversations';
-import { useSelector } from 'react-redux';
-import { selectSavedIds } from '../../store/slices/savedSlice';
 
 const RecentActivity = memo(() => {
-  const navigate = useNavigate();
+
 
   const { data: enquiries = [] }        = useEnquiries();
   const { data: tours = [] }            = useTours();
   const { conversations = [] }          = useConversations();
-  const savedIds                        = useSelector(selectSavedIds);
 
   // Build unified activity list sorted by date
   const activities = useMemo(() => {

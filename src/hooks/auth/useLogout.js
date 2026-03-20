@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearAuth } from "../../store/slices/authSlice";
-import { clearActivity } from "../../store/slices/activitySlice"; 
 import { logoutUser } from "../../api/authApi";
 import { getTokens } from "../../utils/token";
 import toast from "react-hot-toast";
@@ -47,7 +46,7 @@ export default function useLogout() {
       navigate("/login", { replace: true });
     },
 
-    onError: (error) => {
+    onError: () => {
       
       // Clear Redux auth state anyway
       dispatch(clearAuth());

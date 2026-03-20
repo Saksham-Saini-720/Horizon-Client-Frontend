@@ -23,7 +23,7 @@ const getInitialState = () => {
     if (userStr) {
       try {
         user = JSON.parse(userStr);
-      } catch (e) {
+      } catch {
         
         localStorage.removeItem('user');
         
@@ -44,10 +44,9 @@ const getInitialState = () => {
         isAuthenticated: false,
       };
     }
-  } catch (error) {
+  } catch {
     
     return {
-      error: error instanceof Error ? error.message : 'Unknown error during auth initialization',
       user: null,
       isAuthenticated: false,
     };
@@ -111,7 +110,7 @@ const authSlice = createSlice({
         if (userStr) {
           try {
             user = JSON.parse(userStr);
-          } catch (e) {
+          } catch {
             localStorage.removeItem('user');
           }
         }
@@ -129,7 +128,7 @@ const authSlice = createSlice({
           state.user = user;
           state.isAuthenticated = true;
         }
-      } catch (error) {
+      } catch  {
         state.user = null;
         state.isAuthenticated = false;
       }
@@ -149,7 +148,7 @@ const authSlice = createSlice({
           }
         }
       } catch (error) {
-        throw new Error('Failed to force login from storage');
+        throw new Error('Failed to force login from storage', error);
       }
     },
   },

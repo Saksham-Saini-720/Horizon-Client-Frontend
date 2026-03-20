@@ -33,16 +33,13 @@ import {
 
 // Import selectors
 import {
-  selectAuth,
   selectUser,
   selectIsAuthenticated,
 } from '../../store/slices/authSlice';
 import {
   selectSavedIds,
-  selectIsSaved,
   selectSavedCount,
   selectAllNotes,
-  selectPropertyNote,
 } from '../../store/slices/savedSlice';
 import {
   selectFilters,

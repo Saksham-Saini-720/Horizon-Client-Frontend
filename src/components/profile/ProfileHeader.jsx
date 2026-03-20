@@ -13,18 +13,7 @@ const ProfileHeader = memo(({ user, onEdit }) => {
     const last = lastName?.charAt(0) || '';
     return (first + last).toUpperCase() || 'U';
   };
-
-  // Format member since date
-  const formatMemberSince = (dateString) => {
-    if (!dateString) return 'January 2024';
-    
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'long', 
-      year: 'numeric' 
-    });
-  };
-
+ 
   return (
     
     //   {/* User Info Card */}

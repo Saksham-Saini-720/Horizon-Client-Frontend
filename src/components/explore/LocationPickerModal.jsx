@@ -5,7 +5,7 @@ import { memo, useState, useEffect, useCallback } from 'react';
  * LocationPickerModal
  * Modal for selecting location - shows current location, search, and recent locations
  */
-const LocationPickerModal = memo(({ isOpen, onClose, currentLocation, onSelectLocation }) => {
+const LocationPickerModal = memo(({ isOpen, onClose, onSelectLocation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);

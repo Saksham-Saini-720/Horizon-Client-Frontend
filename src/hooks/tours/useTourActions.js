@@ -12,7 +12,7 @@ export const useCancelTour = () => {
 
   return useMutation({
     mutationFn: ({ tourId, reason }) => cancelTourRequest(tourId, reason),
-    onSuccess: (response, { tourId }) => {
+    onSuccess: () => {
       // Invalidate tours query to refetch
       queryClient.invalidateQueries({ queryKey: ['tours'] });
       
@@ -40,7 +40,7 @@ export const useRescheduleTour = () => {
   return useMutation({
     mutationFn: ({ tourId, preferredDate, preferredTime }) => 
       rescheduleTourRequest(tourId, preferredDate, preferredTime),
-    onSuccess: (response, { tourId }) => {
+    onSuccess: () => {
       // Invalidate tours query to refetch
       queryClient.invalidateQueries({ queryKey: ['tours'] });
       
@@ -83,7 +83,7 @@ export const useDeleteTour = () => {
         position: 'top-center',
       });
     },
-    onError: (error, variables) => {
+    onError: () => {
       // Rollback on error
       queryClient.invalidateQueries({ queryKey: ['tours'] });
       

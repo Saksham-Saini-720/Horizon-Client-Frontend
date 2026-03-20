@@ -20,6 +20,7 @@ const EditProfileModal = memo(({ isOpen, onClose, user }) => {
   // Update form when user changes
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line
       setFormData({
         firstName: user.firstName || '',
         lastName: user.lastName || '',

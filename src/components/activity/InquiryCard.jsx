@@ -20,9 +20,11 @@ const InquiryCard = memo(({ inquiry }) => {
   };
   const currentStatus = statusConfig[status] || statusConfig['submitted'];
 
-  const handlePropertyClick = useCallback(() => {
-    if (property?.id) navigate(`/property/${property.id}`);
-  }, [navigate, property?.id]);
+    const handlePropertyClick = useCallback(() => {
+      if (property?.id) {
+        navigate(`/property/${property.id}`);
+      }
+    }, [navigate, property]);
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-md hover:shadow-xl transition-all">

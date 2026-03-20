@@ -22,7 +22,7 @@ const isTokenExpiring = (token, bufferMinutes = 2) => {
 
     // Return true if token expires within buffer time
     return (expiryTime - currentTime) < bufferTime;
-  } catch (error) {
+  } catch  {
     return false;
   }
 };
@@ -56,7 +56,7 @@ export default function TokenRefreshManager() {
       try {
         await refreshTokens();
       } catch (error) {
-        throw new Error('Failed to refresh token after access token deletion');
+        throw new Error('Failed to refresh token after access token deletion', error);
       }
       return;
     }
@@ -66,7 +66,7 @@ export default function TokenRefreshManager() {
       try {
         await refreshTokens();
       } catch (error) {
-        throw new Error('Failed to refresh token before expiry');
+        throw new Error('Failed to refresh token before expiry', error);
       }
     }
   }, [isAuthenticated, refreshTokens]);
@@ -115,7 +115,7 @@ export default function TokenRefreshManager() {
         try {
           await refreshTokens();
         } catch (error) {
-          throw new Error('Failed to refresh token after manual access token deletion');
+          throw new Error('Failed to refresh token after manual access token deletion', error);
         }
       }
 
@@ -135,7 +135,7 @@ export default function TokenRefreshManager() {
           try {
             await refreshTokens();
           } catch (error) {
-            throw new Error('Failed to refresh token after access token deletion in another tab');
+            throw new Error('Failed to refresh token after access token deletion in another tab',error);
           }
         }
       }

@@ -45,7 +45,7 @@ export const useTokenRefresh = () => {
       queryClient.invalidateQueries();
     },
 
-    onError: (error) => {
+    onError: () => {
       // Clear tokens and logout
       clearTokens();
       dispatch(clearAuth());

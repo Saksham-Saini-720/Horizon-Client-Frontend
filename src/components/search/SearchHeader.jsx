@@ -9,10 +9,7 @@ const SearchHeader = memo(({
   query, 
   onSearch, 
   onClearSearch, 
-  onBack,
-  recentSearches = [],
-  onRemoveRecent,
-  onClearAllRecent 
+  onBack
 }) => {
   const inputRef = useRef(null);
   const [localQuery, setLocalQuery] = useState(query);

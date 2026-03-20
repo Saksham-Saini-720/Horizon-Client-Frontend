@@ -11,7 +11,7 @@ export const useStartConversation = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async ({ agent, property, message, name, email, phone }) => {
+    mutationFn: async ({ property, message, name, email, phone }) => {
       // Backend no longer needs recipientId — it's determined by property owner
       const conversationResponse = await startConversation({
         propertyId:     property?.id || property?._id,

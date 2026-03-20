@@ -41,24 +41,28 @@ export default function App() {
           <Route path="/" element={<HomePage />}>
             
             {/* ── Public Routes (auto-generated from config) ── */}
-            {publicRoutes.map(({ path, element: Component, title }) => (
-              <Route 
+            {publicRoutes.map(({ path, element: Component }) => {
+              const PageComponent = Component;
+
+              return (<Route 
                 key={path || "index"} 
                 index={path === ""}
                 path={path || undefined}
-                element={<Component />} 
-              />
-            ))}
+                element={<PageComponent />} 
+              />)
+              })}
 
             {/* ── Protected Routes (wrapped in auth HOC) ── */}
             <Route element={<ProtectedRoute />}>
-              {protectedRoutes.map(({ path, element: Component }) => (
-                <Route 
+              {protectedRoutes.map(({ path, element: Component }) => {
+                const PageComponent = Component;
+
+                return (<Route 
                   key={path} 
                   path={path} 
-                  element={<Component />} 
-                />
-              ))}
+                  element={<PageComponent />} 
+                />)
+                })}
             </Route>
 
             {/* ── 404 Not Found ── */}
