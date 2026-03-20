@@ -15,7 +15,7 @@ import Preferences from '../components/profile/Preferences';
 import AccountSecurity from '../components/profile/AccountSecurity';
 import EditProfileModal from '../components/profile/EditProfileModal';
 import useConversations from '../hooks/conversations/useConversations';
-import LogoutModal from '../components/profile/logoutModal';
+import LogoutModal from '../components/profile/LogoutModal';
 
 /**
  * NotLoggedInState Component
