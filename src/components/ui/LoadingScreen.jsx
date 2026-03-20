@@ -7,18 +7,18 @@ const LoadingScreen = memo(() => {
     <div className="min-h-screen bg-secondary flex flex-col items-center justify-center">
       
       {/* Logo */}
-      <div className="mb-8">
-        <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-primary-light to-secondary flex items-center justify-center shadow-2xl">
+      <div >
+        <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-2xl">
           <img src={logo} alt="logo" className="w-5/5 h-auto object-contain p-[1px]" />
         </div>
       </div>
 
       {/* Brand Name */}
-      <h1 className="text-white text-[36px] font-balck font-myriad mb-1">
+      <h1 className="text-white text-[40px] font-black font-myriad">
         Horizon
       </h1>
       
-      <p className="text-white/60 text-[15px] font-myriad tracking-widest uppercase mb-12">
+      <p className="text-white/60 text-[18px] font-black font-myriad tracking-widest uppercase mb-7">
         PROPERTIES
       </p>
 

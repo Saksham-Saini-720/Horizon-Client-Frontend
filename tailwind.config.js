@@ -8,9 +8,9 @@ export default {
       colors: {
         primary: {
           DEFAULT: '#171C26',
-          light:   '#2D368E',
+          light:   '#C96C38',
         },
-        secondary: '#C96C38',
+        secondary: '#2D368E',
         surface: '#F7F6F2',
       },
       fontFamily: {

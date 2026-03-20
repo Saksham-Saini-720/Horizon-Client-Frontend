@@ -1,5 +1,5 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import logo from "../../assets/icons/logo.png";
+import logo from "../../assets/icons/white_logo.png";
 
 const HIDE_BACK   = ["/saved", "/inquiries", "/tours", "/profile"];
 const ROUTE_TITLES = {
@@ -20,7 +20,7 @@ export const HorizonLogo = ({ size = 40 }) => (
     style={{
       width: size,
       height: size,
-      background: "linear-gradient(145deg, #F5F5F5 0%, #F5F5F5 100%)",
+      background: "linear-gradient(145deg, #2D368E 0%, #2D368E 100%)",
       boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
     }}
   >
