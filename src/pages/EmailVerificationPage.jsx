@@ -113,7 +113,7 @@ useEffect(() => {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-[16px] text-gray-500 mt-6 font-myriad">
+        <p className="text-center text-[16px] text-gray-500 mt-6 mb-9 font-myriad">
           Already verified?{" "}
           <button
             onClick={handleGoToLogin}
