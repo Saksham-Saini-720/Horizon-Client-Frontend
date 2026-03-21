@@ -2,7 +2,7 @@
 import { useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import useRegisterMutation from "../hooks/auth/useRegisterMutation";
-import SocialLogin from "../components/auth/SocialLogin";
+// import SocialLogin from "../components/auth/SocialLogin";
 import AuthDivider from "../components/auth/AuthDivider";
 import AuthTerms from "../components/auth/AuthTerms";
 import ValidatedInput from "../components/forms/ValidatedInput";
@@ -72,10 +72,10 @@ export default function RegisterPage() {
         <p className="text-sm text-gray-500 mb-6">Join Horizon Properties today.</p>
 
         {/* Google OAuth */}
-        <SocialLogin label="Continue with Google" />
+        {/* <SocialLogin label="Continue with Google" /> */}
 
         {/* Divider */}
-        <AuthDivider text="or sign up with email" />
+        <AuthDivider text="sign up with email" />
 
         {/* Error Banner */}
         <ErrorBanner error={registerMutation.error} />

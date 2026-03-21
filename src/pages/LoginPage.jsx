@@ -5,7 +5,7 @@ import { useEmailLoginMutation } from "../hooks/auth/useLoginMutations";
 import ValidatedInput from "../components/forms/ValidatedInput";
 import ErrorBanner from "../components/forms/ErrorBanner";
 import SubmitButton from "../components/forms/SubmitButton";
-import SocialLogin from "../components/auth/SocialLogin";
+// import SocialLogin from "../components/auth/SocialLogin";
 import AuthDivider from "../components/auth/AuthDivider";
 import AuthTerms from "../components/auth/AuthTerms";
 
@@ -67,10 +67,10 @@ export default function LoginPage() {
         </p>
 
         {/* Google OAuth */}
-        <SocialLogin label="Continue with Google" />
+        {/* <SocialLogin label="Continue with Google" /> */}
 
         {/* Divider */}
-        <AuthDivider text="or continue with email" />
+        <AuthDivider text="continue with email" />
 
         {/* Error Banner */}
         <ErrorBanner error={emailLoginMutation.error} />
