@@ -59,7 +59,7 @@ const EmptySaved = () => {
       <button
         onClick={() => navigate('/')}
         className="px-8 py-3.5 rounded-xl text-[15px] font-semibold text-white shadow-lg hover:shadow-xl transition-all active:scale-95"
-        style={{ background: 'linear-gradient(135deg, #F5B731, #DB143C)' }}
+        style={{ background: 'linear-gradient(135deg, #2D368E, #C96C38)' }}
       >
         Explore Properties
       </button>
