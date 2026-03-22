@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 
 export default function useForgotPassword() {
   return useMutation({
-    mutationFn: (email) => {
-      return forgotPassword(email);
+    mutationFn: (email, portal) => {
+      return forgotPassword(email, portal);
     },
 
     onSuccess: () => {

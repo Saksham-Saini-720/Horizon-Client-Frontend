@@ -8,8 +8,8 @@ export default function useResetPassword() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: ({ token, newPassword }) => {
-      return changePassword({ token, newPassword });
+    mutationFn: ({ token, newPassword, portal }) => {
+      return changePassword({ token, newPassword, portal });
     },
 
     onSuccess: () => {

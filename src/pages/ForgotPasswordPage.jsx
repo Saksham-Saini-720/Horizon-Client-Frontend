@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
     const err = validateEmail(email);
     if (err) return;
 
-    forgotPasswordMutation.mutate(email, {
+    forgotPasswordMutation.mutate({email, portal : "client"}, {
       onSuccess: () => setSubmittedEmail(email),
     });
   }, [forgotPasswordMutation]);

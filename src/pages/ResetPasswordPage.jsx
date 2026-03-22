@@ -70,7 +70,7 @@ export default function ResetPasswordPage() {
 
     if (passwordErr || confirmPasswordErr) return;
 
-    resetPasswordMutation.mutate({ token, newPassword: password });
+    resetPasswordMutation.mutate({ token, newPassword: password, portal : "client" });
   }, [token, resetPasswordMutation]);
 
   const handleBackToLogin = useCallback(() => navigate("/login"), [navigate]);

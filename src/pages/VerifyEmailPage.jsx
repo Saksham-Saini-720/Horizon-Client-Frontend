@@ -101,7 +101,7 @@ const VerifyEmailPage = memo(() => {
       navigate("/");
       return;
     }
-    verifyMutation.mutate(token);
+    verifyMutation.mutate({ token, portal : "client" });
   }, [token, navigate]);
 
   const handleRetry = () => {

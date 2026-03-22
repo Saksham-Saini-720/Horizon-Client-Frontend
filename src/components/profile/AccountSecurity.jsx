@@ -1,5 +1,5 @@
 
-import { memo, useCallback, useState } from 'react';
+import { memo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HelpSupportModal from './HelpSupportModal';
 
@@ -7,11 +7,11 @@ const AccountSecurity = memo(({ onLogout }) => {
   const navigate = useNavigate();
   const [showSupport, setShowSupport] = useState(false);
 
-  const handleDeleteAccount = useCallback(() => {
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      console.log('Delete account requested');
-    }
-  }, []);
+  // const handleDeleteAccount = useCallback(() => {
+  //   if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+  //     console.log('Delete account requested');
+  //   }
+  // }, []);
 
   return (
     <div className="mt-8 mb-8">
@@ -54,7 +54,7 @@ const AccountSecurity = memo(({ onLogout }) => {
         <div className="border-t border-gray-100" />
 
         {/* Delete Account */}
-        <button onClick={handleDeleteAccount} className="w-full p-5 flex items-center gap-4 hover:bg-red-50 transition-colors text-left group">
+        {/* <button onClick={handleDeleteAccount} className="w-full p-5 flex items-center gap-4 hover:bg-red-50 transition-colors text-left group">
           <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="3 6 5 6 21 6" />
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -63,7 +63,7 @@ const AccountSecurity = memo(({ onLogout }) => {
           <svg className="w-5 h-5 text-red-300 group-hover:text-red-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="9 18 15 12 9 6" />
           </svg>
-        </button>
+        </button> */}
 
         <div className="border-t border-gray-100" />
 
