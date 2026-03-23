@@ -60,7 +60,6 @@ export default function RegisterPage() {
       email: values.email,
       password: values.password,
       phone: values.phone || undefined,
-      portal: "client",
     });
   }, [registerMutation]);
 
