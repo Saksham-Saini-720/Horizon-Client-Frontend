@@ -2,10 +2,13 @@ import { memo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/utils/useRedux";
 import useResendVerification from "../hooks/auth/useResendVerification";
+import { useDispatch } from "react-redux";
+import { clearAuth } from "../store/slices/authSlice";
 
 const EmailVerificationPage = memo(() => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const dispatch = useDispatch()
   const resendMutation = useResendVerification();
 
   const [countdown, setCountdown] = useState(0);
@@ -18,7 +21,7 @@ const EmailVerificationPage = memo(() => {
       timer = setTimeout(() => {
         setCountdown(prev => prev - 1);
       }, 1000);
-    } else if (countdown === 0 && !canResend) { // ✅ guard added
+    } else if (countdown === 0 && !canResend) {
       // eslint-disable-next-line
       setCanResend(true);
     }
@@ -26,7 +29,7 @@ const EmailVerificationPage = memo(() => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [countdown, canResend]); // ✅ canResend added to deps
+  }, [countdown, canResend]); 
 
   const handleResend = useCallback(() => {
     if (!canResend || resendMutation.isPending) return;
@@ -39,9 +42,10 @@ const EmailVerificationPage = memo(() => {
     });
   }, [canResend, resendMutation]);
 
-  const handleGoToLogin = useCallback(() => {
+  const handleGoToLogin = () => {
+    dispatch(clearAuth())
     navigate("/login");
-  }, [navigate]);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-surface to-amber-50 flex items-center justify-center px-4">

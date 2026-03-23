@@ -61,7 +61,7 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
-
+    resetPasswordMutation.reset(); 
     const password = passwordRef.current?.value ?? "";
     const confirmPassword = confirmPasswordRef.current?.value ?? "";
 
@@ -77,7 +77,7 @@ export default function ResetPasswordPage() {
   const handleRequestNewLink = useCallback(() => navigate("/forgot-password"), [navigate]);
 
   // Success state
-  if (resetPasswordMutation.isSuccess) {
+  if (resetPasswordMutation.isSuccess && !resetPasswordMutation.isError) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
