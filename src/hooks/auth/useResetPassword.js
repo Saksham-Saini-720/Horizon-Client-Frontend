@@ -7,7 +7,7 @@ export default function useResetPassword() {
 
   return useMutation({
     mutationFn: ({ token, newPassword, portal }) => {
-      return changePassword({ token, newPassword, portal });
+      return changePassword({ token, newPassword, portal }, {skipAuthRefresh : true});
     },
 
     onSuccess: () => {

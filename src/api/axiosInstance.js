@@ -15,6 +15,9 @@ const axiosInstance = axios.create({
 // ===== REQUEST INTERCEPTOR =====
 axiosInstance.interceptors.request.use(
   (config) => {
+
+    if (config.skipAuthRefresh) return config; // ✅ ADD THIS
+
     const token = localStorage.getItem("accessToken");
 
     if (token) {
@@ -44,7 +47,11 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config;    
+
+    if (originalRequest?.skipAuthRefresh) {
+      return Promise.reject(error); 
+    }
 
     const url = originalRequest?.url || "";
 

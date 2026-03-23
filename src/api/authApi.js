@@ -21,8 +21,8 @@ export const forgotPassword = (email) =>
 export const resetPassword = (payload) =>
   apiPost("/auth/reset-password", payload);
 
-export const changePassword = (payload) =>
-  apiPost("/auth/change-password", payload);
+export const changePassword = (payload, config = {}) =>
+  apiPost("/auth/change-password", payload, config);
 
 export const verifyEmail = (payload) =>
   apiPost("/auth/verify-email", payload);
