@@ -1,4 +1,3 @@
-
 import { memo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/utils/useRedux";
@@ -8,31 +7,37 @@ const EmailVerificationPage = memo(() => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const resendMutation = useResendVerification();
-  
+
   const [countdown, setCountdown] = useState(0);
-  const [canResend] = useState(true);
+  const [canResend, setCanResend] = useState(true);
 
-  // Countdown timer after resend
+  useEffect(() => {
+    let timer;
 
-useEffect(() => {
-  if (countdown <= 0) return;
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
+    } else if (countdown === 0 && !canResend) { // ✅ guard added
+      // eslint-disable-next-line
+      setCanResend(true);
+    }
 
-  const timer = setTimeout(() => {
-    setCountdown(prev => prev - 1);
-  }, 1000);
-
-  return () => clearTimeout(timer);
-}, [countdown]);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [countdown, canResend]); // ✅ canResend added to deps
 
   const handleResend = useCallback(() => {
-  if (!canResend || resendMutation.isPending) return;
+    if (!canResend || resendMutation.isPending) return;
 
-  resendMutation.mutate(undefined, {
-    onSuccess: () => {
-      setCountdown(60);
-    },
-  });
-}, [canResend, resendMutation]);
+    resendMutation.mutate(undefined, {
+      onSuccess: () => {
+        setCountdown(60);
+        setCanResend(false);
+      },
+    });
+  }, [canResend, resendMutation]);
 
   const handleGoToLogin = useCallback(() => {
     navigate("/login");
@@ -41,10 +46,10 @@ useEffect(() => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-surface to-amber-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        
+
         {/* Card */}
         <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
-          
+
           {/* Email Icon */}
           <div className="mb-6 flex justify-center">
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-lg">
@@ -78,12 +83,13 @@ useEffect(() => {
 
           {/* Resend Button */}
           <button
+            type="button" // ✅ fix: prevents form submit
             onClick={handleResend}
             disabled={!canResend || resendMutation.isPending || countdown > 0}
             className="w-full px-6 py-3.5 rounded-xl text-[16px] font-semibold font-myriad transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mb-3"
-            style={{ 
+            style={{
               background: canResend && countdown === 0 && !resendMutation.isPending
-                ? "linear-gradient(135deg, #F5B731, #E8A020)" 
+                ? "linear-gradient(135deg, #F5B731, #E8A020)"
                 : "#E5E7EB",
               color: canResend && countdown === 0 && !resendMutation.isPending
                 ? "white"
@@ -104,6 +110,7 @@ useEffect(() => {
 
           {/* Back to Login */}
           <button
+            type="button" // ✅ fix
             onClick={handleGoToLogin}
             className="w-full px-6 py-3 rounded-xl border border-gray-200 text-[16px] font-semibold text-gray-700 font-myriad hover:bg-gray-50 active:scale-95 transition-all"
           >
@@ -113,9 +120,10 @@ useEffect(() => {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-[16px] text-gray-500 mt-6 mb-9 font-myriad">
+        <p className="text-center text-[16px] text-gray-500 mt-6 font-myriad">
           Already verified?{" "}
           <button
+            type="button" // ✅ fix
             onClick={handleGoToLogin}
             className="text-secondary font-semibold hover:text-amber-700 hover:underline"
           >

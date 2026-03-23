@@ -75,7 +75,7 @@ export default function RegisterPage() {
         {/* <SocialLogin label="Continue with Google" /> */}
 
         {/* Divider */}
-        <AuthDivider text="sign up with email" />
+        {/* <AuthDivider text="sign up with email" /> */}
 
         {/* Error Banner */}
         <ErrorBanner error={registerMutation.error} />

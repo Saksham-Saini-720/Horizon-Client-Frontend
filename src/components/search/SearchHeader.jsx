@@ -1,10 +1,5 @@
-
 import { memo, useState, useRef } from "react";
 
-/**
- * SearchHeader Component
- * Header with back arrow and search bar (Lovable app style)
- */
 const SearchHeader = memo(({ 
   query, 
   onSearch, 
@@ -38,16 +33,21 @@ const SearchHeader = memo(({
   };
 
   return (
-    <div className="bg-white border-b border-gray-100 px-4 py-3">
-      <div className="flex items-center gap-3">
-        {/* Back Arrow */}
+   
+    <div className="bg-white border-b border-gray-100 px-3 sm:px-4 py-2.5 sm:py-3 overflow-hidden">
+      
+      
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+
+        {/* Back Arrow — slightly smaller on mobile */}
         <button
+          type="button"
           onClick={onBack}
-          className="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors flex-shrink-0"
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors flex-shrink-0"
           aria-label="Go back"
         >
           <svg
-            className="w-5 h-5 text-gray-700"
+            className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -58,14 +58,17 @@ const SearchHeader = memo(({
           </svg>
         </button>
 
-        {/* Search Bar */}
-        <div className="flex-1 relative">
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
-            isFocused ? 'border-secondary bg-amber-50/30' : 'border-gray-200 bg-white'
+        
+        <div className="flex-1 min-w-0">
+          <div className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border transition-all overflow-hidden ${
+            isFocused
+              ? "border-secondary bg-amber-50/30"
+              : "border-gray-200 bg-white"
           }`}>
-            {/* Search Icon */}
+
+            {/* Search Icon — hidden on very small screens to save space */}
             <svg
-              className="w-5 h-5 text-gray-400 flex-shrink-0"
+              className="hidden xs:block w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -76,28 +79,30 @@ const SearchHeader = memo(({
               <path d="M21 21l-4.35-4.35" />
             </svg>
 
-            {/* Input */}
-            <input
-              ref={inputRef}
-              type="text"
-              value={localQuery}
-              onChange={(e) => setLocalQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="villa"
-              className="flex-1 bg-transparent outline-none border-none text-[15px] text-gray-700 placeholder-gray-400 font-myriad"
-            />
+            <div className="flex-1 min-w-0 overflow-x-auto scrollbar-none">
+              <input
+                ref={inputRef}
+                type="text"
+                value={localQuery}
+                onChange={(e) => setLocalQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="Search..."
+                className="w-full bg-transparent outline-none border-none text-[14px] sm:text-[15px] text-gray-700 placeholder-gray-400 font-myriad whitespace-nowrap"
+              />
+            </div>
 
             {/* Clear X */}
             {localQuery && (
               <button
+                type="button"
                 onClick={handleClear}
-                className="w-6 h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center flex-shrink-0 transition-colors"
+                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center flex-shrink-0 transition-colors"
                 aria-label="Clear search"
               >
                 <svg
-                  className="w-3.5 h-3.5 text-gray-600"
+                  className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -110,11 +115,12 @@ const SearchHeader = memo(({
             )}
           </div>
         </div>
+
       </div>
     </div>
   );
 });
 
-SearchHeader.displayName = 'SearchHeader';
+SearchHeader.displayName = "SearchHeader";
 
 export default SearchHeader;
