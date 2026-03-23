@@ -8,7 +8,7 @@ export default function useVerifyEmail() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: (token, portal) => {
+    mutationFn: ({token, portal}) => {
       return verifyEmail({ token, portal });
     },
 
