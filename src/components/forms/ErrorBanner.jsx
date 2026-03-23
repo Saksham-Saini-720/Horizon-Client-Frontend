@@ -2,7 +2,6 @@
 import { memo } from "react";
 
 const ErrorBanner = memo(({ error }) => {
-  console.log("ErrorBanner received error:", error); 
   if (!error) return null;
 
   const responseData = error;
@@ -12,7 +11,6 @@ const ErrorBanner = memo(({ error }) => {
     responseData?.details ||           
     [];
 
-    console.log("details", details)
 
   const mainMessage = responseData
     responseData?.error?.message ||   
