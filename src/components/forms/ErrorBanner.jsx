@@ -5,16 +5,16 @@ const ErrorBanner = memo(({ error }) => {
   if (!error) return null;
 
   const responseData = error?.response?.data?.error || error;
-  
-  const details = responseData ||
-    responseData?.error?.details ||   
-    responseData?.details ||           
+
+  const mainMessage = 
+    responseData?.message || 
+    responseData?.error?.message ||
+    (typeof responseData === "string" ? responseData : null);
+
+  const details =
+    responseData?.details ||
+    responseData?.error?.details ||
     [];
-
-
-  const mainMessage = responseData||
-    responseData?.error?.message ||   
-    responseData?.message 
 
   return (
     <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-5">

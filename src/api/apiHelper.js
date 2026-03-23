@@ -4,8 +4,7 @@ const handleResponse = (response) => response.data;
 
 const handleError = (error) => {
   const message =
-    error?.response?.data?.error?.details ||
-    error?.response?.data?.error?.message ||
+    error?.response?.data?.error ||
     "Something went wrong";
 
   return Promise.reject(message);
