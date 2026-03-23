@@ -6,7 +6,7 @@ import ValidatedInput from "../components/forms/ValidatedInput";
 import ErrorBanner from "../components/forms/ErrorBanner";
 import SubmitButton from "../components/forms/SubmitButton";
 // import SocialLogin from "../components/auth/SocialLogin";
-import AuthDivider from "../components/auth/AuthDivider";
+// import AuthDivider from "../components/auth/AuthDivider";
 import AuthTerms from "../components/auth/AuthTerms";
 
 // ─── Validators ───────────────────────────────────────────────────────────────
@@ -69,8 +69,8 @@ export default function LoginPage() {
         {/* Google OAuth */}
         {/* <SocialLogin label="Continue with Google" /> */}
 
-        {/* Divider */}
-        <AuthDivider text="continue with email" />
+        {/* Divider
+        <AuthDivider text="continue with email" /> */}
 
         {/* Error Banner */}
         <ErrorBanner error={emailLoginMutation.error} />
