@@ -16,7 +16,7 @@ export const refresh = (refreshToken) =>
   apiPost("/auth/refresh", { refreshToken });
 
 export const forgotPassword = (email) =>
-  apiPost("/auth/forgot-password", { email });
+  apiPost("/auth/forgot-password", { email, portal: "client" });
 
 export const resetPassword = (payload) =>
   apiPost("/auth/reset-password", payload);
