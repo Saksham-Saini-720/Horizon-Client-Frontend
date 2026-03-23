@@ -14,7 +14,6 @@ const ProfileHeader = memo(({ user, onEdit }) => {
     return (first + last).toUpperCase() || 'U';
   };
 
-  console.log('Rendering ProfileHeader with user:', user);
  
   return (
     <div className="bg-gradient-to-br from-secondary/20 to-secondary-light rounded-3xl px-6 py-4 mt-6 mb-6">

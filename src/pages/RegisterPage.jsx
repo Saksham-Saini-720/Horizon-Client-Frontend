@@ -3,7 +3,7 @@ import { useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import useRegisterMutation from "../hooks/auth/useRegisterMutation";
 // import SocialLogin from "../components/auth/SocialLogin";
-import AuthDivider from "../components/auth/AuthDivider";
+// import AuthDivider from "../components/auth/AuthDivider";
 import AuthTerms from "../components/auth/AuthTerms";
 import ValidatedInput from "../components/forms/ValidatedInput";
 import ErrorBanner from "../components/forms/ErrorBanner";
