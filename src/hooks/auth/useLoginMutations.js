@@ -5,10 +5,6 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "../../api/authApi";
 import { setAuth } from "../../store/slices/authSlice";
 
-
-/**
- * Email login mutation with Redux
- */
 export function useEmailLoginMutation() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,25 +13,40 @@ export function useEmailLoginMutation() {
 
   return useMutation({
     mutationFn: async ({ email, password }) => {
-      const response  = await loginUser({ email, password, device: "web", portal: "client" });
-      return response.data;
+      const response = await loginUser({ email, password, device: "web", portal: "client" });
+      return { ...response.data, _email: email };
     },
 
     onSuccess: (data) => {
-      // Dispatch to Redux - automatically syncs to localStorage
+      const isVerified = data.user?.emailVerification === true;
+
+      if (!isVerified) {
+        
+        dispatch(setAuth({
+          user:         data.user,
+          accessToken:  data.accessToken,
+          refreshToken: data.refreshToken,
+        }));
+
+        // Navigate to verify-email page
+        navigate("/verify-email", {
+          replace: true,
+          state: { email: data._email, fromLogin: true },
+        });
+        return;
+      }
+
       dispatch(setAuth({
-        user: data.user,
-        accessToken: data.accessToken,
+        user:         data.user,
+        accessToken:  data.accessToken,
         refreshToken: data.refreshToken,
       }));
-      
+
       navigate(from, { replace: true });
     },
+
 
     retry: false,
   });
 }
-
-
-
 

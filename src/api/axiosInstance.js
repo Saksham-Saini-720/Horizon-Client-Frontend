@@ -46,14 +46,15 @@ axiosInstance.interceptors.response.use(
 
     // only handle 401
     if (
-      error.response?.status === 401 &&
-      !originalRequest._retry
-    ) {
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url.includes("/auth/login") 
+      ){
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken) {
-        window.location.href = "/login";
+        window.location.pathname = "/login";
         return Promise.reject(error);
       }
 
