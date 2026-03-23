@@ -52,7 +52,7 @@ export default function LoginPage() {
   }, [emailLoginMutation]);
 
   // Redirect if already logged in
-  if (isAuthenticated && user) {
+  if (isAuthenticated && user ) {
     return <Navigate to="/" replace />;
   }
 

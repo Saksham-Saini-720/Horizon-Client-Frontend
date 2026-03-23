@@ -134,13 +134,13 @@ const ConversationPage = () => {
             </p>
           </div>
 
-          <button className="p-2 rounded-xl hover:bg-white/10 transition-colors">
+          {/* <button className="p-2 rounded-xl hover:bg-white/10 transition-colors">
             <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <circle cx="12" cy="5" r="1" fill="currentColor"/>
               <circle cx="12" cy="12" r="1" fill="currentColor"/>
               <circle cx="12" cy="19" r="1" fill="currentColor"/>
             </svg>
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -199,14 +199,14 @@ const ConversationPage = () => {
               className="flex-1 bg-transparent text-[15px] text-primary placeholder-gray-400 font-myriad resize-none outline-none leading-[1.4] max-h-[120px] overflow-y-auto"
               style={{ scrollbarWidth: 'none' }}
             />
-            <button className="ml-1.5 flex-shrink-0 mb-0.5 hover:opacity-75 transition-opacity">
+            {/* <button className="ml-1.5 flex-shrink-0 mb-0.5 hover:opacity-75 transition-opacity">
               <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M8 13s1.5 2 4 2 4-2 4-2"/>
                 <line x1="9" y1="9" x2="9.01" y2="9"/>
                 <line x1="15" y1="9" x2="15.01" y2="9"/>
               </svg>
-            </button>
+            </button> */}
           </div>
           <button
             onClick={handleSend}
@@ -323,7 +323,5 @@ function isTimeDiffSignificant(date1, date2) {
 function getInitials(name = '') {
   return name.split(' ').slice(0, 2).map(n => n[0]?.toUpperCase()).join('');
 }
-
-const AVATAR_COLORS = ['#1C2A3A', '#2E4057', '#3D6B8A', '#5B8DB8', '#7B5EA7', '#A06B9A', '#C97B6E'];
 
 export default ConversationPage;

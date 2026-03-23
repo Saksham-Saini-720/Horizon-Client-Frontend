@@ -63,7 +63,7 @@ const QuickAccessGrid = memo(({ savedCount, inquiriesCount, toursCount, messages
       count: inquiriesCount,
       timestamp: 'Updated about 2 years ago',
       iconColor: 'bg-gray-100',
-      route: '/activity?tab=inquiries'
+      route: '/inquiries'
     },
     {
       id: 'tours',
@@ -79,7 +79,7 @@ const QuickAccessGrid = memo(({ savedCount, inquiriesCount, toursCount, messages
       count: toursCount,
       timestamp: 'Updated about 2 years ago',
       iconColor: 'bg-amber-50',
-      route: '/activity?tab=tours'
+      route: '/inquiries'
     },
     {
       id: 'messages',
@@ -92,11 +92,12 @@ const QuickAccessGrid = memo(({ savedCount, inquiriesCount, toursCount, messages
       count: messagesCount,
       timestamp: 'Updated about 2 years ago',
       iconColor: 'bg-green-50',
-      route: '/activity?tab=messages'
+      route: '/inquiries'
     }
   ];
 
   const handleCardClick = useCallback((route) => {
+    console.log(`Navigating to ${route} from QuickAccessCard`);
     onNavigate(route);
   }, [onNavigate]);
 

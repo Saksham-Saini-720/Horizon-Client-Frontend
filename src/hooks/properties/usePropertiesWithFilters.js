@@ -1,4 +1,5 @@
 
+
 import { useQuery } from "@tanstack/react-query";
 import { getAllProperties, getFeaturedProperties } from "../../api/propertyApi";
 import { transformPropertyResponse } from "../../utils/propertyTransform";
@@ -11,10 +12,6 @@ export const propertyKeys = {
   new: (filters) => [...propertyKeys.all, "new", filters],
 };
 
-/**
- * Hook for browsing properties with filters
- * Supports: purpose (buy/rent), price, bedrooms, location, etc.
- */
 export function usePropertiesWithFilters(filters = {}, options = {}) {
   return useQuery({
     queryKey: propertyKeys.filtered(filters),
@@ -34,9 +31,7 @@ export function usePropertiesWithFilters(filters = {}, options = {}) {
   });
 }
 
-/**
- * Hook for featured properties with optional purpose filter
- */
+
 export function useFeaturedPropertiesFiltered(filters = {}, options = {}) {
   return useQuery({
     queryKey: propertyKeys.featured(filters),
@@ -74,9 +69,7 @@ export function useNewListingsFiltered(filters = {}, options = {}) {
       };
       
       const response = await getAllProperties(params);
-      // console.log("API Response for New Listings with Filters:", response);
       const transformed = transformPropertyResponse(response);
-      // console.log("Transformed Properties:", transformed);
       return transformed.properties;
     },
 
@@ -95,7 +88,10 @@ export function useNewListingsFiltered(filters = {}, options = {}) {
 function buildQueryParams(filters) {
   const params = {};
 
-  // Purpose (buy/rent)
+  if (filters.search) {
+    params.search = filters.search;
+  }
+
   if (filters.purpose) {
     params.purpose = filters.purpose; // 'sale' or 'rent'
   }
@@ -115,6 +111,16 @@ function buildQueryParams(filters) {
     } else {
       params.minBedrooms = parseInt(filters.bedrooms);
       params.maxBedrooms = parseInt(filters.bedrooms);
+    }
+  }
+
+  // Bathrooms
+  if (filters.bathrooms) {
+    if (filters.bathrooms === '4+') {
+      params.minBathrooms = 4;
+    } else {
+      params.minBathrooms = parseInt(filters.bathrooms);
+      params.maxBathrooms = parseInt(filters.bathrooms);
     }
   }
 
@@ -138,7 +144,7 @@ function buildQueryParams(filters) {
 
   // Sort
   if (filters.sort) {
-    params.sort = filters.sort; // price_asc, price_desc, newest, oldest
+    params.sort = filters.sort; 
   }
 
   // Pagination

@@ -1,36 +1,56 @@
-import { useState } from "react";
+
+import { useState, useCallback, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
-import { useSearchProperties, useFeaturedProperties, useNewListings } from "../hooks/properties/useProperties";
+import { usePropertiesWithFilters } from "../hooks/properties/usePropertiesWithFilters";
 import EmptyState from "../components/states/EmptyState";
 import ErrorState from "../components/states/ErrorState";
 import SearchHeader from "../components/search/SearchHeader";
 import NewListingCard from "../components/explore/NewListingCard";
 import { NewListingCardSkeleton } from "../components/ui/SkeletonCards";
+import FilterChips from "../components/explore/FilterChips";
+import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
+import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
+import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
 
 const SearchPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const query = searchParams.get("q") ?? "";
-  const isFeatured = searchParams.get("featured") === "true";
-  const isNew = searchParams.get("new") === "true";
 
-  const [activeTab, setActiveTab] = useState("buy");
+  const [filters, setFilters] = useState({
+    purpose: null,       // 'sale' or 'rent'
+    sort: 'newest',      // 'newest', 'oldest', 'price_asc', 'price_desc'
+    minPrice: undefined,
+    maxPrice: undefined,
+    bedrooms: undefined,
+    bathrooms: undefined,
+    type: undefined,
+    amenities: undefined,
+  });
+
+  const [activeModal, setActiveModal] = useState(null);
 
   const recent = useRecentSearches();
   const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
 
-  const searchQuery = useSearchProperties(query, !!query && !isFeatured && !isNew);
-  const featuredQuery = useFeaturedProperties({ enabled: isFeatured });
-  const newListingsQuery = useNewListings({ enabled: isNew });
+  const apiFilters = useMemo(() => {
+    const f = {};
+    if (filters.purpose)             f.purpose   = filters.purpose;
+    if (filters.sort)                f.sort      = filters.sort;
+    if (filters.minPrice)            f.minPrice  = filters.minPrice;
+    if (filters.maxPrice)            f.maxPrice  = filters.maxPrice;
+    if (filters.bedrooms)            f.bedrooms  = filters.bedrooms;
+    if (filters.bathrooms)           f.bathrooms = filters.bathrooms;
+    if (filters.type)                f.type      = filters.type;
+    if (filters.amenities?.length)   f.amenities = filters.amenities;
+    if (query)                       f.search    = query;
+    return f;
+  }, [filters, query]);
 
-  const activeQuery = isFeatured
-    ? featuredQuery
-    : isNew
-      ? newListingsQuery
-      : searchQuery;
+  const { data: properties = [], isLoading, isError, error, refetch } = usePropertiesWithFilters(apiFilters);
 
   const handleSearch = (newQuery) => {
     setSearchParams({ q: newQuery });
@@ -39,15 +59,61 @@ const SearchPage = () => {
 
   const handleClearSearch = () => {
     setSearchParams({});
-    navigate("/search");
+    setFilters({
+      purpose: null,
+      sort: 'newest',
+      minPrice: undefined,
+      maxPrice: undefined,
+      bedrooms: undefined,
+      bathrooms: undefined,
+      type: undefined,
+      amenities: undefined,
+    });
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
+  // Active filter for FilterChips component
+  const activeFilter = useMemo(() => {
+    if (filters.purpose === 'sale') return 'buy';
+    if (filters.purpose === 'rent') return 'rent';
+    return null;
+  }, [filters.purpose]);
+
+  //  Filter toggle handler - same as ExplorePage
+  const handleFilterToggle = useCallback((id) => {
+    if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale' }));
+    else if (id === 'rent')     setFilters(p => ({ ...p, purpose: p.purpose === 'rent' ? null : 'rent' }));
+    else if (id === 'price')    setActiveModal('price');
+    else if (id === 'bedrooms') setActiveModal('bedrooms');
+    else if (id === 'filters')  setActiveModal('filters');
+    else if (id === 'nearme')   navigate('/map');
+  }, [navigate]);
+
+  // Modal apply handlers
+  const handlePriceApply = useCallback((p) => {
+    setFilters(prev => ({ ...prev, minPrice: p.minPrice, maxPrice: p.maxPrice }));
+  }, []);
+
+  const handleBedroomsApply = useCallback((p) => {
+    setFilters(prev => ({ ...prev, bedrooms: p.bedrooms }));
+  }, []);
+
+  const handleFullApply = useCallback((all) => {
+    setFilters(prev => ({ ...prev, ...all }));
+  }, []);
+
+
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (filters.purpose) count++;
+    if (filters.minPrice || filters.maxPrice) count++;
+    if (filters.bedrooms) count++;
+    if (filters.bathrooms) count++;
+    if (filters.type) count++;
+    if (filters.amenities?.length) count++;
+    return count;
+  }, [filters]);
 
   return (
-   
     <div className="min-h-screen w-full overflow-x-hidden bg-surface pb-28">
 
       {/* Search Header */}
@@ -61,56 +127,33 @@ const SearchPage = () => {
         onClearAllRecent={recent.clearAll}
       />
 
+      <FilterChips
+        activeFilter={activeFilter}
+        onToggle={handleFilterToggle}
+        dimmed={isLoading}
+      />
+
+      {/* Sort + Map + Grid row */}
       <div className="bg-white border-b border-gray-100">
-        
         <div className="overflow-x-auto scrollbar-none w-full">
-          
           <div className="inline-flex items-center justify-between w-full min-w-max px-4 py-3 gap-2">
 
-            {/* Left: Buy | Rent | Filters */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => handleTabChange("buy")}
-                className={`px-3 py-1.5 rounded-lg text-[14px] font-semibold font-myriad transition-colors whitespace-nowrap ${
-                  activeTab === "buy"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                Buy
-              </button>
-              <button
-                type="button"
-                onClick={() => handleTabChange("rent")}
-                className={`px-3 py-1.5 rounded-lg text-[14px] font-semibold font-myriad transition-colors whitespace-nowrap ${
-                  activeTab === "rent"
-                    ? "bg-primary text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                Rent
-              </button>
-              <button
-                type="button"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-[14px] font-semibold text-gray-700 font-myriad hover:border-gray-300 transition-colors whitespace-nowrap"
-              >
-                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="4" y1="6" x2="20" y2="6" />
-                  <line x1="8" y1="12" x2="16" y2="12" />
-                  <line x1="11" y1="18" x2="13" y2="18" />
-                </svg>
-                Filters
-              </button>
-            </div>
+            {/* Left: Empty space (filters now in FilterChips) */}
+            <div className="flex-1" />
 
-            {/* Right: Sort + Map + Grid */}
-            <div className="flex items-center gap-2 ml-2">
-              <select className="px-2 py-1.5 rounded-lg border border-gray-200 text-[13px] font-semibold text-gray-700 font-myriad bg-white focus:outline-none focus:border-gray-300 max-w-[130px] whitespace-nowrap">
-                <option>Newest First</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-              </select>
+            {/* Right: Sort + Map + Grid
+            <div className="flex items-center gap-2">
+              {/* Sort dropdown */}
+              {/* <select 
+                value={filters.sort}
+                onChange={handleSortChange}
+                className="px-2 py-1.5 rounded-lg border border-gray-200 text-[13px] font-semibold text-gray-700 font-myriad bg-white focus:outline-none focus:border-gray-300 max-w-[130px] whitespace-nowrap cursor-pointer"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+              </select> */}
 
               {/* Map Icon */}
               <button
@@ -140,36 +183,103 @@ const SearchPage = () => {
                   <rect x="3" y="14" width="7" height="7" />
                 </svg>
               </button>
-            </div>
+            {/* </div> */} 
 
           </div>
         </div>
       </div>
 
+      {(activeFiltersCount > 0 || query) && (
+        <div className="px-4 pt-3 pb-2 bg-white border-b border-gray-100">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[13px] text-gray-500 font-myriad">Active filters:</span>
+            
+            {query && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+                Search: "{query}"
+                <button onClick={handleClearSearch} className="ml-1 hover:text-primary-dark">×</button>
+              </span>
+            )}
+
+            {filters.purpose === 'sale' && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+                For Sale
+                <button onClick={() => setFilters(p => ({ ...p, purpose: null }))} className="ml-1 hover:text-primary-dark">×</button>
+              </span>
+            )}
+            
+            {filters.purpose === 'rent' && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+                For Rent
+                <button onClick={() => setFilters(p => ({ ...p, purpose: null }))} className="ml-1 hover:text-primary-dark">×</button>
+              </span>
+            )}
+
+            {(filters.minPrice || filters.maxPrice) && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+                Price: {filters.minPrice ? `$${filters.minPrice.toLocaleString()}` : '0'} - {filters.maxPrice ? `$${filters.maxPrice.toLocaleString()}` : '∞'}
+                <button onClick={() => setFilters(p => ({ ...p, minPrice: undefined, maxPrice: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+              </span>
+            )}
+
+            {filters.bedrooms && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+                {filters.bedrooms} Bedrooms
+                <button onClick={() => setFilters(p => ({ ...p, bedrooms: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+              </span>
+            )}
+
+            {filters.bathrooms && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+                {filters.bathrooms} Bathrooms
+                <button onClick={() => setFilters(p => ({ ...p, bathrooms: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+              </span>
+            )}
+
+            {filters.type && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+                {filters.type.charAt(0).toUpperCase() + filters.type.slice(1)}
+                <button onClick={() => setFilters(p => ({ ...p, type: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+              </span>
+            )}
+
+            {activeFiltersCount > 0 && (
+              <button
+                onClick={handleClearSearch}
+                className="text-[12px] font-semibold text-secondary hover:text-amber-700 ml-2"
+              >
+                Clear All
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Property Count */}
       <div className="px-4 pt-4 pb-2">
-        {activeQuery.isLoading ? (
+        {isLoading ? (
           <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
         ) : (
           <p className="text-[15px] text-gray-600 font-myriad">
-            {activeQuery.data?.length ?? 0} properties
+            {properties.length} properties
+            {filters.purpose === 'sale' && ' for sale'}
+            {filters.purpose === 'rent' && ' for rent'}
           </p>
         )}
       </div>
 
       {/* Results */}
-      
       <div className="px-4 flex flex-col gap-4 max-w-full">
-        {activeQuery.isLoading ? (
+        {isLoading ? (
           Array(4).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
-        ) : activeQuery.isError ? (
+        ) : isError ? (
           <ErrorState
             title="Failed to load results"
-            message={activeQuery.error?.message}
-            onRetry={() => activeQuery.refetch()}
+            message={error?.message}
+            onRetry={refetch}
           />
-        ) : activeQuery.data && activeQuery.data.length > 0 ? (
-          activeQuery.data.map((p) => (
+        ) : properties.length > 0 ? (
+          properties.map((p) => (
             <NewListingCard
               key={p.id}
               {...p}
@@ -181,12 +291,12 @@ const SearchPage = () => {
             icon="search"
             title="No properties found"
             message={
-              query
+              query || activeFiltersCount > 0
                 ? `Try adjusting your filters or search for a different location.`
                 : "Try a different search"
             }
             action={
-              query ? (
+              (query || activeFiltersCount > 0) ? (
                 <button
                   type="button"
                   onClick={handleClearSearch}
@@ -199,6 +309,28 @@ const SearchPage = () => {
           />
         )}
       </div>
+
+    
+      <PriceFilterModal
+        isOpen={activeModal === 'price'}
+        onClose={() => setActiveModal(null)}
+        onApply={handlePriceApply}
+        currentFilters={filters}
+      />
+
+      <BedroomsFilterModal
+        isOpen={activeModal === 'bedrooms'}
+        onClose={() => setActiveModal(null)}
+        onApply={handleBedroomsApply}
+        currentFilters={filters}
+      />
+
+      <FullFiltersModal
+        isOpen={activeModal === 'filters'}
+        onClose={() => setActiveModal(null)}
+        onApply={handleFullApply}
+        currentFilters={filters}
+      />
     </div>
   );
 };
