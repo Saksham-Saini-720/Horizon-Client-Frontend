@@ -46,11 +46,18 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    const isPublicRoute =
-      originalRequest.url.includes("/auth/login") ||
-      originalRequest.url.includes("/auth/reset-password") ||
-      originalRequest.url.includes("/auth/forgot-password") ||
-      originalRequest.url.includes("/auth/verify-email");
+    const url = originalRequest?.url || "";
+
+    const publicRoutes = [
+        "/auth/login",
+        "/auth/reset-password",
+        "/auth/forgot-password",
+        "/auth/verify-email",
+      ];
+
+      const isPublicRoute = publicRoutes.some(route =>
+        url.includes(route)
+      );
 
     // only handle 401
     if (
@@ -62,7 +69,7 @@ axiosInstance.interceptors.response.use(
 
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken) {
-        window.location.pathname = "/login";
+        window.location.href = "/login";
         return Promise.reject(error);
       }
 
