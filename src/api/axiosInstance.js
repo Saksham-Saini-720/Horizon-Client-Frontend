@@ -31,6 +31,8 @@ axiosInstance.interceptors.request.use(
 let isRefreshing = false;
 let failedQueue = [];
 
+
+
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
     if (error) prom.reject(error);
@@ -44,11 +46,17 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    const isPublicRoute =
+      originalRequest.url.includes("/auth/login") ||
+      originalRequest.url.includes("/auth/reset-password") ||
+      originalRequest.url.includes("/auth/forgot-password") ||
+      originalRequest.url.includes("/auth/verify-email");
+
     // only handle 401
     if (
         error.response?.status === 401 &&
         !originalRequest._retry &&
-        !originalRequest.url.includes("/auth/login") 
+        !isPublicRoute
       ){
       originalRequest._retry = true;
 
