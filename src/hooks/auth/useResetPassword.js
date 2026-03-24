@@ -1,18 +1,17 @@
 
 import { useMutation } from "@tanstack/react-query";
-import { changePassword } from "../../api/authApi";
+import { resetPassword } from "../../api/authApi";
 import toast from "react-hot-toast";
 
 export default function useResetPassword() {
 
   return useMutation({
     mutationFn: ({ token, newPassword, portal }) => {
-      return changePassword({ token, newPassword, portal }, {skipAuthRefresh : true});
+      return resetPassword({ token, newPassword, portal }, {skipAuthRefresh : true});
     },
 
     onSuccess: () => {
-      toast.success("Password changed successfully! You can now log in.");
-      
+      toast.success("Password reset successfully! You can now log in.");      
     },
 
     onError: (error) => {

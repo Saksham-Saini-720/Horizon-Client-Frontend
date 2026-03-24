@@ -60,6 +60,7 @@ axiosInstance.interceptors.response.use(
         "/auth/reset-password",
         "/auth/forgot-password",
         "/auth/verify-email",
+        "/auth/change-password"
       ];
 
       const isPublicRoute = publicRoutes.some(route =>
