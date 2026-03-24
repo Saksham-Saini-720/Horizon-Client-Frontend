@@ -1,14 +1,5 @@
 
 
-/**
- * Validate Enquiry Form Data
- * According to API spec:
- * - name: 2-100 chars, letters/hyphens/apostrophes
- * - email: valid email format
- * - phone: E.164 format (+[country code][number])
- * - message: max 500 chars (optional)
- */
-
 export const validateEnquiryForm = (data) => {
   const errors = {};
 
@@ -56,10 +47,6 @@ export const validateEnquiryForm = (data) => {
   };
 };
 
-/**
- * Format phone number to E.164
- * Converts: 0977888999 → +260977888999
- */
 export const formatPhoneToE164 = (phone, countryCode = '+260') => {
   // Remove all non-digit characters
   const cleaned = phone.replace(/\D/g, '');

@@ -2,13 +2,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { updateBasicInfo, updateClientPreferences, updateClientNotifications } from '../../api/profileApi';
-import { updateUser } from '../../store/slices/authSlice'; // Changed from setUser
+import { updateUser } from '../../store/slices/authSlice'; 
 import toast from 'react-hot-toast';
 
-/**
- * useUpdateBasicInfo Hook
- * Updates user's basic information (firstName, lastName, phone, email)
- */
 export const useUpdateBasicInfo = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();

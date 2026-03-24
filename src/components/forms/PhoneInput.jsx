@@ -19,9 +19,28 @@ const COUNTRIES = [
   { code: "DE", name: "Germany",      dial: "+49",  flag: "🇩🇪" },
 ];
 
-const PhoneInput = memo(({ inputRef, label, required, className = "", onChange }) => {
-  const [selected, setSelected]   = useState(COUNTRIES[0]); // Zambia default
-  const [number, setNumber]       = useState("");
+const parseDefaultValue = (value) => {
+  if (!value) return { country: COUNTRIES[0], localNumber: "" };
+
+  const sorted = [...COUNTRIES].sort((a, b) => b.dial.length - a.dial.length);
+  const match = sorted.find((c) => value.startsWith(c.dial));
+
+  if (match) {
+    return {
+      country: match,
+      localNumber: value.slice(match.dial.length),
+    };
+  }
+
+  return { country: COUNTRIES[0], localNumber: value };
+};
+
+const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, defaultValue }) => {
+
+  const parsed = parseDefaultValue(defaultValue);
+
+  const [selected, setSelected]   = useState(parsed.country);
+  const [number, setNumber]       = useState(parsed.localNumber);
   const [open, setOpen]           = useState(false);
   const [search, setSearch]       = useState("");
   const [error, setError]         = useState("");
@@ -68,7 +87,7 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange }
 
     // Combine dial code + number for parent
     const full = `${selected.dial}${val.replace(/\D/g, "")}`;
-    if (inputRef) inputRef.current = { value: full }; // expose as ref-compatible
+    if (inputRef) inputRef.current = { value: full };
     onChange?.(full);
   }, [selected, inputRef, onChange]);
 

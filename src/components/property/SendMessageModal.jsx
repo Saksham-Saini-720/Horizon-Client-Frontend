@@ -6,6 +6,7 @@ import { useStartConversation } from '../../hooks/conversations/useStartConversa
 import { validateEnquiryForm, formatPhoneToE164, sanitizeEnquiryData } from '../../utils/enquiryValidation';
 import MessageSuccessModal from './MessageSuccessModal';
 import MessageNotification from './MessageNotification';
+import PhoneInput from '../forms/PhoneInput'; 
 
 const formatLocation = (location) => {
   if (!location) return '';
@@ -48,6 +49,11 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   }, [errors]);
+
+  const handlePhoneChange = useCallback((val) => {
+    setFormData(prev => ({ ...prev, phone: val }));
+    if (errors.phone) setErrors(prev => ({ ...prev, phone: '' }));
+  }, [errors.phone]);
 
   const handleSend = useCallback(async (e) => {
     e.preventDefault();
@@ -187,21 +193,24 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
 
         {/* Form */}
         <form onSubmit={handleSend} className="px-6 pb-6 space-y-4">
-          {/* Name & Phone */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Your Name <span className="text-red-500">*</span></label>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Mwamba" required
-                className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
-              {errors.name && <p className="text-[11px] text-red-500 mt-1">{errors.name}</p>}
-            </div>
-            <div>
-              <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Phone <span className="text-red-500">*</span></label>
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="+260977888999" required
-                className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
-              {errors.phone && <p className="text-[11px] text-red-500 mt-1">{errors.phone}</p>}
-            </div>
+
+          {/* Name */}
+          <div>
+            <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Your Name <span className="text-red-500">*</span></label>
+            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Mwamba" required
+              className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
+            {errors.name && <p className="text-[11px] text-red-500 mt-1">{errors.name}</p>}
           </div>
+
+          
+          <PhoneInput
+            label="Phone Number"
+            required
+            onChange={handlePhoneChange}
+          />
+          {errors.phone && (
+            <p className="text-[11px] text-red-500 -mt-3">{errors.phone}</p>
+          )}
 
           {/* Email */}
           <div>
