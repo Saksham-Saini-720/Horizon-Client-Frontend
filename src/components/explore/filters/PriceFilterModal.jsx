@@ -2,11 +2,11 @@
 import { memo, useState } from 'react';
 
 const PRICE_RANGES = [
-  { label: 'Under $100K', min: 0, max: 100000 },
-  { label: '$100K - $250K', min: 100000, max: 250000 },
-  { label: '$250K - $500K', min: 250000, max: 500000 },
-  { label: '$500K - $1M', min: 500000, max: 1000000 },
-  { label: 'Over $1M', min: 1000000, max: null },
+  { label: 'Under ZWM 100K', min: 0, max: 100000 },
+  { label: 'ZWM 100K - ZWM 250K', min: 100000, max: 250000 },
+  { label: 'ZWM 250K - ZWM 500K', min: 250000, max: 500000 },
+  { label: 'ZWM 500K - ZWM 1M', min: 500000, max: 1000000 },
+  { label: 'Over ZWM 1M', min: 1000000, max: null },
 ];
 
 const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }) => {

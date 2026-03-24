@@ -1,10 +1,10 @@
 
 import { memo, useState } from 'react';
 
-const PROPERTY_TYPES = ['Apartment', 'House', 'Villa', 'Commercial', 'Land'];
+const PROPERTY_TYPES = ['Apartment', 'House', 'Villa', 'Commercial', 'Land', 'Condo', 'Townhouse'];
 const BEDROOM_OPTIONS = ['1', '2', '3', '4', '5+'];
 const BATHROOM_OPTIONS = ['1', '2', '3', '4+'];
-const AMENITIES = ['Pool', 'Gym', 'Parking', 'Security', 'Elevator', 'Garden'];
+const AMENITIES = ['Pool', 'Gym', 'Parking', 'Security', 'Elevator', 'Garden', "Balcony", "PetFriendly",          "Furnished","AirConditioning", "Heating", "Fireplace", "Laundry", "Dishwasher", "HardwoodFloors", "Internet", "CableTV", "Unfurnished", "Semi-furnished",];
 
 const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }) => {
   const [filters, setFilters] = useState({
