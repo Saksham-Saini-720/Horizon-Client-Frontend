@@ -1,10 +1,6 @@
 
 import { useState, useCallback, memo } from "react";
 
-/**
- * Password input with optional strength indicator
- * Used in: Login, Register, ResetPassword
- */
 const PasswordInput = memo(({
   inputRef,
   name = "password",
