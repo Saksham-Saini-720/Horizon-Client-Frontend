@@ -204,7 +204,7 @@ const ExplorePage = () => {
               title="More Nearby"
               onSeeAll={() => navigate('/map', { state: { location: selectedLocation } })}
             />
-            <div className="px-4 flex flex-col gap-4">
+            <div className="px-4 flex-wrap flex flex-col gap-4">
               {listingsData.slice(4, 10).map((p) => (
                 <NewListingCard key={p.id} {...p} onClick={() => navigate(`/property/${p.id}`)} />
               ))}

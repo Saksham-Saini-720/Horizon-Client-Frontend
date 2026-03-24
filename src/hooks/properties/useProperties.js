@@ -29,10 +29,10 @@ export function useAllProperties(options = {}) {
       return transformed.properties;
     },
 
-    staleTime: 1000 * 60 * 10,    // 10 min
+    staleTime: 1000 * 60 * 2,  
     gcTime: 1000 * 60 * 30,       // 30 min cache
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
     
     ...options,
   });
@@ -49,10 +49,10 @@ export function useFeaturedProperties(options = {}) {
       return transformed.properties;
     },
 
-    staleTime: 1000 * 60 * 15,    // 15 min - featured rarely change
+    staleTime: 1000 * 60 * 2,   
     gcTime: 1000 * 60 * 30,       // 30 min cache
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
     
     ...options,
   });
@@ -69,10 +69,10 @@ export function useNewListings(options = {}) {
       return transformed.properties;
     },
 
-    staleTime: 1000 * 60 * 10,    // 10 min
+    staleTime: 1000 * 60 * 2,   
     gcTime: 1000 * 60 * 30,       // 30 min cache
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
     
     ...options,
   });
@@ -91,6 +91,8 @@ export function useSearchProperties(query, enabled = true) {
 
     enabled: enabled && !!query,  // Only run if query exists
     staleTime: 1000 * 60 * 2,     // Search results stale faster
+    refetchOnMount : true,
+    refetchOnWindowFocus : true
   });
 }
 
@@ -109,9 +111,9 @@ export function useSavedPropertiesData(savedIds) {
     },
 
     enabled: savedIds.length > 0,
-    staleTime: 1000 * 60 * 30,     // 30 min
+    staleTime: 1000 * 60 * 2,  
     gcTime: 1000 * 60 * 60,        // 1 hour cache
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 }
