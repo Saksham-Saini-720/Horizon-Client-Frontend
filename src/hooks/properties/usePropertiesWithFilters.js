@@ -1,5 +1,4 @@
 
-
 import { useQuery } from "@tanstack/react-query";
 import { getAllProperties, getFeaturedProperties } from "../../api/propertyApi";
 import { transformPropertyResponse } from "../../utils/propertyTransform";
@@ -19,7 +18,11 @@ export function usePropertiesWithFilters(filters = {}, options = {}) {
       const params = buildQueryParams(filters);
       const response = await getAllProperties(params);
       const transformed = transformPropertyResponse(response);
-      return transformed.properties;
+      
+      return {
+        properties: transformed.properties,
+        pagination: transformed.pagination,
+      };
     },
 
     staleTime: 1000 * 60 * 5,  // 5 min
@@ -43,7 +46,7 @@ export function useFeaturedPropertiesFiltered(filters = {}, options = {}) {
       
       const response = await getFeaturedProperties(params);
       const transformed = transformPropertyResponse(response);
-      return transformed.properties;
+      return transformed.properties;  // No pagination needed for featured
     },
 
     staleTime: 1000 * 60 * 15,
@@ -55,9 +58,7 @@ export function useFeaturedPropertiesFiltered(filters = {}, options = {}) {
   });
 }
 
-/**
- * Hook for new listings with filters
- */
+
 export function useNewListingsFiltered(filters = {}, options = {}) {
   return useQuery({
     queryKey: propertyKeys.new(filters),
@@ -70,7 +71,7 @@ export function useNewListingsFiltered(filters = {}, options = {}) {
       
       const response = await getAllProperties(params);
       const transformed = transformPropertyResponse(response);
-      return transformed.properties;
+      return transformed.properties;  
     },
 
     staleTime: 1000 * 60 * 10,
@@ -88,10 +89,12 @@ export function useNewListingsFiltered(filters = {}, options = {}) {
 function buildQueryParams(filters) {
   const params = {};
 
+  // Search query
   if (filters.search) {
     params.search = filters.search;
   }
 
+  // Purpose (buy/rent)
   if (filters.purpose) {
     params.purpose = filters.purpose; // 'sale' or 'rent'
   }
@@ -126,7 +129,7 @@ function buildQueryParams(filters) {
 
   // Property type
   if (filters.type) {
-    params.type = filters.type; // apartment, house, villa, commercial, land
+    params.type = filters.type; 
   }
 
   // Location
@@ -147,9 +150,9 @@ function buildQueryParams(filters) {
     params.sort = filters.sort; 
   }
 
-  // Pagination
   params.page = filters.page || 1;
-  params.limit = filters.limit || 20;
+  params.limit = filters.limit || 10; 
 
   return params;
 }
+

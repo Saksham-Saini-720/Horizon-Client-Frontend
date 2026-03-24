@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
@@ -13,6 +13,7 @@ import FilterChips from "../components/explore/FilterChips";
 import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
 import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
 import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
+import Pagination from "../components/ui/Pagination";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -21,14 +22,16 @@ const SearchPage = () => {
   const query = searchParams.get("q") ?? "";
 
   const [filters, setFilters] = useState({
-    purpose: null,       // 'sale' or 'rent'
-    sort: 'newest',      // 'newest', 'oldest', 'price_asc', 'price_desc'
+    purpose: null,
+    sort: 'newest',
     minPrice: undefined,
     maxPrice: undefined,
     bedrooms: undefined,
     bathrooms: undefined,
     type: undefined,
     amenities: undefined,
+    page: 1,         
+    limit: 10,      
   });
 
   const [activeModal, setActiveModal] = useState(null);
@@ -36,6 +39,7 @@ const SearchPage = () => {
   const recent = useRecentSearches();
   const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
 
+  
   const apiFilters = useMemo(() => {
     const f = {};
     if (filters.purpose)             f.purpose   = filters.purpose;
@@ -47,14 +51,25 @@ const SearchPage = () => {
     if (filters.type)                f.type      = filters.type;
     if (filters.amenities?.length)   f.amenities = filters.amenities;
     if (query)                       f.search    = query;
+    f.page  = filters.page;
+    f.limit = filters.limit;
     return f;
   }, [filters, query]);
 
-  const { data: properties = [], isLoading, isError, error, refetch } = usePropertiesWithFilters(apiFilters);
+  const { data, isLoading, isError, error, refetch } = usePropertiesWithFilters(apiFilters);
+
+  const properties = data?.properties || [];
+  const pagination = data?.pagination || null;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [filters.page]);
 
   const handleSearch = (newQuery) => {
     setSearchParams({ q: newQuery });
     submitSearch(newQuery);
+    // Reset to page 1 when searching
+    setFilters(prev => ({ ...prev, page: 1 }));
   };
 
   const handleClearSearch = () => {
@@ -68,39 +83,48 @@ const SearchPage = () => {
       bathrooms: undefined,
       type: undefined,
       amenities: undefined,
+      page: 1,
+      limit: 10,
     });
   };
 
-  // Active filter for FilterChips component
+
   const activeFilter = useMemo(() => {
     if (filters.purpose === 'sale') return 'buy';
     if (filters.purpose === 'rent') return 'rent';
     return null;
   }, [filters.purpose]);
 
-  //  Filter toggle handler - same as ExplorePage
+  // Filter toggle handler
   const handleFilterToggle = useCallback((id) => {
-    if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale' }));
-    else if (id === 'rent')     setFilters(p => ({ ...p, purpose: p.purpose === 'rent' ? null : 'rent' }));
+    if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale', page: 1 }));
+    else if (id === 'rent')     setFilters(p => ({ ...p, purpose: p.purpose === 'rent' ? null : 'rent', page: 1 }));
     else if (id === 'price')    setActiveModal('price');
     else if (id === 'bedrooms') setActiveModal('bedrooms');
     else if (id === 'filters')  setActiveModal('filters');
     else if (id === 'nearme')   navigate('/map');
   }, [navigate]);
 
-  // Modal apply handlers
+
   const handlePriceApply = useCallback((p) => {
-    setFilters(prev => ({ ...prev, minPrice: p.minPrice, maxPrice: p.maxPrice }));
+    setFilters(prev => ({ ...prev, minPrice: p.minPrice, maxPrice: p.maxPrice, page: 1 }));
   }, []);
 
   const handleBedroomsApply = useCallback((p) => {
-    setFilters(prev => ({ ...prev, bedrooms: p.bedrooms }));
+    setFilters(prev => ({ ...prev, bedrooms: p.bedrooms, page: 1 }));
   }, []);
 
   const handleFullApply = useCallback((all) => {
-    setFilters(prev => ({ ...prev, ...all }));
+    setFilters(prev => ({ ...prev, ...all, page: 1 }));
   }, []);
 
+  // const handleSortChange = (e) => {
+  //   setFilters(prev => ({ ...prev, sort: e.target.value, page: 1 }));
+  // };
+
+  const handlePageChange = useCallback((newPage) => {
+    setFilters(prev => ({ ...prev, page: newPage }));
+  }, []);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -127,6 +151,7 @@ const SearchPage = () => {
         onClearAllRecent={recent.clearAll}
       />
 
+      {/* Filter Chips */}
       <FilterChips
         activeFilter={activeFilter}
         onToggle={handleFilterToggle}
@@ -137,13 +162,9 @@ const SearchPage = () => {
       <div className="bg-white border-b border-gray-100">
         <div className="overflow-x-auto scrollbar-none w-full">
           <div className="inline-flex items-center justify-between w-full min-w-max px-4 py-3 gap-2">
-
-            {/* Left: Empty space (filters now in FilterChips) */}
             <div className="flex-1" />
 
-            {/* Right: Sort + Map + Grid
             <div className="flex items-center gap-2">
-              {/* Sort dropdown */}
               {/* <select 
                 value={filters.sort}
                 onChange={handleSortChange}
@@ -155,7 +176,6 @@ const SearchPage = () => {
                 <option value="price_desc">Price: High to Low</option>
               </select> */}
 
-              {/* Map Icon */}
               <button
                 type="button"
                 onClick={() => navigate("/map")}
@@ -169,7 +189,6 @@ const SearchPage = () => {
                 </svg>
               </button>
 
-              {/* Grid Icon */}
               <button
                 type="button"
                 className="p-1.5 rounded-lg bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors flex-shrink-0"
@@ -183,12 +202,12 @@ const SearchPage = () => {
                   <rect x="3" y="14" width="7" height="7" />
                 </svg>
               </button>
-            {/* </div> */} 
-
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Active filters chips */}
       {(activeFiltersCount > 0 || query) && (
         <div className="px-4 pt-3 pb-2 bg-white border-b border-gray-100">
           <div className="flex items-center gap-2 flex-wrap">
@@ -204,42 +223,42 @@ const SearchPage = () => {
             {filters.purpose === 'sale' && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
                 For Sale
-                <button onClick={() => setFilters(p => ({ ...p, purpose: null }))} className="ml-1 hover:text-primary-dark">×</button>
+                <button onClick={() => setFilters(p => ({ ...p, purpose: null, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
               </span>
             )}
             
             {filters.purpose === 'rent' && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
                 For Rent
-                <button onClick={() => setFilters(p => ({ ...p, purpose: null }))} className="ml-1 hover:text-primary-dark">×</button>
+                <button onClick={() => setFilters(p => ({ ...p, purpose: null, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
               </span>
             )}
 
             {(filters.minPrice || filters.maxPrice) && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
                 Price: {filters.minPrice ? `$${filters.minPrice.toLocaleString()}` : '0'} - {filters.maxPrice ? `$${filters.maxPrice.toLocaleString()}` : '∞'}
-                <button onClick={() => setFilters(p => ({ ...p, minPrice: undefined, maxPrice: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+                <button onClick={() => setFilters(p => ({ ...p, minPrice: undefined, maxPrice: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
               </span>
             )}
 
             {filters.bedrooms && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
                 {filters.bedrooms} Bedrooms
-                <button onClick={() => setFilters(p => ({ ...p, bedrooms: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+                <button onClick={() => setFilters(p => ({ ...p, bedrooms: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
               </span>
             )}
 
             {filters.bathrooms && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
                 {filters.bathrooms} Bathrooms
-                <button onClick={() => setFilters(p => ({ ...p, bathrooms: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+                <button onClick={() => setFilters(p => ({ ...p, bathrooms: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
               </span>
             )}
 
             {filters.type && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
                 {filters.type.charAt(0).toUpperCase() + filters.type.slice(1)}
-                <button onClick={() => setFilters(p => ({ ...p, type: undefined }))} className="ml-1 hover:text-primary-dark">×</button>
+                <button onClick={() => setFilters(p => ({ ...p, type: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
               </span>
             )}
 
@@ -255,15 +274,20 @@ const SearchPage = () => {
         </div>
       )}
 
-      {/* Property Count */}
+      {/* Property Count & Pagination Info */}
       <div className="px-4 pt-4 pb-2">
         {isLoading ? (
           <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+        ) : pagination ? (
+          <p className="text-[15px] text-gray-600 font-myriad">
+            Showing {properties.length > 0 ? ((pagination.page - 1) * pagination.limit + 1) : 0}-
+            {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} properties
+            {filters.purpose === 'sale' && ' for sale'}
+            {filters.purpose === 'rent' && ' for rent'}
+          </p>
         ) : (
           <p className="text-[15px] text-gray-600 font-myriad">
             {properties.length} properties
-            {filters.purpose === 'sale' && ' for sale'}
-            {filters.purpose === 'rent' && ' for rent'}
           </p>
         )}
       </div>
@@ -271,7 +295,7 @@ const SearchPage = () => {
       {/* Results */}
       <div className="px-4 flex flex-col gap-4 max-w-full">
         {isLoading ? (
-          Array(4).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
+          Array(10).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
         ) : isError ? (
           <ErrorState
             title="Failed to load results"
@@ -310,7 +334,17 @@ const SearchPage = () => {
         )}
       </div>
 
-    
+      {/* ⭐ Pagination Component */}
+      {pagination && pagination.pages > 1 && (
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={pagination.pages}
+          onPageChange={handlePageChange}
+          isLoading={isLoading}
+        />
+      )}
+
+      {/* Filter Modals */}
       <PriceFilterModal
         isOpen={activeModal === 'price'}
         onClose={() => setActiveModal(null)}
@@ -336,3 +370,4 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
+
