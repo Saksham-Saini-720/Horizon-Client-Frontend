@@ -253,7 +253,7 @@ const ExplorePage = () => {
 
         {/* More Nearby (only in nearby mode) */}
         {showNearby && listingsData?.length > 4 && (
-          <div>
+          <div id="new-listings-section">
             <SectionHeader
               title="More Nearby"
               onSeeAll={() => navigate('/map', { state: { location: selectedLocation } })}

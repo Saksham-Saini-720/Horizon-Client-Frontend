@@ -114,7 +114,7 @@ const AccountSecurity = memo(({ onLogout }) => {
           </svg>
           <p className="text-[12px] text-gray-500 font-font-myriad">Your data is encrypted & secure</p>
         </div>
-        <p className="text-[11px] text-gray-400 font-font-myriad">Horizon Properties v1.0.0 • Phase 1</p>
+        <p className="text-[11px] text-gray-400 font-font-myriad">Horizon Properties</p>
       </div>
 
       <HelpSupportModal isOpen={showSupport} onClose={() => setShowSupport(false)}/>
