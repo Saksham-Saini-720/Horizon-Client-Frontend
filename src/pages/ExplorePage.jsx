@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
@@ -15,6 +15,7 @@ import { FeaturedCardSkeleton, NewListingCardSkeleton } from "../components/ui/S
 import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
 import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
 import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
+import Pagination from "../components/ui/Pagination";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
@@ -29,8 +30,15 @@ const ExplorePage = () => {
   const [isSearching, setIsSearching] = useState(false);
 
   const [filters, setFilters] = useState({
-    purpose: null, minPrice: undefined, maxPrice: undefined,
-    bedrooms: undefined, bathrooms: undefined, type: undefined, amenities: undefined,
+    purpose: null,
+    minPrice: undefined,
+    maxPrice: undefined,
+    bedrooms: undefined,
+    bathrooms: undefined,
+    type: undefined,
+    amenities: undefined,
+    page: 1,       
+    limit: 10,      
   });
 
   const [activeModal, setActiveModal] = useState(null);
@@ -47,22 +55,39 @@ const ExplorePage = () => {
     if (filters.bathrooms)           f.bathrooms = filters.bathrooms;
     if (filters.type)                f.type      = filters.type;
     if (filters.amenities?.length)   f.amenities = filters.amenities;
+    f.page  = filters.page;   
+    f.limit = filters.limit; 
     return f;
   }, [filters]);
 
   const showNearby = !!(selectedLocation && !isSearching);
 
-  // Nearby — uses same smart fallback as MapPage (nearby → 50km → getAllProperties)
   const nearbyQuery = useMapProperties(
     selectedLocation?.lng,
     selectedLocation?.lat,
     5000,
-    selectedLocation?.name,  // city filter
+    selectedLocation?.name,  
   );
 
-  // Regular
-  const featuredQuery    = useFeaturedPropertiesFiltered(apiFilters, { enabled: !showNearby });
-  const newListingsQuery = useNewListingsFiltered(apiFilters,         { enabled: !showNearby });
+  // Regular queries
+  const featuredQuery = useFeaturedPropertiesFiltered(
+    { purpose: filters.purpose },  
+    { enabled: !showNearby }
+  );
+  
+  const newListingsQuery = useNewListingsFiltered(
+    apiFilters, 
+    { enabled: !showNearby }
+  );
+
+  useEffect(() => {
+    if (filters.page > 1) {
+      const newListingsSection = document.getElementById('new-listings-section');
+      if (newListingsSection) {
+        newListingsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [filters.page]);
 
   const handleLocationChange = useCallback((location) => {
     setSelectedLocation(location);
@@ -82,8 +107,8 @@ const ExplorePage = () => {
   }, [filters.purpose]);
 
   const handleFilterToggle = useCallback((id) => {
-    if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale' }));
-    else if (id === 'rent')     setFilters(p => ({ ...p, purpose: p.purpose === 'rent' ? null : 'rent' }));
+    if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale', page: 1 }));
+    else if (id === 'rent')     setFilters(p => ({ ...p, purpose: p.purpose === 'rent' ? null : 'rent', page: 1 }));
     else if (id === 'price')    setActiveModal('price');
     else if (id === 'bedrooms') setActiveModal('bedrooms');
     else if (id === 'filters')  setActiveModal('filters');
@@ -92,17 +117,37 @@ const ExplorePage = () => {
     }
   }, [navigate, selectedLocation]);
 
-  const handlePriceApply    = useCallback((p) => setFilters(prev => ({ ...prev, minPrice: p.minPrice, maxPrice: p.maxPrice })), []);
-  const handleBedroomsApply = useCallback((p) => setFilters(prev => ({ ...prev, bedrooms: p.bedrooms })), []);
-  const handleFullApply     = useCallback((all) => setFilters(prev => ({ ...prev, ...all })), []);
+  const handlePriceApply = useCallback((p) => {
+    setFilters(prev => ({ ...prev, minPrice: p.minPrice, maxPrice: p.maxPrice, page: 1 }));
+  }, []);
 
-  // Which data to show
-  const isFeaturedLoading = showNearby ? nearbyQuery.isLoading    : (featuredQuery.isLoading    || featuredQuery.isFetching);
-  const isListingsLoading = showNearby ? nearbyQuery.isLoading    : (newListingsQuery.isLoading  || newListingsQuery.isFetching);
-  const featuredData      = showNearby ? nearbyQuery.data         : featuredQuery.data;
-  const listingsData      = showNearby ? nearbyQuery.data         : newListingsQuery.data;
-  const featuredError     = showNearby ? nearbyQuery.isError      : featuredQuery.isError;
-  const listingsError     = showNearby ? nearbyQuery.isError      : newListingsQuery.isError;
+  const handleBedroomsApply = useCallback((p) => {
+    setFilters(prev => ({ ...prev, bedrooms: p.bedrooms, page: 1 }));
+  }, []);
+
+  const handleFullApply = useCallback((all) => {
+    setFilters(prev => ({ ...prev, ...all, page: 1 }));
+  }, []);
+
+  const handlePageChange = useCallback((newPage) => {
+    setFilters(prev => ({ ...prev, page: newPage }));
+  }, []);
+
+  const isFeaturedLoading = showNearby ? nearbyQuery.isLoading : (featuredQuery.isLoading || featuredQuery.isFetching);
+  const isListingsLoading = showNearby ? nearbyQuery.isLoading : (newListingsQuery.isLoading || newListingsQuery.isFetching);
+  
+  const featuredData = showNearby ? nearbyQuery.data : featuredQuery.data;
+  
+  const listingsData = showNearby
+    ? nearbyQuery.data  
+    : newListingsQuery.data?.properties || [];  
+  
+  const listingsPagination = showNearby
+    ? null  
+    : newListingsQuery.data?.pagination || null;  
+  
+  const featuredError = showNearby ? nearbyQuery.isError : featuredQuery.isError;
+  const listingsError = showNearby ? nearbyQuery.isError : newListingsQuery.isError;
 
   return (
     <div className="min-h-screen bg-surface">
@@ -144,7 +189,7 @@ const ExplorePage = () => {
 
       <div className="pb-28">
 
-        {/* Featured / Nearby */}
+        {/* Featured / Nearby  */}
         <div className="mt-4 mb-6">
           <SectionHeader
             title={showNearby ? 'Nearby Properties' : 'Featured'}
@@ -177,13 +222,13 @@ const ExplorePage = () => {
           </div>
         </div>
 
-        {/* New Listings (only when not nearby mode) */}
+        {/* New Listings (WITH PAGINATION) - only when not nearby mode */}
         {!showNearby && (
-          <div>
+          <div id="new-listings-section">
             <SectionHeader title="New Listings" onSeeAll={() => navigate('/search?new=true')} />
             <div className="px-4 flex flex-col gap-4">
               {isListingsLoading ? (
-                Array(3).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
+                Array(10).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
               ) : listingsError ? (
                 <ErrorState title="Failed to load new listings" onRetry={() => newListingsQuery.refetch()} />
               ) : listingsData?.length > 0 ? (
@@ -194,6 +239,15 @@ const ExplorePage = () => {
                 <EmptyState icon="home" title="No new listings" message="Try adjusting your filters" />
               )}
             </div>
+
+            {listingsPagination && listingsPagination.pages > 1 && (
+              <Pagination
+                currentPage={listingsPagination.page}
+                totalPages={listingsPagination.pages}
+                onPageChange={handlePageChange}
+                isLoading={isListingsLoading}
+              />
+            )}
           </div>
         )}
 
@@ -214,9 +268,9 @@ const ExplorePage = () => {
 
       </div>
 
-      <PriceFilterModal    isOpen={activeModal === 'price'}    onClose={() => setActiveModal(null)} onApply={handlePriceApply}    currentFilters={filters} />
+      <PriceFilterModal isOpen={activeModal === 'price'} onClose={() => setActiveModal(null)} onApply={handlePriceApply} currentFilters={filters} />
       <BedroomsFilterModal isOpen={activeModal === 'bedrooms'} onClose={() => setActiveModal(null)} onApply={handleBedroomsApply} currentFilters={filters} />
-      <FullFiltersModal    isOpen={activeModal === 'filters'}  onClose={() => setActiveModal(null)} onApply={handleFullApply}     currentFilters={filters} />
+      <FullFiltersModal isOpen={activeModal === 'filters'} onClose={() => setActiveModal(null)} onApply={handleFullApply} currentFilters={filters} />
     </div>
   );
 };

@@ -72,7 +72,7 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 mb-14">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
 
-        <h2 className="text-2xl font-semibold text-gray-900 mb-1 font-['DM_Sans',sans-serif]">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-1 font-font-myriad">
           Create an account
         </h2>
         <p className="text-sm text-gray-500 mb-6">Join Horizon Properties today.</p>

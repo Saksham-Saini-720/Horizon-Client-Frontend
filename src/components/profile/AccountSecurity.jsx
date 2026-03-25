@@ -11,7 +11,7 @@ const AccountSecurity = memo(({ onLogout }) => {
 
   return (
     <div className="mt-8 mb-8">
-      <h2 className="text-[16px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-4">
+      <h2 className="text-[16px] font-semibold text-[#1C2A3A] font-font-myriad mb-4">
         Account & Security
       </h2>
 
@@ -24,8 +24,8 @@ const AccountSecurity = memo(({ onLogout }) => {
             <line x1="12" y1="18" x2="12.01" y2="18"/>
           </svg>
           <div className="flex-1">
-            <p className="text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">This Device</p>
-            <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">Current session • Active now</p>
+            <p className="text-[15px] font-semibold text-[#1C2A3A] font-font-myriad">This Device</p>
+            <p className="text-[12px] text-gray-500 font-font-myriad">Current session • Active now</p>
           </div>
           <span className="px-3 py-1 rounded-full bg-green-50 text-[12px] font-semibold text-green-600">Active</span>
         </div>
@@ -41,7 +41,7 @@ const AccountSecurity = memo(({ onLogout }) => {
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">Change Password</span>
+          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-font-myriad">Change Password</span>
           <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -56,7 +56,7 @@ const AccountSecurity = memo(({ onLogout }) => {
             <polyline points="16 17 21 12 16 7"/>
             <line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
-          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">Log Out</span>
+          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-font-myriad">Log Out</span>
           <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -72,7 +72,7 @@ const AccountSecurity = memo(({ onLogout }) => {
             <line x1="16" y1="13" x2="8" y2="13"/>
             <line x1="16" y1="17" x2="8" y2="17"/>
           </svg>
-          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">Terms & Conditions</span>
+          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-font-myriad">Terms & Conditions</span>
           <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -85,7 +85,7 @@ const AccountSecurity = memo(({ onLogout }) => {
           <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">Privacy Policy</span>
+          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-font-myriad">Privacy Policy</span>
           <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -100,7 +100,7 @@ const AccountSecurity = memo(({ onLogout }) => {
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
             <line x1="12" y1="17" x2="12.01" y2="17"/>
           </svg>
-          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-['DM_Sans',sans-serif]">Help & Support</span>
+          <span className="flex-1 text-[15px] font-semibold text-[#1C2A3A] font-font-myriad">Help & Support</span>
           <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-500 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
@@ -112,9 +112,9 @@ const AccountSecurity = memo(({ onLogout }) => {
           <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          <p className="text-[12px] text-gray-500 font-['DM_Sans',sans-serif]">Your data is encrypted & secure</p>
+          <p className="text-[12px] text-gray-500 font-font-myriad">Your data is encrypted & secure</p>
         </div>
-        <p className="text-[11px] text-gray-400 font-['DM_Sans',sans-serif]">Horizon Properties v1.0.0 • Phase 1</p>
+        <p className="text-[11px] text-gray-400 font-font-myriad">Horizon Properties v1.0.0 • Phase 1</p>
       </div>
 
       <HelpSupportModal isOpen={showSupport} onClose={() => setShowSupport(false)}/>

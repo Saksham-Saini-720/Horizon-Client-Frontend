@@ -91,7 +91,7 @@ const Preferences = memo(({ profile }) => {
   });
   const [interestedIn, setInterestedIn] = useState(profile?.preferences?.interestedIn || []);
   const [locations,    setLocations]    = useState(profile?.preferences?.locations    || []);
-  const [showSearch,   setShowSearch]   = useState(false);
+  // const [showSearch,   setShowSearch]   = useState(false);
 
   // Sync when profile loads
   useEffect(() => {
@@ -140,32 +140,32 @@ const Preferences = memo(({ profile }) => {
   }, []);
 
   // Save immediately when location added/removed
-  const saveLocations = useCallback((newLocations) => {
-    updatePreferences.mutate({
-      propertyTypes: interestedIn,
-      locations:     newLocations,
-      budget:        profile?.preferences?.budget,
-      amenities:     profile?.preferences?.amenities || [],
-      purpose:       profile?.preferences?.purpose   || 'both',
-    });
-  }, [interestedIn, profile, updatePreferences]);
+  // const saveLocations = useCallback((newLocations) => {
+  //   updatePreferences.mutate({
+  //     propertyTypes: interestedIn,
+  //     locations:     newLocations,
+  //     budget:        profile?.preferences?.budget,
+  //     amenities:     profile?.preferences?.amenities || [],
+  //     purpose:       profile?.preferences?.purpose   || 'both',
+  //   });
+  // }, [interestedIn, profile, updatePreferences]);
 
-  const addLocation = useCallback((loc) => {
-    setLocations(prev => {
-      if (prev.includes(loc)) return prev;
-      const updated = [...prev, loc];
-      saveLocations(updated);
-      return updated;
-    });
-  }, [saveLocations]);
+  // const addLocation = useCallback((loc) => {
+  //   setLocations(prev => {
+  //     if (prev.includes(loc)) return prev;
+  //     const updated = [...prev, loc];
+  //     saveLocations(updated);
+  //     return updated;
+  //   });
+  // }, [saveLocations]);
 
-  const removeLocation = useCallback((loc) => {
-    setLocations(prev => {
-      const updated = prev.filter(l => l !== loc);
-      saveLocations(updated);
-      return updated;
-    });
-  }, [saveLocations]);
+  // const removeLocation = useCallback((loc) => {
+  //   setLocations(prev => {
+  //     const updated = prev.filter(l => l !== loc);
+  //     saveLocations(updated);
+  //     return updated;
+  //   });
+  // }, [saveLocations]);
 
   return (
     <div>
@@ -242,7 +242,7 @@ const Preferences = memo(({ profile }) => {
           </p>
         </div>
 
-        {/* ── Locations ── */}
+        {/* ── Locations ──
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -293,7 +293,7 @@ const Preferences = memo(({ profile }) => {
           {showSearch && (
             <LocationSearch locations={locations} onAdd={addLocation}/>
           )}
-        </div>
+        </div> */}
 
       </div>
     </div>

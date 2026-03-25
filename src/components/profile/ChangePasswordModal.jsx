@@ -22,7 +22,7 @@ const PasswordField = memo(({ label, value, onChange, error, placeholder }) => {
   const [show, setShow] = useState(false);
   return (
     <div>
-      <label className="block text-[13px] font-semibold text-gray-700 font-['DM_Sans',sans-serif] mb-1.5">
+      <label className="block text-[13px] font-semibold text-gray-700 font-font-myriad mb-1.5">
         {label}
       </label>
       <div className={`flex items-center border rounded-xl transition-colors ${
@@ -139,10 +139,10 @@ const ChangePasswordModal = memo(({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-3 pb-4 border-b border-gray-100">
           <div>
-            <h2 className="text-[20px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif]">
+            <h2 className="text-[20px] font-bold text-[#1C2A3A] font-font-myriad">
               Change Password
             </h2>
-            <p className="text-[13px] text-gray-400 font-['DM_Sans',sans-serif] mt-0.5">
+            <p className="text-[13px] text-gray-400 font-font-myriad mt-0.5">
               You'll be logged out after changing
             </p>
           </div>
@@ -164,10 +164,10 @@ const ChangePasswordModal = memo(({ isOpen, onClose }) => {
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <p className="text-[17px] font-bold text-[#1C2A3A] font-['DM_Sans',sans-serif] mb-2">
+            <p className="text-[17px] font-bold text-[#1C2A3A] font-font-myriad mb-2">
               Password Changed!
             </p>
-            <p className="text-[14px] text-gray-400 font-['DM_Sans',sans-serif] text-center">
+            <p className="text-[14px] text-gray-400 font-font-myriad text-center">
               Logging you out in a moment...
             </p>
           </div>
@@ -205,7 +205,7 @@ const ChangePasswordModal = memo(({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={mutation.isPending}
-              className="w-full py-4 rounded-2xl bg-[#1C2A3A] text-white text-[15px] font-bold font-['DM_Sans',sans-serif] hover:bg-[#2A3A4A] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              className="w-full py-4 rounded-2xl bg-[#1C2A3A] text-white text-[15px] font-bold font-font-myriad hover:bg-[#2A3A4A] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {mutation.isPending ? (
                 <span className="flex items-center justify-center gap-2">

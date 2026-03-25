@@ -11,6 +11,7 @@ export const propertyKeys = {
   new: (filters) => [...propertyKeys.all, "new", filters],
 };
 
+
 export function usePropertiesWithFilters(filters = {}, options = {}) {
   return useQuery({
     queryKey: propertyKeys.filtered(filters),
@@ -46,7 +47,7 @@ export function useFeaturedPropertiesFiltered(filters = {}, options = {}) {
       
       const response = await getFeaturedProperties(params);
       const transformed = transformPropertyResponse(response);
-      return transformed.properties;  // No pagination needed for featured
+      return transformed.properties;  
     },
 
     staleTime: 1000 * 60 * 15,
@@ -58,20 +59,23 @@ export function useFeaturedPropertiesFiltered(filters = {}, options = {}) {
   });
 }
 
-
 export function useNewListingsFiltered(filters = {}, options = {}) {
   return useQuery({
     queryKey: propertyKeys.new(filters),
     queryFn: async () => {
       const params = {
         sort: 'newest',
-        limit: 10,
+        limit: filters.limit || 10,
         ...buildQueryParams(filters),
       };
       
       const response = await getAllProperties(params);
       const transformed = transformPropertyResponse(response);
-      return transformed.properties;  
+      
+      return {
+        properties: transformed.properties,
+        pagination: transformed.pagination,
+      };
     },
 
     staleTime: 1000 * 60 * 10,
@@ -83,13 +87,9 @@ export function useNewListingsFiltered(filters = {}, options = {}) {
   });
 }
 
-/**
- * Build query parameters from filter object
- */
 function buildQueryParams(filters) {
   const params = {};
 
-  // Search query
   if (filters.search) {
     params.search = filters.search;
   }
@@ -129,7 +129,7 @@ function buildQueryParams(filters) {
 
   // Property type
   if (filters.type) {
-    params.type = filters.type; 
+    params.type = filters.type;
   }
 
   // Location
@@ -147,11 +147,11 @@ function buildQueryParams(filters) {
 
   // Sort
   if (filters.sort) {
-    params.sort = filters.sort; 
+    params.sort = filters.sort;
   }
 
   params.page = filters.page || 1;
-  params.limit = filters.limit || 10; 
+  params.limit = filters.limit || 10;
 
   return params;
 }
