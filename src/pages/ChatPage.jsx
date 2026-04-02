@@ -28,11 +28,9 @@ const ChatPage = () => {
     <div className="min-h-screen flex flex-col">
 
       {/* ── Header ── */}
-      <div className="px-4 pt-12 pb-4 bg-secondary">
+      <div className="px-4 pb-4 bg-secondary">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-[24px] font-semibold text-white font-myriad">
-            Messages
-          </h1>
+          
           {unreadCount > 0 && (
             <span className="bg-secondary text-white text-[12px] font-semibold px-3 py-1 rounded-full font-myriad">
               {unreadCount} unread

@@ -65,10 +65,10 @@ const ActivityPage = memo(() => {
 
   return (
     <div className="min-h-screen pb-24 bg-gray-100">
-      <div className='bg-gray-100 border-b-2 border-gray-300'>
-        <div className="border-b border-gray-100 px-4 pt-4">
-          <h1 className="text-[24px] font-bold text-primary font-myriad mb-1">Activity</h1>
-          <p className="text-[15px] text-gray-500 font-myriad">Manage your property interactions</p>
+      <div className='bg-secondary border-b-2 border-secondary'>
+        <div className="border-b border-secondary px-4 pt-4">
+          <h1 className="text-[24px] font-bold text-white font-myriad mb-1">Activity</h1>
+          <p className="text-[15px] text-gray-100 font-myriad">Manage your property interactions</p>
         </div>
 
         <div className="px-3 py-3 rounded-2xl mb-3">
@@ -86,12 +86,12 @@ const ActivityPage = memo(() => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative pb-3 text-[15px] font-semibold font-myriad transition-colors ${
-                  activeTab === tab.id ? 'text-primary' : 'text-gray-400 hover:text-gray-600'
+                  activeTab === tab.id ? 'text-white' : 'text-gray-400 hover:text-gray-100'
                 }`}
               >
                 {tab.label}
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white rounded-full" />
                 )}
               </button>
             ))}

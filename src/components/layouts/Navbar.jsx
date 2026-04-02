@@ -1,7 +1,7 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import logo from "../../assets/icons/white_logo.png";
 
-const HIDE_BACK   = ["/saved", "/inquiries", "/tours", "/profile"];
+const HIDE_BACK   = [];
 const ROUTE_TITLES = {
   "/search":    "Search",
   "/saved":     "Saved",
@@ -10,6 +10,7 @@ const ROUTE_TITLES = {
   "/profile":   "Profile",
   "/login":     "Login",
   "/register":  "Register",
+  "/chat":      "Messages",
 };
 
 // ─── HorizonLogo ──────────────────────────────────────────────────────────────
@@ -21,7 +22,7 @@ export const HorizonLogo = ({ size = 40 }) => (
       width: size,
       height: size,
       background: "linear-gradient(145deg, #2D368E 0%, #2D368E 100%)",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.35)",
+      boxShadow: "0 2px 8px rgba(255,255,255,0.35)",
     }}
   >
     <img src={logo} alt="logo" className="w-5/5 h-auto object-contain p-[1px]" />
@@ -45,7 +46,7 @@ const Navbar = () => {
     : baseTitle;
 
   return (
-    <header className="flex items-center justify-between px-5 h-16 bg-white border-b border-gray-100 sticky top-0 z-50 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+    <header className="flex items-center justify-between px-5 h-16 bg-secondary border-b border-secondary sticky top-0 z-50 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
       <div className="flex items-center gap-3 flex-1">
         {showBack && (
           <button
@@ -59,7 +60,7 @@ const Navbar = () => {
             </svg>
           </button>
         )}
-        <h1 className="text-[24px] font-bold text-primary  m-0 truncate font-myriad">
+        <h1 className="text-[24px] font-bold text-white  m-0 truncate font-myriad">
           {title}
         </h1>
       </div>

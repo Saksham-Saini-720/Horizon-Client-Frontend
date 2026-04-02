@@ -42,7 +42,7 @@ const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => (
             flex items-center gap-1.5 flex-shrink-0 px-4 py-2 rounded-full border
             text-[15px] font-semibold font-myriad transition-all active:scale-95
             ${isActive
-              ? "bg-secondary text-white border-primary"
+              ? "bg-secondary text-white border-white"
               : "bg-white text-primary border-gray-200"
             }
           `}
