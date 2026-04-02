@@ -1,16 +1,17 @@
-
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
 import { useFeaturedPropertiesFiltered, useNewListingsFiltered } from "../hooks/properties/usePropertiesWithFilters";
 import { useMapProperties } from "../hooks/properties/useMapProperties";
+import useMostViewedProperties from "../hooks/properties/useMostViewedProperties"; // ⭐ NEW
 import EmptyState from "../components/states/EmptyState";
 import ErrorState from "../components/states/ErrorState";
 import ExploreHeader from "../components/explore/ExploreHeader";
 import FeaturedCard from "../components/explore/FeaturedCard";
 import NewListingCard from "../components/explore/NewListingCard";
 import SectionHeader from "../components/explore/SectionHeader";
+import MostViewedCarousel from "../components/explore/MostViewedCarousel"; // ⭐ NEW
 import { FeaturedCardSkeleton, NewListingCardSkeleton } from "../components/ui/SkeletonCards";
 import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
 import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
@@ -62,6 +63,11 @@ const ExplorePage = () => {
 
   const showNearby = !!(selectedLocation && !isSearching);
 
+  // ⭐ NEW: Most Viewed Query
+  const mostViewedQuery = useMostViewedProperties(10, {
+    enabled: !showNearby, // Only fetch when not in nearby mode
+  });
+
   const nearbyQuery = useMapProperties(
     selectedLocation?.lng,
     selectedLocation?.lat,
@@ -74,20 +80,15 @@ const ExplorePage = () => {
     
     let filtered = nearbyQuery.data;
     
-    // Filter by purpose (Buy/Rent)
     if (filters.purpose) {
       filtered = filtered.filter(p => p.purpose === filters.purpose);
     }
-    
-    // Filter by price range
     if (filters.minPrice) {
       filtered = filtered.filter(p => p.rawPrice >= filters.minPrice);
     }
     if (filters.maxPrice) {
       filtered = filtered.filter(p => p.rawPrice <= filters.maxPrice);
     }
-    
-    // Filter by bedrooms
     if (filters.bedrooms) {
       const bedroomCount = filters.bedrooms === '4+' ? 4 : parseInt(filters.bedrooms);
       filtered = filtered.filter(p => {
@@ -98,8 +99,6 @@ const ExplorePage = () => {
         return beds === bedroomCount;
       });
     }
-    
-    // Filter by bathrooms
     if (filters.bathrooms) {
       const bathroomCount = filters.bathrooms === '4+' ? 4 : parseInt(filters.bathrooms);
       filtered = filtered.filter(p => {
@@ -110,13 +109,9 @@ const ExplorePage = () => {
         return baths === bathroomCount;
       });
     }
-    
-    // Filter by type
     if (filters.type) {
       filtered = filtered.filter(p => p.type?.toLowerCase() === filters.type.toLowerCase());
     }
-    
-    // Filter by amenities
     if (filters.amenities?.length > 0) {
       filtered = filtered.filter(p => {
         if (!p.amenities || !Array.isArray(p.amenities)) return false;
@@ -128,7 +123,6 @@ const ExplorePage = () => {
     return filtered;
   }, [nearbyQuery.data, filters, showNearby]);
 
-  // Regular queries
   const featuredQuery = useFeaturedPropertiesFiltered(
     { purpose: filters.purpose },
     { enabled: !showNearby }
@@ -194,12 +188,9 @@ const ExplorePage = () => {
 
   const isFeaturedLoading = showNearby ? nearbyQuery.isLoading : (featuredQuery.isLoading || featuredQuery.isFetching);
   const isListingsLoading = showNearby ? nearbyQuery.isLoading : (newListingsQuery.isLoading || newListingsQuery.isFetching);
-  
 
   const featuredData = showNearby ? [] : featuredQuery.data;
-  
   const nearbyData = filteredNearbyData;
-  
   const listingsData = showNearby ? [] : (newListingsQuery.data?.properties || []);
   const listingsPagination = showNearby ? null : (newListingsQuery.data?.pagination || null);
   
@@ -221,7 +212,6 @@ const ExplorePage = () => {
         onLocationChange={handleLocationChange}
       />
 
-      {/* Location banner */}
       {showNearby && (
         <div className="px-4 py-3 bg-amber-50 border-b border-amber-100">
           <div className="flex items-center justify-between">
@@ -245,6 +235,15 @@ const ExplorePage = () => {
       )}
 
       <div className="pb-28">
+
+        {!showNearby && (
+          <MostViewedCarousel
+            properties={mostViewedQuery.data || []}
+            isLoading={mostViewedQuery.isLoading}
+            isError={mostViewedQuery.isError}
+            onRetry={() => mostViewedQuery.refetch()}
+          />
+        )}
 
         {!showNearby && (
           <div className="mt-4 mb-6">
@@ -308,7 +307,6 @@ const ExplorePage = () => {
           </div>
         )}
 
-        {/* New Listings (WITH PAGINATION) - only when not nearby mode */}
         {!showNearby && (
           <div id="new-listings-section">
             <SectionHeader title="New Listings" onSeeAll={() => navigate('/search?new=true')} />

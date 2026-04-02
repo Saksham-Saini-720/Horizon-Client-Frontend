@@ -1,8 +1,4 @@
 
-
-/**
- * Transform API property to component format
- */
 export function transformProperty(apiProperty) {
   if (!apiProperty) return null;
 
@@ -20,6 +16,7 @@ export function transformProperty(apiProperty) {
     type,
     amenities,
     status,
+    stats,          
     createdAt,
     updatedAt
   } = apiProperty;
@@ -28,10 +25,9 @@ export function transformProperty(apiProperty) {
   const formattedLocation = formatLocation(location);
   const formattedArea     = formatArea(details?.squareFeet);
   const imageUrl          = getPropertyImage(images);
+  const allImages         = getAllPropertyImages(images);
   const tag               = formatPurpose(purpose);
 
-  // MongoDB GeoJSON format: { type: 'Point', coordinates: [lng, lat] }
-  // Note: GeoJSON order is [longitude, latitude] — NOT [lat, lng]
   const coords = location?.coordinates?.coordinates ?? location?.coordinates;
   const lng = Array.isArray(coords) ? coords[0] : (location?.lng ?? location?.longitude ?? null);
   const lat = Array.isArray(coords) ? coords[1] : (location?.lat ?? location?.latitude  ?? null);
@@ -46,11 +42,13 @@ export function transformProperty(apiProperty) {
     baths:    details?.bathrooms ? `${details.bathrooms} Bath${details.bathrooms > 1 ? 's' : ''}` : null,
     area:     formattedArea,
     img:      imageUrl,
+    images:   allImages,
     tag:      tag,
     purpose:  purpose,
     type:     type,
     amenities: amenities || [],
     status:   status,
+    viewCount: stats?.views || 0, 
     // lat/lng for map markers
     latitude:  lat,
     longitude: lng,
@@ -76,7 +74,6 @@ export function transformProperties(apiProperties) {
 
 /**
  * Transform API response — handles ALL response shapes
- *  FIX 1: Added more format handlers for nearby/other endpoints
  */
 export function transformPropertyResponse(apiResponse) {
   if (!apiResponse) return { properties: [], pagination: null };
@@ -88,29 +85,23 @@ export function transformPropertyResponse(apiResponse) {
 
 
   if (Array.isArray(data)) {
-    // Format A: Direct array  →  [{ ... }, { ... }]
     properties = transformProperties(data);
 
   } else if (Array.isArray(data.properties)) {
-    // Format B: { properties: [...] }  (featured, new listings)
     properties = transformProperties(data.properties);
     pagination  = data.pagination ?? null;
 
   } else if (Array.isArray(data.items)) {
-    // Format C: { items: [...], pagination: {} }  (search)
     properties = transformProperties(data.items);
     pagination  = data.pagination ?? null;
 
   } else if (Array.isArray(data.nearby)) {
-    // Format D: { nearby: [...] }  (nearby endpoint)
     properties = transformProperties(data.nearby);
 
   } else if (Array.isArray(data.results)) {
-    // Format E: { results: [...] }
     properties = transformProperties(data.results);
 
   } else if (Array.isArray(data.data)) {
-    // Format F: { data: { data: [...] } }  (double-nested)
     properties = transformProperties(data.data);
 
   } 
@@ -164,7 +155,7 @@ export function getAllPropertyImages(images) {
   if (images?.featured) urls.push(getPropertyImage(images));
   if (Array.isArray(images?.gallery)) {
     images.gallery.forEach(img => {
-      const url = img.medium?.url || img.large?.url || img.original?.url;
+      const url = img.medium?.url || img.large?.url || img.thumbnail?.url || img.original?.url;
       if (url) urls.push(url);
     });
   }

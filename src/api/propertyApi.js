@@ -1,6 +1,7 @@
 
 import axiosInstance from './axiosInstance';
 
+
 // ─── Public Property APIs ─────────────────────────────────────────────────────
 
 /**
@@ -45,6 +46,13 @@ export const searchProperties = async (searchQuery, params = {}) => {
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Failed to search properties');
   }
+};
+
+export const getMostViewedProperties = async (limit = 10) => {
+  const response = await axiosInstance.get(`/properties/most-viewed`, {
+    params: { limit }
+  });
+  return response.data;
 };
 
 /**
