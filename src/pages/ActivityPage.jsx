@@ -65,7 +65,7 @@ const ActivityPage = memo(() => {
 
   return (
     <div className="min-h-screen pb-24 bg-gray-100">
-      <div className='bg-secondary border-b-2 border-secondary'>
+      <div className='bg-secondary border-b-2 border-secondary  sticky top-0 z-50'>
         <div className="border-b border-secondary px-4 pt-4">
           <h1 className="text-[24px] font-bold text-white font-myriad mb-1">Activity</h1>
           <p className="text-[15px] text-gray-100 font-myriad">Manage your property interactions</p>
@@ -99,7 +99,7 @@ const ActivityPage = memo(() => {
         </div>
       </div>
 
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 ">
         {activeTab === 'inquiries' && <InquiriesTab />}
         {activeTab === 'tours'     && <ToursTab />}
         {activeTab === 'messages'  && <MessagesTab />}

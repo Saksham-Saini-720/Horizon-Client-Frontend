@@ -28,39 +28,40 @@ const ChatPage = () => {
     <div className="min-h-screen flex flex-col">
 
       {/* ── Header ── */}
-      <div className="px-4 pb-4 bg-secondary">
-        <div className="flex items-center justify-between mb-4">
-          
-          {unreadCount > 0 && (
-            <span className="bg-secondary text-white text-[12px] font-semibold px-3 py-1 rounded-full font-myriad">
-              {unreadCount} unread
-            </span>
-          )}
-        </div>
+      <div className="sticky top-0 z-50 bg-secondary">
+        <div className="px-4 pb-4 bg-secondary">
+          <div className="flex items-center justify-between mb-4">
+            
+            {unreadCount > 0 && (
+              <span className="bg-secondary text-white text-[12px] font-semibold px-3 py-1 rounded-full font-myriad">
+                {unreadCount} unread
+              </span>
+            )}
+          </div>
 
-        {/* Search bar */}
-        <div className="flex items-center gap-2.5 bg-white/10 rounded-2xl px-4 py-2.5">
-          <svg className="w-4 h-4 text-white/60 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="m21 21-4.35-4.35"/>
-          </svg>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search conversations..."
-            className="flex-1 bg-transparent text-[15px] text-white placeholder-white/50 outline-none font-myriad"
-          />
-          {searchQuery.length > 0 && (
-            <button onClick={() => { setSearchQuery(''); setDebouncedSearch(''); }}>
-              <svg className="w-4 h-4 text-white/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M18 6 6 18M6 6l12 12"/>
-              </svg>
-            </button>
-          )}
+          {/* Search bar */}
+          <div className="flex items-center gap-2.5 bg-white/10 rounded-2xl px-4 py-2.5 ">
+            <svg className="w-4 h-4 text-white/60 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search conversations..."
+              className="flex-1 bg-transparent text-[15px] text-white placeholder-white/50 outline-none font-myriad"
+            />
+            {searchQuery.length > 0 && (
+              <button onClick={() => { setSearchQuery(''); setDebouncedSearch(''); }}>
+                <svg className="w-4 h-4 text-white/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       </div>
-
       {/* ── Content ── */}
       <div className="flex-1 pb-28">
 
