@@ -1,7 +1,8 @@
 
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HeartBtn from "../ui/HeartBtn";
+
 
 // ─── Small spec item (Beds / Baths / Area) ───────────────────────────────────
 
@@ -18,6 +19,18 @@ const SpecItem = ({ label, children }) => (
 
 const MiniCarousel = memo(({ images = [], title = "Property" }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+    if (!images || images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) =>
+        prev === images.length - 1 ? 0 : prev + 1
+      );
+    }, 3000); 
+
+    return () => clearInterval(interval);
+  }, [images]);
 
   if (!images || images.length === 0) {
     return (
@@ -40,6 +53,7 @@ const MiniCarousel = memo(({ images = [], title = "Property" }) => {
     e.stopPropagation();
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
+
 
   return (
     <div className="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden">

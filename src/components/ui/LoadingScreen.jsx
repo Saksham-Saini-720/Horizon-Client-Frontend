@@ -1,6 +1,7 @@
 
 import { memo } from "react";
 import logo from "../../assets/icons/white_logo.png";
+import leading from "../../assets/icons/Leading.png";
 
 const LoadingScreen = memo(() => {
   return (
@@ -8,22 +9,22 @@ const LoadingScreen = memo(() => {
       
       {/* Logo */}
       <div >
-        <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-2xl">
-          <img src={logo} alt="logo" className="w-5/5 h-auto object-contain p-[1px]" />
-        </div>
+        {/* <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-2xl"> */}
+          <img src={logo} alt="logo" className="w-52 h-52  object-contain" />
+        {/* </div> */}
       </div>
 
       {/* Brand Name */}
-      <h1 className="text-white text-[40px] font-black font-myriad">
-        Horizon
-      </h1>
+      <div >
+        <img src={leading} alt="logo" className="invert w-96 h-96  object-contain" />
+      </div>
       
-      <p className="text-white/60 text-[18px] font-black font-myriad tracking-widest uppercase mb-7">
+      {/* <p className="text-white/60 text-[18px] font-black font-myriad tracking-widest uppercase mb-7">
         PROPERTIES
-      </p>
+      </p> */}
 
       {/* Animated Dots */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mt-6">
         <div 
           className="w-3 h-3 rounded-full bg-white/40"
           style={{

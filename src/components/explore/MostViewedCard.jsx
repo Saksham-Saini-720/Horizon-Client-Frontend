@@ -1,5 +1,5 @@
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HeartBtn from "../ui/HeartBtn";
 
@@ -18,6 +18,7 @@ const MostViewedCard = memo(({
   viewCount = 0 
 }) => {
   const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleClick = useCallback(() => {
     navigate(`/property/${id}`);
@@ -29,7 +30,19 @@ const MostViewedCard = memo(({
   };
 
   const isForSale = tag === "For Sale";
-  const displayImage = images?.[0] || img;
+  // const displayImage = images?.[0] || img;
+
+  useEffect(() => {
+  if (!images || images.length <= 1) return;
+
+  const interval = setInterval(() => {
+    setCurrentIndex((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1
+    );
+  }, 3000);
+
+  return () => clearInterval(interval);
+}, [images]);
   
   return (
     <div
@@ -38,12 +51,20 @@ const MostViewedCard = memo(({
     >
       {/* Image with Gradient Overlay */}
       <div className="relative h-[240px] overflow-hidden">
-        <img
-          src={displayImage}
-          alt={title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          loading="lazy"
-        />
+        <div 
+          className="flex h-full transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {(images && images.length > 0 ? images : [img]).map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`${title} ${index + 1}`}
+              className="w-full h-full object-cover flex-shrink-0 group-hover:scale-110 transition-transform duration-700"
+              loading="lazy"
+            />
+          ))}
+        </div>
         
         {/* Gradient Overlay - Bottom to Top */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

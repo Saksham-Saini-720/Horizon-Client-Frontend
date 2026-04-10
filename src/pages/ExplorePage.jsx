@@ -63,7 +63,7 @@ const ExplorePage = () => {
 
   const showNearby = !!(selectedLocation && !isSearching);
 
-  // ⭐ NEW: Most Viewed Query
+  // NEW: Most Viewed Query
   const mostViewedQuery = useMostViewedProperties(10, {
     enabled: !showNearby, // Only fetch when not in nearby mode
   });
