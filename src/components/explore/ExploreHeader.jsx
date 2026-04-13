@@ -3,7 +3,7 @@ import { memo, useState } from "react";
 import { HorizonLogo } from "../layouts/Navbar";
 import SearchBar from "../layouts/SearchBar";
 import LocationPickerModal from "./LocationPickerModal";
-import leading from "../../assets/icons/leading.png";
+import leading from "../../assets/icons/Leading.png";
 import village from "../../assets/icons/green_village.png";
 import auction from "../../assets/icons/auction_logo.png";
 import tree from "../../assets/icons/tree.png";
