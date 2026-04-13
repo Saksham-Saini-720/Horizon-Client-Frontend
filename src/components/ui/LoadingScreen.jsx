@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { motion as Motion } from "framer-motion";
-import horizonLogo from "../../assets/icons/logo.png"; // transparent wala use karo
-import leadingReLogo from "../../assets/icons/Leading.png"; // transparent wala use karo
+import horizonLogo from "../../assets/icons/logo.png"; 
+import leadingReLogo from "../../assets/icons/leading.png"; 
 
 const TEXT = "Real\u00A0\u00A0\u00A0\u00A0Property\u00A0\u00A0\u00A0\u00A0Merchants";
 
