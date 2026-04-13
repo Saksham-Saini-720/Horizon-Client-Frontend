@@ -234,7 +234,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
 
           {/* Send Button */}
           <button type="submit" disabled={isStarting}
-            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-primary text-white text-[16px] font-semibold font-myriad hover:bg-[#2A3A4A] transition-all active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-secondary text-white text-[16px] font-semibold font-myriad hover:bg-[#2A3A4A] transition-all active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
             {isStarting ? (
               <>
                 <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">

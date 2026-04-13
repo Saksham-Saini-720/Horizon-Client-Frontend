@@ -1,17 +1,19 @@
+
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
 import { useFeaturedPropertiesFiltered, useNewListingsFiltered } from "../hooks/properties/usePropertiesWithFilters";
 import { useMapProperties } from "../hooks/properties/useMapProperties";
-import useMostViewedProperties from "../hooks/properties/useMostViewedProperties"; // ⭐ NEW
+import useMostViewedProperties from "../hooks/properties/useMostViewedProperties";
 import EmptyState from "../components/states/EmptyState";
 import ErrorState from "../components/states/ErrorState";
 import ExploreHeader from "../components/explore/ExploreHeader";
 import FeaturedCard from "../components/explore/FeaturedCard";
 import NewListingCard from "../components/explore/NewListingCard";
 import SectionHeader from "../components/explore/SectionHeader";
-import MostViewedCarousel from "../components/explore/MostViewedCarousel"; // ⭐ NEW
+import MostViewedCarousel from "../components/explore/MostViewedCarousel";
+import FilterChips from "../components/explore/FilterChips";
 import { FeaturedCardSkeleton, NewListingCardSkeleton } from "../components/ui/SkeletonCards";
 import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
 import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
@@ -63,9 +65,8 @@ const ExplorePage = () => {
 
   const showNearby = !!(selectedLocation && !isSearching);
 
-  // NEW: Most Viewed Query
   const mostViewedQuery = useMostViewedProperties(10, {
-    enabled: !showNearby, // Only fetch when not in nearby mode
+    enabled: !showNearby,
   });
 
   const nearbyQuery = useMapProperties(
@@ -199,15 +200,12 @@ const ExplorePage = () => {
 
   return (
     <div className="min-h-screen bg-surface">
-
+      {/* Header WITHOUT FilterChips */}
       <ExploreHeader
         onSubmitSearch={handleSearch}
         recentSearches={recent.searches}
         onRemoveRecent={recent.remove}
         onClearAllRecent={recent.clearAll}
-        activeFilter={activeFilter}
-        onFilterToggle={handleFilterToggle}
-        filtersDimmed={isFeaturedLoading || isListingsLoading}
         currentLocation={selectedLocation}
         onLocationChange={handleLocationChange}
       />
@@ -235,7 +233,7 @@ const ExplorePage = () => {
       )}
 
       <div className="pb-28">
-
+        {/* Most Viewed Carousel */}
         {!showNearby && (
           <MostViewedCarousel
             properties={mostViewedQuery.data || []}
@@ -245,6 +243,27 @@ const ExplorePage = () => {
           />
         )}
 
+      
+        <div className=" top-[140px] z-40 bg-gradient-to-b from-white via-white to-transparent pt-3 shadow-sm">
+          <div className="relative">
+            {/* Subtle top gradient border */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+            
+            {/* Premium filter chips container */}
+            <div className="px-4">
+              <FilterChips
+                activeFilter={activeFilter}
+                onToggle={handleFilterToggle}
+                dimmed={isFeaturedLoading || isListingsLoading}
+              />
+            </div>
+            
+            {/* Subtle bottom gradient border */}
+            <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+          </div>
+        </div>
+
+        {/* Featured Section */}
         {!showNearby && (
           <div className="mt-4 mb-6">
             <SectionHeader
@@ -276,6 +295,7 @@ const ExplorePage = () => {
           </div>
         )}
 
+        {/* Nearby Properties */}
         {showNearby && (
           <div className="mt-4 mb-6" id="new-listings-section">
             <SectionHeader
@@ -307,6 +327,7 @@ const ExplorePage = () => {
           </div>
         )}
 
+        {/* New Listings */}
         {!showNearby && (
           <div id="new-listings-section">
             <SectionHeader title="New Listings" onSeeAll={() => navigate('/search?new=true')} />
@@ -334,9 +355,9 @@ const ExplorePage = () => {
             )}
           </div>
         )}
-
       </div>
 
+      {/* Modals */}
       <PriceFilterModal isOpen={activeModal === 'price'} onClose={() => setActiveModal(null)} onApply={handlePriceApply} currentFilters={filters} />
       <BedroomsFilterModal isOpen={activeModal === 'bedrooms'} onClose={() => setActiveModal(null)} onApply={handleBedroomsApply} currentFilters={filters} />
       <FullFiltersModal isOpen={activeModal === 'filters'} onClose={() => setActiveModal(null)} onApply={handleFullApply} currentFilters={filters} />

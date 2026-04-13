@@ -115,7 +115,7 @@ const PropertyDetailPage = () => {
 
       {/* Agent Card */}
       {property.agent && (
-        <AgentCard agent={property.agent} />
+        <AgentCard agent={property.agent} property={property} />
       )}
 
       {/* Action Buttons (Fixed at bottom) */}
