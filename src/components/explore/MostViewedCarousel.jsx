@@ -1,29 +1,43 @@
-
-import { memo, useState, useEffect, useCallback } from "react";
+import { memo, useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import MostViewedCard from "./MostViewedCard";
 import { MostViewedCardSkeleton } from "../ui/SkeletonCards";
 import EmptyState from "../states/EmptyState";
 import ErrorState from "../states/ErrorState";
 
-const MostViewedCarousel = memo(({ 
-  properties = [], 
-  isLoading = false, 
+const CARD_WIDTH = 320;
+const CARD_GAP = 14;
+const PEEK = 34; // how much of prev/next card shows on sides
+
+const MostViewedCarousel = memo(({
+  properties = [],
+  isLoading = false,
   isError = false,
-  onRetry 
+  onRetry,
 }) => {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const containerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(0);
 
-  // Auto-scroll logic
+  // Measure container width
   useEffect(() => {
-    if (isPaused || properties.length === 0 || properties.length === 1) return;
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      setContainerWidth(entries[0].contentRect.width);
+    });
+    observer.observe(containerRef.current);
+    setContainerWidth(containerRef.current.offsetWidth);
+    return () => observer.disconnect();
+  }, []);
 
+  // Auto-scroll
+  useEffect(() => {
+    if (isPaused || properties.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev === properties.length - 1 ? 0 : prev + 1));
-    }, 4000); // Auto-advance every 4 seconds
-
+    }, 4000);
     return () => clearInterval(interval);
   }, [isPaused, properties.length]);
 
@@ -35,11 +49,16 @@ const MostViewedCarousel = memo(({
     setCurrentIndex((prev) => (prev === properties.length - 1 ? 0 : prev + 1));
   }, [properties.length]);
 
-  const goToIndex = useCallback((index) => {
-    setCurrentIndex(index);
-  }, []);
+  // const goToIndex = useCallback((index) => setCurrentIndex(index), []);
 
-  // Loading state
+  // Center the active card:
+  // offset = currentIndex * (CARD_WIDTH + CARD_GAP) - (containerWidth - CARD_WIDTH) / 2
+  const offset =
+    containerWidth > 0
+      ? currentIndex * (CARD_WIDTH + CARD_GAP) - (containerWidth - CARD_WIDTH) / 2
+      : currentIndex * (CARD_WIDTH + CARD_GAP);
+
+  // ── Loading ──
   if (isLoading) {
     return (
       <div className="mt-6 mb-8">
@@ -57,27 +76,22 @@ const MostViewedCarousel = memo(({
           </p>
         </div>
         <div className="flex gap-4 px-4 overflow-x-hidden">
-          {Array(3).fill(0).map((_, i) => (
-            <MostViewedCardSkeleton key={i} />
-          ))}
+          {Array(3).fill(0).map((_, i) => <MostViewedCardSkeleton key={i} />)}
         </div>
       </div>
     );
   }
 
-  // Error state
+  // ── Error ──
   if (isError) {
     return (
       <div className="mt-6 mb-8 px-4">
-        <ErrorState
-          title="Failed to load most viewed properties"
-          onRetry={onRetry}
-        />
+        <ErrorState title="Failed to load most viewed properties" onRetry={onRetry} />
       </div>
     );
   }
 
-  // Empty state
+  // ── Empty ──
   if (!properties || properties.length === 0) {
     return (
       <div className="mt-6 mb-8 px-4">
@@ -91,84 +105,87 @@ const MostViewedCarousel = memo(({
   }
 
   return (
-    <div className="mt-6 mb-8">
+    <div className="mt-6 ">
       {/* Header */}
       <div className="px-4 mb-4 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
-              <span className="text-[16px]">🔥</span>
-            </div>
+          <div className="flex items-center gap-2.5 pl-8">
             <h2 className="text-[20px] font-bold text-primary font-myriad">
               Most Viewed Properties
             </h2>
           </div>
-          <p className="text-[13px] text-gray-500 font-myriad mt-1 ml-9">
+          <p className="text-[13px] text-gray-500 font-myriad mt-1 ml-8">
             Trending properties everyone is watching
           </p>
         </div>
-
-        {/* See All Link */}
         <button
-          onClick={() => navigate('/search?sort=views')}
+          onClick={() => navigate("/search?sort=views")}
           className="text-[13px] font-semibold text-secondary hover:text-secondary/80 transition-colors font-myriad"
         >
           See All →
         </button>
       </div>
 
-      {/* Carousel Container */}
-      <div 
+      {/* Carousel */}
+      <div
         className="relative"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        {/* Cards Container */}
-        <div className="overflow-hidden px-4">
-          <div 
-            className="flex gap-4 transition-transform duration-700 ease-out"
-            style={{ 
-              transform: `translateX(-${currentIndex * (340 + 16)}px)` // 340px card width + 16px gap
+        {/* Overflow window — PEEK px on each side stays visible */}
+        <div
+          ref={containerRef}
+          className="overflow-hidden"
+          style={{ paddingLeft: PEEK, paddingRight: PEEK }}
+        >
+          <div
+            className="flex transition-transform duration-700 ease-[cubic-bezier(.77,0,.18,1)]"
+            style={{
+              gap: CARD_GAP,
+              transform: `translateX(-${Math.max(0, offset)}px)`,
             }}
           >
-            {properties.map((property) => (
-              <MostViewedCard 
-                key={property.id} 
-                {...property}
-                viewCount={property.viewCount || 0}
-              />
+            {properties.map((property, idx) => (
+              <div
+                key={property.id}
+                className="flex-shrink-0 transition-all duration-500"
+                style={{
+                  // Non-active cards: slightly scaled down + dimmed for depth
+                  transform: idx === currentIndex ? "scale(1)" : "scale(0.94)",
+                  // opacity: idx === currentIndex ? 1 : 0.55,
+                  filter: idx === currentIndex ? "none" : "blur(0.5px)",
+                }}
+              >
+                <MostViewedCard
+                  {...property}
+                  viewCount={property.viewCount || 0}
+                />
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Navigation Arrows - Only show if multiple cards */}
-        {properties.length > 1 && (
-          <>
-            {/* Previous Button */}
-            <button
-              onClick={goToPrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-xl flex items-center justify-center hover:bg-gray-50 hover:scale-110 active:scale-95 transition-all z-10 border border-gray-100"
-              aria-label="Previous property"
-            >
-              <svg className="w-5 h-5 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M15 18l-6-6 6-6"/>
-              </svg>
-            </button>
-
-            {/* Next Button */}
-            <button
-              onClick={goToNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-xl flex items-center justify-center hover:bg-gray-50 hover:scale-110 active:scale-95 transition-all z-10 border border-gray-100"
-              aria-label="Next property"
-            >
-              <svg className="w-5 h-5 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
-            </button>
-          </>
+        {/* Left tap zone */}
+        {properties.length > 1 && currentIndex > 0 && (
+          <button
+            onClick={goToPrevious}
+            aria-label="Previous property"
+            className="absolute left-0 top-0 bottom-0 z-20"
+            style={{ width: PEEK + 16 }}
+          />
         )}
 
-        {/* Dot Indicators - Only show if multiple cards */}
+        {/* Right tap zone */}
+        {properties.length > 1 && currentIndex < properties.length - 1 && (
+          <button
+            onClick={goToNext}
+            aria-label="Next property"
+            className="absolute right-0 top-0 bottom-0 z-20"
+            style={{ width: PEEK + 16 }}
+          />
+        )}
+
+        {/* Dot Indicators
         {properties.length > 1 && (
           <div className="flex items-center justify-center gap-2 mt-5">
             {properties.map((_, index) => (
@@ -184,10 +201,10 @@ const MostViewedCarousel = memo(({
               />
             ))}
           </div>
-        )}
+        )} */}
 
-        {/* Auto-scroll Indicator */}
-        {!isPaused && properties.length > 1 && (
+        {/* Auto-scroll indicator */}
+        {/* {!isPaused && properties.length > 1 && (
           <div className="flex items-center justify-center gap-2 mt-3">
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100">
               <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
@@ -196,12 +213,12 @@ const MostViewedCarousel = memo(({
               </span>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
 });
 
-MostViewedCarousel.displayName = 'MostViewedCarousel';
+MostViewedCarousel.displayName = "MostViewedCarousel";
 
 export default MostViewedCarousel;

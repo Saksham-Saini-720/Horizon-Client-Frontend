@@ -32,7 +32,7 @@ createRoot(document.getElementById("root")).render(
       <Provider store={store}>
         {/* Redux Persist - waits for rehydration */}
         <PersistGate loading={<LoadingScreen/>} persistor={persistor} onBeforeLift={() =>
-          new Promise(resolve => setTimeout(resolve, 4000))
+          new Promise(resolve => setTimeout(resolve, 12000))
         }>
           {/* TanStack Query - for server state */}
           <QueryClientProvider client={queryClient}>

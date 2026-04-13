@@ -15,18 +15,18 @@ const ROUTE_TITLES = {
 
 // ─── HorizonLogo ──────────────────────────────────────────────────────────────
 
-export const HorizonLogo = ({ size = 40 }) => (
-  <div
-    className="rounded-2xl flex items-center justify-center flex-shrink-0 cursor-pointer"
-    style={{
-      width: size,
-      height: size,
-      background: "linear-gradient(145deg, #2D368E 0%, #2D368E 100%)",
-      boxShadow: "0 2px 8px rgba(255,255,255,0.35)",
-    }}
-  >
-    <img src={logo} alt="logo" className="w-5/5 h-auto object-contain p-[1px]" />
-  </div>
+export const HorizonLogo = ({ size = 10 }) => (
+  // <div
+  //   className="rounded-2xl flex items-center justify-center flex-shrink-0 cursor-pointer"
+  //   style={{
+  //     width: size,
+  //     height: size,
+  //     background: "linear-gradient(145deg, #2D368E 0%, #2D368E 100%)",
+  //     boxShadow: "0 2px 8px rgba(255,255,255,0.35)",
+  //   }}
+  // >
+    <img src={logo} alt="logo" className={`w-${size} h-auto object-contain`}/>
+  // </div>
 );
 
 // ─── Navbar ───────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ const Navbar = () => {
     : baseTitle;
 
   return (
-    <header className="flex items-center justify-between px-5 h-16 bg-secondary border-b border-secondary sticky top-0 z-50 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+    <header className="flex items-center justify-between px-5 h-20 bg-secondary border-b border-secondary sticky top-0 z-50 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
       <div className="flex items-center gap-3 flex-1">
         {showBack && (
           <button
@@ -65,7 +65,7 @@ const Navbar = () => {
         </h1>
       </div>
       <div onClick={()=> navigate("/")} className="cursor-pointer">
-        <HorizonLogo size={50} />
+        <HorizonLogo size={20} />
       </div>
     </header>
   );

@@ -220,7 +220,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                     disabled={!selectedTimes.includes(time) && selectedTimes.length >= 3}
                     className={`flex items-center justify-center gap-2 p-4 rounded-xl border-2 transition-all ${
                       selectedTimes.includes(time)
-                        ? 'border-primary bg-primary text-white'
+                        ? 'border-primary bg-secondary text-white'
                         : 'border-gray-200 hover:border-gray-300 text-gray-700'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
@@ -271,7 +271,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
           <button
             onClick={handleReview}
             disabled={!selectedDate || selectedTimes.length === 0}
-            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-400 text-white text-[16px] font-semibold font-myriad hover:bg-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed enabled:bg-primary enabled:hover:bg-primary-light shadow-lg"
+            className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-400 text-white text-[16px] font-semibold font-myriad hover:bg-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed enabled:bg-secondary enabled:hover:bg-primary-light shadow-lg"
           >
             Review & Request Tour
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

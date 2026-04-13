@@ -1,67 +1,121 @@
+import { useEffect, useRef } from "react";
+import { motion as Motion } from "framer-motion";
+import horizonLogo from "../../assets/icons/logo.png"; // transparent wala use karo
+import leadingReLogo from "../../assets/icons/leading.png"; // transparent wala use karo
 
-import { memo } from "react";
-import logo from "../../assets/icons/white_logo.png";
-import leading from "../../assets/icons/Leading.png";
+const TEXT = "Real\u00A0\u00A0\u00A0\u00A0Property\u00A0\u00A0\u00A0\u00A0Merchants";
 
-const LoadingScreen = memo(() => {
+export default function SplashScreen() {
+  const textPathRef = useRef(null);
+
+ useEffect(() => {
+  const el = textPathRef.current;
+  if (!el) return;
+
+  el.innerHTML = "";
+
+  TEXT.split("").forEach((ch, i) => {
+    const ts = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+    ts.textContent = ch === " " ? "\u00A0" : ch;
+    ts.setAttribute("opacity", "0");
+    ts.style.transition = "opacity 0.18s ease";
+    el.appendChild(ts);
+    setTimeout(() => ts.setAttribute("opacity", "1"), 950 + i * 52);
+  });
+}, []);
+
   return (
-    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center">
-      
-      {/* Logo */}
-      <div >
-        {/* <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-2xl"> */}
-          <img src={logo} alt="logo" className="w-52 h-52  object-contain" />
-        {/* </div> */}
-      </div>
+    <Motion.div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+      style={{ backgroundColor: "#2D368E" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4 }}
+    >
+      <Motion.div
+        style={{ position: "relative", width: 270, height: 240 }}
+        initial={{ opacity: 0, scale: 0.88 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
+      >
+        {/* Logo - top 29% cropped (hides original text) */}
+        <img
+          src={horizonLogo}
+          alt="Horizon"
+          style={{
+            width: 250,
+            // height: 200,
+            objectFit: "contain",
+            position: "absolute",
+            top: 50,
+            left: 0,
+            // margin: "auto",
+            zIndex: 1,
+            clipPath: "inset(2% 2% 2% 2%)",
+          }}
+        />
 
-      {/* Brand Name */}
-      <div >
-        <img src={leading} alt="logo" className="invert w-96 h-96  object-contain" />
-      </div>
-      
-      {/* <p className="text-white/60 text-[18px] font-black font-myriad tracking-widest uppercase mb-7">
-        PROPERTIES
-      </p> */}
+        {/* Arc animated text */}
+        <svg
+          width="320"
+          height="250"
+          viewBox="0 0 320 120"
+          style={{ position: "absolute", top: -23, left: -33, zIndex: 2 }}
+        >
+          <defs>
+            <path id="rpmArc" d="M 10,110 A 160,160 0 0,1 310,110" />
+          </defs>
+          <text fontFamily="'Great Vibes', cursive" fontSize="25" fill="white">
+            <textPath
+              ref={textPathRef}
+              href="#rpmArc"
+              startOffset="52%"
+              textAnchor="middle"
+              letterSpacing="1"
+            />
+          </text>
+        </svg>
+      </Motion.div>
 
-      {/* Animated Dots */}
       <div className="flex items-center gap-2 mt-6">
-        <div 
-          className="w-3 h-3 rounded-full bg-white/40"
-          style={{
-            animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            animationDelay: '0s'
-          }}
-        />
-        <div 
-          className="w-3 h-3 rounded-full bg-white/40"
-          style={{
-            animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            animationDelay: '0.2s'
-          }}
-        />
-        <div 
-          className="w-3 h-3 rounded-full bg-white/40"
-          style={{
-            animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            animationDelay: '0.4s'
-          }}
-        />
+        {[0, 1, 2].map((i) => (
+          <Motion.div
+            key={i}
+            className="w-2 h-2 rounded-full bg-white"
+            animate={{ opacity: [0.3, 1, 0.3], y: [0, -6, 0] }}
+            transition={{ duration: 0.85, repeat: Infinity, delay: i * 0.18 }}
+          />
+        ))}
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 0.4;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.2);
-          }
-        }
-      `}</style>
-    </div>
+       {/* A member of text */}
+      <Motion.p
+        style={{
+          color: "white",
+          fontSize: 13,
+          letterSpacing: 2,
+          marginTop: 150,
+          opacity: 0.85,
+          textTransform: "uppercase",
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.85 }}
+        transition={{ duration: 0.6, delay: 1.4 }}
+      >
+        A member of the
+      </Motion.p>
+      <Motion.img
+        src={leadingReLogo}
+        alt="LeadingRE"
+        style={{
+          width: 230,
+          filter: "brightness(0) invert(1)", // black logo → white
+          opacity: 0.9,
+        }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.9 }}
+        transition={{ duration: 0.5, delay: 2.5 }}
+      />
+    </Motion.div>
   );
-});
-
-export default LoadingScreen;
+}
