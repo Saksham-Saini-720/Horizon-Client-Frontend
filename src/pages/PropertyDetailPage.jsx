@@ -1,7 +1,8 @@
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import usePropertyDetail from "../hooks/properties/usePropertyDetail";
+import usePropertyAgent from "../hooks/properties/usePropertyAgent";
+import { useAuth } from "../hooks/utils/useRedux";
 import Button from "../components/ui/Button";
 import PropertyImageCarousel from "../components/property/PropertyImageCarousel";
 import PropertyHeader from "../components/property/PropertyHeader";
@@ -56,11 +57,44 @@ const PropertyNotFound = ({ onRetry, onGoBack }) => (
 const PropertyDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  
+  // State for enquiry trigger
+  const [shouldOpenEnquiry, setShouldOpenEnquiry] = useState(false);
+  
+  // Fetch property details
   const { data: property, isLoading, isError, error, refetch } = usePropertyDetail(id);
+  
+  // Fetch agent details (only if authenticated)
+  const { 
+    data: agentDetails, 
+    isLoading: isAgentLoading 
+  } = usePropertyAgent(id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  // // Handle enquiry trigger from AgentCard
+  // const handleEnquire = useCallback(() => {
+  //   setShouldOpenEnquiry(true);
+  //   setTimeout(() => {
+  //     const actionsElement = document.querySelector('[data-property-actions]');
+  //     if (actionsElement) {
+  //       actionsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //     }
+  //   }, 100);
+  // }, []);
+
+  // Reset enquiry trigger after it's been handled
+  useEffect(() => {
+    if (shouldOpenEnquiry) {
+      const timer = setTimeout(() => {
+        setShouldOpenEnquiry(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldOpenEnquiry]);
 
   // Loading state
   if (isLoading) {
@@ -82,6 +116,14 @@ const PropertyDetailPage = () => {
     );
   }
 
+  // Determine which agent data to use
+  // If authenticated:
+  //   - If agentDetails exists (API returned agent) → use it
+  //   - If agentDetails is null (no dedicated agent assigned) → pass null to show "No Agent" state
+  //   - If not authenticated → use basic owner info from property
+  const displayAgent = isAuthenticated 
+    ? agentDetails  // Will be null if no agent assigned, or agent object if assigned
+    : property.agent; // Fallback for non-authenticated users
 
   // Success state
   return (
@@ -113,13 +155,20 @@ const PropertyDetailPage = () => {
         <PropertyAmenities amenities={property.amenities} />
       )}
 
-      {/* Agent Card */}
-      {property.agent && (
-        <AgentCard agent={property.agent} property={property} />
-      )}
+      {/* Agent Card - Always show (with "No Agent" state if needed) */}
+      <AgentCard 
+        agent={displayAgent} 
+        property={property}
+        isLoading={isAuthenticated && isAgentLoading}
+        // onEnquire={handleEnquire}
+      />
 
       {/* Action Buttons (Fixed at bottom) */}
-      <PropertyActions agent={property.agent} property={property} />
+      <PropertyActions 
+        agent={displayAgent} 
+        property={property}
+        shouldOpenEnquiry={shouldOpenEnquiry}
+      />
     </div>
   );
 };

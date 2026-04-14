@@ -48,6 +48,20 @@ export const searchProperties = async (searchQuery, params = {}) => {
   }
 };
 
+/**
+ * Get property agent/owner details
+ * GET /api/v1/properties/:id/agent
+ * AUTHENTICATED - client only
+ */
+export const getPropertyAgent = async (propertyId) => {
+  try {
+    const response = await axiosInstance.get(`/properties/${propertyId}/agent`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Failed to fetch agent details');
+  }
+};
+
 export const getMostViewedProperties = async (limit = 10) => {
   const response = await axiosInstance.get(`/properties/most-viewed`, {
     params: { limit }
