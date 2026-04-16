@@ -59,7 +59,7 @@ const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => (
           <div className={`w-[60px] h-[60px] rounded-2xl flex items-center justify-center transition-all
             ${isActive
               ? "border-2 border-[#1a1a2e] bg-[#f0f0f8] text-[#1a1a2e]"
-              : "border border-[#e8e8e8] bg-white text-secondary hover:bg-gray-50"
+              : "border border-[#e8e8e8] bg-white text-primary-light hover:bg-gray-50"
             }`}
           >
             {icon}

@@ -120,7 +120,7 @@ const MostViewedCarousel = memo(({
         </div>
         <button
           onClick={() => navigate("/search?sort=views")}
-          className="text-[13px] font-semibold text-secondary hover:text-secondary/80 transition-colors font-myriad"
+          className="text-[13px] font-semibold text-primary-light hover:text-secondary/80 transition-colors font-myriad"
         >
           See All →
         </button>

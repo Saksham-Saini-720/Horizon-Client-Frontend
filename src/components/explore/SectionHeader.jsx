@@ -15,7 +15,7 @@ const SectionHeader = memo(({ title, onSeeAll }) => {
       {onSeeAll && (
         <button 
           onClick={onSeeAll} 
-          className="flex items-center gap-0.5 text-[15px] font-semibold text-secondary font-myriad hover:text-secondary transition-colors"
+          className="flex items-center gap-0.5 text-[15px] font-semibold text-primary-light font-myriad hover:text-secondary transition-colors"
         >
           See all
           <svg 
