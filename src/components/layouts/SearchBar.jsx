@@ -197,8 +197,7 @@ const SearchBar = memo(({
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleSubmit}
-          className="flex-shrink-0 h-8 px-3 rounded-lg text-[15px] font-semibold text-white transition-all active:scale-95"
-          style={{ background: "linear-gradient(135deg, #2D368E, #C96C38)" }}
+          className="flex-shrink-0 h-8 px-3 rounded-lg text-[15px] font-semibold text-white transition-all active:scale-95 bg-primary-light"
         >
           Search
         </button>

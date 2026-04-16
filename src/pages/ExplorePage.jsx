@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef  } from "react";
 import { useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
@@ -19,6 +19,10 @@ import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
 import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
 import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
 import Pagination from "../components/ui/Pagination";
+import one from "../assets/slides/one.jpeg";
+import two from "../assets/slides/two.jpeg";
+import three from "../assets/slides/three.jpeg";
+import four from "../assets/slides/four.jpeg";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
@@ -45,6 +49,85 @@ const ExplorePage = () => {
   });
 
   const [activeModal, setActiveModal] = useState(null);
+
+  // --- Promo Carousel ---
+  const PROMO_SLIDES = [
+    {
+      id: 1,
+      image: one,
+    },
+    {
+      id: 2,
+      image: two,
+    },
+    {
+      id: 3,
+      image: three,
+    },
+    {
+      id: 4,
+      image: four,
+    },
+  ];
+
+  const PEEK = 20;   // px visible from each side
+  const GAP  = -2;   // px gap between slides
+
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const carouselWrapRef = useRef(null);
+  const [slideWidth, setSlideWidth] = useState(0);
+  const touchStartX = useRef(0);
+
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  useEffect(() => {
+    const calc = () => {
+      if (carouselWrapRef.current) {
+        const containerWidth = carouselWrapRef.current.offsetWidth;
+        const isLarge = window.innerWidth >= 768;
+        const count = isLarge ? 2 : 1;
+        setVisibleCount(count);
+
+        // slideWidth = (container - peek both sides - gaps between visible slides) / count
+        const totalGaps = (count - 1) * GAP;
+        setSlideWidth((containerWidth - PEEK * 2 - totalGaps) / count);
+      }
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, [GAP]);
+
+  // Auto-scroll every 3.5 seconds
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setCarouselIndex((prev) => {
+      const next = prev + 1;
+      return next >= PROMO_SLIDES.length ? 0 : next;
+    });
+  }, 3500);
+  return () => clearInterval(interval);
+}, [PROMO_SLIDES.length]);
+
+ const goPrev = useCallback(() => {
+  setCarouselIndex((prev) => Math.max(prev - visibleCount, 0));
+}, [visibleCount]);
+
+const goNext = useCallback(() => {
+  setCarouselIndex((prev) => {
+    const next = prev + visibleCount;
+    return next >= PROMO_SLIDES.length ? 0 : next;
+  });
+}, [visibleCount]);
+
+  const handleCarouselTouchStart = useCallback((e) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleCarouselTouchEnd = useCallback((e) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) diff > 0 ? goNext() : goPrev();
+  }, [goNext, goPrev]);
 
   const recent = useRecentSearches();
   const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
@@ -260,6 +343,66 @@ const ExplorePage = () => {
             
             {/* Subtle bottom gradient border */}
             <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+          </div>
+        </div>
+
+        {/* Promo Carousel - 2 slides on large screen, 1 on small */}
+        <div className="mt-3 mb-2 py-1">
+          <div
+            ref={carouselWrapRef}
+            className="overflow-hidden w-full"
+            style={{ padding: `0 ${PEEK}px` }}
+          >
+            <div
+              className="flex"
+              style={{
+                transform: `translateX(${-carouselIndex * (slideWidth + GAP)}px)`,
+                transition: "transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                willChange: "transform",
+              }}
+              onTouchStart={handleCarouselTouchStart}
+              onTouchEnd={handleCarouselTouchEnd}
+            >
+              {PROMO_SLIDES.map((slide, i) => (
+                <div
+                  key={slide.id}
+                  className="relative flex-shrink-0 overflow-hidden my-3 rounded-2xl"
+                  style={{
+                    // Large screen (>=768px): 2 slides fit → half width minus gap & peek
+                    // Small screen (<768px): 1 slide → full width minus peek
+                    width: slideWidth > 0 ? `${slideWidth}px` : "calc(100% - 40px)",
+                    height: "clamp(120px, 18vw, 230px)",
+                    marginRight: `${GAP}px`,
+                    // opacity: i === carouselIndex ? 1 : 0.45,
+                    transform: i === carouselIndex ? "scale(1)" : "scale(0.93)",
+                    transition: "opacity 0.45s ease, transform 0.45s ease",
+                    boxShadow: i === carouselIndex
+                      ? "0 8px 24px rgba(0,0,0,0.45)"
+                      : "0 4px 12px rgba(0,0,0,0.12)",
+                  }}
+                >
+                  <img
+                    src={slide.image}
+                    alt={`slide-${slide.id}`}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Dot indicators */}
+          <div className="flex justify-center gap-1.5 mt-2">
+            {PROMO_SLIDES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCarouselIndex(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === carouselIndex ? "w-5 bg-secondary" : "w-1.5 bg-gray-300"
+                }`}
+              />
+            ))}
           </div>
         </div>
 

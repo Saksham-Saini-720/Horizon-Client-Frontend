@@ -1,12 +1,8 @@
-
 import { memo, useState } from "react";
 import { HorizonLogo } from "../layouts/Navbar";
 import SearchBar from "../layouts/SearchBar";
 import LocationPickerModal from "./LocationPickerModal";
 import leading from "../../assets/icons/Leading.png";
-import village from "../../assets/icons/green_village.png";
-import auction from "../../assets/icons/auction_logo.png";
-import tree from "../../assets/icons/tree.png";
 
 const ExploreHeader = memo(({
   onSubmitSearch,
@@ -27,32 +23,12 @@ const ExploreHeader = memo(({
           <HorizonLogo size={20} />
 
           {/* RIGHT — Leading real estate logo */}
-          <div className="flex flex-col items-end">
-            <img
-              src={village}
-              alt="Leading Real Estate"
-              className="h-[50px]"
-            />
-          </div>
-          <div className="flex flex-col items-end">
-            <img
-              src={auction}
-              alt="Leading Real Estate"
-              className="h-[50px]"
-            />
-          </div>
-          <div className="flex flex-col items-end">
-            <img
-              src={tree}
-              alt="Leading Real Estate"
-              className="h-[60px]"
-            />
-          </div>
-          <div className="flex flex-col items-end">
+      
+          <div className="flex flex-col mt-2 items-end">
             <img
               src={leading}
               alt="Leading Real Estate"
-              className="invert h-[60px]"
+              className="invert h-[55px]"
             />
           </div>
         </div>
