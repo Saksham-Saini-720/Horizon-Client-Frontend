@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { motion as Motion } from "framer-motion";
-import horizonLogo from "../../assets/icons/logo.png";
+import horizonLogo from "../../assets/icons/white_logo.png";
 import leadingReLogo from "../../assets/icons/Leading.png";
 import auction from "../../assets/icons/auction_logo.png";
 import village from "../../assets/icons/green_village.png";
 import tree from "../../assets/icons/tree.png";
 
-const TEXT = "Real\u00A0Property\u00A0Merchants";
+const TEXT = "";
 
 const WATERMARKS = [
   { src: auction,      x: "70%", y: "88%", rotate: 0, scale: 1.19,  invertBlack: true  },
