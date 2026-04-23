@@ -1,170 +1,409 @@
-import { useEffect, useRef } from "react";
-import { motion as Motion } from "framer-motion";
-import horizonLogo from "../../assets/icons/logo.png";
-import leadingReLogo from "../../assets/icons/Leading.png";
+import { useState } from "react";
+import { motion as Motion, AnimatePresence } from "framer-motion";
+import horizonLogo from "../../assets/icons/white_logo.png";
 import auction from "../../assets/icons/auction_logo.png";
 import village from "../../assets/icons/green_village.png";
 import tree from "../../assets/icons/tree.png";
 
-const TEXT = "Real\u00A0Property\u00A0Merchants";
-
-const WATERMARKS = [
-  { src: auction,      x: "70%", y: "88%", rotate: 0, scale: 1.19,  invertBlack: true  },
-  { src: leadingReLogo,x: "7%",  y: "5%",  rotate: 0, scale: 1.7,  invertBlack: true  },
-  { src: village,      x: "80%", y: "38%", rotate: 0, scale: 1.4,  invertBlack: false },
-  { src: tree,         x: "70%", y: "2%",  rotate: 0, scale: 1.99, invertBlack: true  },
-  { src: village,      x: "2%",  y: "35%", rotate: 0, scale: 1.4,  invertBlack: false },
-  { src: village,      x: "7%",  y: "82%", rotate: 0, scale: 1.65, invertBlack: false },
-  { src: auction,      x: "15%",  y: "58%", rotate: 0, scale: 1.2,  invertBlack: true  },
-  { src: leadingReLogo,x: "70%", y: "63%", rotate: 0, scale: 1.5,  invertBlack: true  },
-  { src: tree,         x: "30%", y: "45%", rotate: 0, scale: 1.99,  invertBlack: true  },
-  // ── Extra fills for desktop empty zones ──
-  // { src: village,      x: "40%", y: "68%", rotate: 0, scale: 0.9,  invertBlack: false },
-  // { src: auction,      x: "80%", y: "15%", rotate: 0, scale: 0.95, invertBlack: true  },
-  // { src: tree,         x: "40%", y: "93%", rotate: 0, scale: 1.6,  invertBlack: true  },
-  // { src: leadingReLogo,x: "78%", y: "82%", rotate: 0, scale: 1,  invertBlack: true  },
-  // { src: village,      x: "45%", y: "10%", rotate: 0, scale: 1, invertBlack: false },
+const SLIDES = [
+  {
+    id: 0,
+    badge: "Your Real Estate Partner",
+    heading: "Discover homes built for",
+    headingAccent: "real living.",
+    sub: "Horizon Properties brings you hand-picked listings from trusted agents across every neighbourhood.",
+    icon: village,
+  },
+  {
+    id: 1,
+    badge: "Smart Search",
+    heading: "Browse, save & connect with",
+    headingAccent: "verified agents.",
+    sub: "Save your favourites, set alerts for new listings, and chat directly with licensed professionals.",
+    icon: auction,
+  },
+  {
+    id: 2,
+    badge: "Welcome home",
+    heading: "Find a place that feels",
+    headingAccent: "like yours",
+    sub: "Browse hand-curated homes across the city, save favourites, and chat directly with verified agents.",
+    icon: tree,
+    isLast: true,
+  },
 ];
 
-export default function SplashScreen() {
-  const textPathRef = useRef(null);
+// alternating primary.light (#C96C38) and white rings
+const RINGS = [
+  { r: 195, color: "rgba(255,255,255,0.06)"   },   // white — outermost
+  { r: 150, color: "rgba(201,108,56,0.18)"    },   // primary.light
+  { r: 110, color: "rgba(255,255,255,0.09)"   },   // white
+  { r:  74, color: "rgba(201,108,56,0.28)"    },   // primary.light — innermost
+];
 
-  useEffect(() => {
-    const el = textPathRef.current;
-    if (!el) return;
-    el.innerHTML = "";
-    TEXT.split("").forEach((ch, i) => {
-      const ts = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-      ts.textContent = ch === " " ? "\u00A0" : ch;
-      ts.setAttribute("opacity", "0");
-      ts.style.transition = "opacity 0.18s ease";
-      el.appendChild(ts);
-      setTimeout(() => ts.setAttribute("opacity", "1"), 950 + i * 52);
-    });
-  }, []);
-
+function ConcentricRings() {
   return (
-    <Motion.div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-between"
-      style={{ backgroundColor: "#2D368E", padding: "5vh 0" }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        pointerEvents: "none",
+      }}
     >
-      {/* Background watermarks */}
-      {WATERMARKS.map((wm, i) => (
-        <Motion.img
+      {RINGS.map(({ r, color }, i) => (
+        <div
           key={i}
-          src={wm.src}
-          alt=""
-          aria-hidden="true"
           style={{
             position: "absolute",
-            left: wm.x,
-            top: wm.y,
-            width: "clamp(80px, 10vw, 160px)",
-            objectFit: "contain",
-            filter: wm.invertBlack
-              ? "invert(1) hue-rotate(180deg)"
-              : "brightness(0) invert(1)",
-            transform: `rotate(${wm.rotate}deg) scale(${wm.scale})`,
-            transformOrigin: "top left",
-            pointerEvents: "none",
-            userSelect: "none",
+            width: r * 2,
+            height: r * 2,
+            borderRadius: "50%",
+            border: `1px solid ${color}`,
           }}
-          initial={{ opacity: 0.1 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ duration: 1, delay: 0.3 + i * 0.1 }}
         />
       ))}
+    </div>
+  );
+}
 
-      {/* ── TOP SECTION: Logo + arc text ── */}
+const slideVariants = {
+  enter: (dir) => ({ x: dir > 0 ? 50 : -50, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir) => ({ x: dir > 0 ? -50 : 50, opacity: 0 }),
+};
+
+export default function LoadingScreen({ onComplete }) {
+  const [index, setIndex] = useState(0);
+  const [dir, setDir] = useState(1);
+
+  const slide = SLIDES[index];
+  const isLast = index === SLIDES.length - 1;
+  const total = SLIDES.length;
+
+  const goNext = () => {
+    if (isLast) { onComplete?.(); return; }
+    setDir(1);
+    setIndex((i) => i + 1);
+  };
+
+  const goPrev = () => {
+    if (index === 0) return;
+    setDir(-1);
+    setIndex((i) => i - 1);
+  };
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "linear-gradient(160deg, #2D368E 0%, #232C7A 45%, #171C26 100%)",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        fontFamily: "'DM Sans', sans-serif",
+      }}
+    >
+      {/* Ambient floating dots */}
       <Motion.div
-        style={{ position: "relative", width: 270, height: 240 }}
-        initial={{ opacity: 0, scale: 0.88 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut", delay: 0.25 }}
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+        style={{
+          position: "absolute",
+          top: "28%",
+          left: "12%",
+          width: 7,
+          height: 7,
+          borderRadius: "50%",
+          background: "#C96C38",
+          opacity: 0.9,
+          pointerEvents: "none",
+          zIndex: 2,
+        }}
+      />
+      <Motion.div
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+        style={{
+          position: "absolute",
+          top: "22%",
+          right: "14%",
+          width: 5,
+          height: 5,
+          borderRadius: "50%",
+          background: "rgba(255,255,255,0.75)",
+          pointerEvents: "none",
+          zIndex: 2,
+        }}
+      />
+
+      {/* Top bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "54px 24px 0",
+          position: "relative",
+          zIndex: 10,
+        }}
       >
-        <img
-          src={horizonLogo}
-          alt="Horizon"
+        <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, fontWeight: 500 }}>
+          Step{" "}
+          <span style={{ color: "#E8793A", fontWeight: 700 }}>
+            {String(index + 1).padStart(2, "0")}
+          </span>{" "}
+          of {String(total).padStart(2, "0")}
+        </span>
+
+        <button
+          onClick={() => onComplete?.()}
           style={{
-            width: 230,
-            objectFit: "contain",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            color: "white",
+            fontSize: 13,
+            fontWeight: 500,
+            padding: "6px 20px",
+            borderRadius: 999,
+            cursor: "pointer",
+          }}
+        >
+          Skip
+        </button>
+      </div>
+
+      {/* Center: concentric rings + logo */}
+      <div
+        style={{
+          flex: 1,
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1,
+          overflow: "hidden",
+        }}
+      >
+        <ConcentricRings />
+
+        {/* subtle glow behind logo — very low opacity so it doesn't create a colour blob */}
+        <div
+          style={{
             position: "absolute",
-            top: 120,
-            left: 20,
-            zIndex: 1,
-            clipPath: "inset(0% 0% 0% 0%)",
+            width: 200,
+            height: 200,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(201,108,56,0.12) 0%, transparent 70%)",
+            zIndex: 3,
           }}
         />
-        <svg
-          width="320"
-          height="250"
-          viewBox="0 0 320 120"
-          style={{ position: "absolute", top: 50, left: -30, zIndex: 2 }}
-        >
-          <defs>
-            <path id="rpmArc" d="M 10,110 A 160,160 0 0,1 310,110" />
-          </defs>
-          <text fontFamily="'Great Vibes', cursive" fontSize="26" fill="white" letterSpacing="1px">
-            <textPath
-              ref={textPathRef}
-              href="#rpmArc"
-              startOffset="52%"
-              textAnchor="middle"
-              letterSpacing="1"
-            />
-          </text>
-        </svg>
-      </Motion.div>
 
-      {/* ── MIDDLE: Bouncing dots ── */}
-      <div className="flex items-center gap-2">
-        {[0, 1, 2].map((i) => (
+        <img
+          src={horizonLogo}
+          alt="Horizon Properties"
+          style={{
+            width: 180,
+            objectFit: "contain",
+            filter: "drop-shadow(0 4px 24px rgba(232,121,58,0.28))",
+            position: "relative",
+            zIndex: 4,
+          }}
+        />
+      </div>
+
+      {/* Slide text */}
+      <div
+        style={{
+          padding: "0 28px 12px",
+          position: "relative",
+          zIndex: 10,
+          overflow: "hidden",
+        }}
+      >
+        <AnimatePresence mode="wait" custom={dir}>
           <Motion.div
+            key={index}
+            custom={dir}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.36, ease: [0.32, 0.72, 0, 1] }}
+          >
+            {/* Badge */}
+            <p
+              style={{
+                color: "#E8793A",
+                fontSize: 15,
+                fontStyle: "italic",
+                fontFamily: "'Georgia', serif",
+                marginBottom: 10,
+                marginTop: 0,
+              }}
+            >
+              {slide.badge}
+            </p>
+
+            {/* Heading */}
+            <h1
+              style={{
+                color: "white",
+                fontSize: 30,
+                fontWeight: 700,
+                lineHeight: 1.22,
+                margin: "0 0 2px 0",
+                letterSpacing: "-0.3px",
+              }}
+            >
+              {slide.heading}
+              {/* small orange dot after the heading line */}
+              <span style={{ color: "#E8793A", marginLeft: 4, fontSize: 22 }}>•</span>
+            </h1>
+
+            {/* Accent line */}
+            <h1
+              style={{
+                color: "#E8793A",
+                fontSize: 30,
+                fontWeight: 800,
+                fontStyle: "italic",
+                fontFamily: "'Georgia', serif",
+                lineHeight: 1.22,
+                margin: "0 0 16px 0",
+                letterSpacing: "-0.3px",
+              }}
+            >
+              {slide.headingAccent}
+            </h1>
+
+            {/* Subtitle */}
+            <p
+              style={{
+                color: "rgba(255,255,255,0.6)",
+                fontSize: 14,
+                lineHeight: 1.65,
+                margin: 0,
+                fontStyle: "italic",
+                fontFamily: "'Georgia', serif",
+              }}
+            >
+              {slide.sub}
+            </p>
+          </Motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Progress bars */}
+      <div
+        style={{
+          display: "flex",
+          gap: 6,
+          padding: "16px 28px 0",
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
+        {SLIDES.map((_, i) => (
+          <div
             key={i}
-            className="w-2 h-2 rounded-full bg-white"
-            animate={{ opacity: [0.3, 1, 0.3], y: [0, -6, 0] }}
-            transition={{ duration: 0.85, repeat: Infinity, delay: i * 0.18 }}
+            style={{
+              flex: 1,
+              height: 3,
+              borderRadius: 99,
+              background:
+                i < index
+                  ? "#E8793A"
+                  : i === index
+                  ? "rgba(255,255,255,0.9)"
+                  : "rgba(255,255,255,0.2)",
+              transition: "background 0.35s ease",
+            }}
           />
         ))}
       </div>
 
-      {/* ── BOTTOM SECTION: Member of ── */}
-      {/* No marginTop needed — justify-between handles spacing */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Motion.p
+      {/* Bottom nav */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "20px 28px 52px",
+          position: "relative",
+          zIndex: 10,
+          gap: 16,
+        }}
+      >
+        {/* Back button */}
+        <button
+          onClick={goPrev}
+          disabled={index === 0}
           style={{
-            color: "white",
-            fontSize: 13,
-            letterSpacing: 2,
-            opacity: 0.85,
-            textTransform: "uppercase",
-            margin: 0,
+            width: 50,
+            height: 50,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: index === 0 ? "not-allowed" : "pointer",
+            opacity: index === 0 ? 0.3 : 1,
+            flexShrink: 0,
+            transition: "opacity 0.2s",
           }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.85 }}
-          transition={{ duration: 0.6, delay: 1.4 }}
         >
-          A member of 
-        </Motion.p>
-        <Motion.img
-          src={leadingReLogo}
-          alt="LeadingRE"
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M15 18l-6-6 6-6"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+
+        {/* CTA button */}
+        <Motion.button
+          onClick={goNext}
           style={{
-            width: "clamp(190px, 30vw, 240px)",
-            // ↑ responsive logo width
-            filter: "brightness(0) invert(1)",
-            opacity: 0.9,
-            marginBottom: 58,
+            flex: 1,
+            height: 54,
+            borderRadius: 999,
+            background: "linear-gradient(135deg, #E8793A 0%, #D4601E 100%)",
+            border: "none",
+            color: "white",
+            fontSize: 16,
+            fontWeight: 700,
+            fontFamily: "'DM Sans', sans-serif",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            boxShadow: "0 6px 28px rgba(232,121,58,0.40)",
+            letterSpacing: "0.2px",
           }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.9 }}
-          transition={{ duration: 0.5, delay: 2.5 }}
-        />
+          whileTap={{ scale: 0.97 }}
+          whileHover={{ boxShadow: "0 8px 36px rgba(232,121,58,0.55)" }}
+        >
+          {isLast ? "Get started" : "Next"}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 12h14M13 6l6 6-6 6"
+              stroke="white"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </Motion.button>
       </div>
-    </Motion.div>
+    </div>
   );
 }

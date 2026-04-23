@@ -14,7 +14,9 @@ const HomePage = () => {
     location.pathname.startsWith("/map") ||
     location.pathname.startsWith("/chat/") ||// Individual conversation has its own header
     location.pathname.startsWith("/terms") ||
-    location.pathname.startsWith("/privacy"); 
+    location.pathname.startsWith("/privacy")||
+    location.pathname.startsWith("/login")||
+    location.pathname.startsWith("/register"); 
 
   // Hide footer on individual conversation page (has its own input bar)
   const hideFooter = location.pathname.match(/^\/chat\/.+/) || location.pathname.startsWith("/terms") || location.pathname.startsWith("/privacy") || location.pathname.startsWith("/map");
