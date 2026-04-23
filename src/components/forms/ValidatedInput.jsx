@@ -12,6 +12,7 @@ const ValidatedInput = memo(({
   hint,
   className = "",
   extraClass = "",
+  leftIcon,
 }) => {
   const [fieldError, setFieldError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -44,6 +45,11 @@ const ValidatedInput = memo(({
           ? "border-red-300 bg-red-50 focus-within:border-red-400"
           : "border-gray-200 focus-within:border-gray-800"
       }`}>
+        {leftIcon && (
+          <span className="absolute left-3.5 text-gray-400 flex items-center pointer-events-none">
+            {leftIcon}
+          </span>
+        )}
         <input
           ref={inputRef}
           type={inputType}
@@ -53,8 +59,9 @@ const ValidatedInput = memo(({
           required={required}
           onBlur={handleBlur}
           onFocus={handleFocus}
-          className={`w-full bg-transparent px-4 py-3.5 text-[16px] text-gray-800 placeholder-gray-400
-            outline-none rounded-xl ${extraClass} ${isPassword ? 'pr-11' : ''}`}
+          className={`w-full bg-transparent py-3.5 text-[16px] text-gray-800 placeholder-gray-400
+            outline-none rounded-xl ${extraClass}
+            ${leftIcon ? 'pl-10' : 'pl-4'} ${isPassword ? 'pr-11' : 'pr-4'}`}
         />
 
         {/* Eye toggle — only for password fields */}

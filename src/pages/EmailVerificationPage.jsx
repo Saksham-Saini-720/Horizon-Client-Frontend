@@ -1,39 +1,37 @@
 import { memo, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuth } from "../hooks/utils/useRedux";
 import useResendVerification from "../hooks/auth/useResendVerification";
 import { useDispatch } from "react-redux";
 import { clearAuth } from "../store/slices/authSlice";
+import Spinner from "../components/ui/Spinner";
+import AuthPageHeader from "../components/auth/AuthPageHeader";
+
+const MotionCard = motion.div;
 
 const EmailVerificationPage = memo(() => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const dispatch = useDispatch()
+  const navigate       = useNavigate();
+  const { user }       = useAuth();
+  const dispatch       = useDispatch();
   const resendMutation = useResendVerification();
 
   const [countdown, setCountdown] = useState(0);
-  const [canResend, setCanResend] = useState(true);
+  const [canResend,  setCanResend]  = useState(true);
 
   useEffect(() => {
     let timer;
-
     if (countdown > 0) {
-      timer = setTimeout(() => {
-        setCountdown(prev => prev - 1);
-      }, 1000);
+      timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
     } else if (countdown === 0 && !canResend) {
       // eslint-disable-next-line
       setCanResend(true);
     }
-
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [countdown, canResend]); 
+    return () => { if (timer) clearTimeout(timer); };
+  }, [countdown, canResend]);
 
   const handleResend = useCallback(() => {
     if (!canResend || resendMutation.isPending) return;
-
     resendMutation.mutate(undefined, {
       onSuccess: () => {
         setCountdown(60);
@@ -42,69 +40,71 @@ const EmailVerificationPage = memo(() => {
     });
   }, [canResend, resendMutation]);
 
-  const handleGoToLogin = () => {
-    dispatch(clearAuth())
+  const handleGoToLogin = useCallback(() => {
+    dispatch(clearAuth());
     navigate("/login");
-  };
+  }, [dispatch, navigate]);
+
+  const resendActive = canResend && countdown === 0 && !resendMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-surface to-amber-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex flex-col bg-surface overflow-hidden">
 
-        {/* Card */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 text-center">
+      <AuthPageHeader />
 
-          {/* Email Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center shadow-lg">
-              <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
+      {/* ── Card — constrained width, slides up on mount ── */}
+      <div className="flex justify-center px-5 -mt-7 pb-12 w-full z-20">
+        <MotionCard
+          className="bg-white rounded-3xl shadow-2xl w-full px-8 pt-8 pb-8 text-center"
+          style={{ minWidth: 390 }}
+          initial={{ y: 120, opacity: 0 }}
+          animate={{ y: 0,   opacity: 1 }}
+          transition={{ type: "spring", stiffness: 110, damping: 18, delay: 0.05 }}
+        >
+          {/* Envelope icon */}
+          <div className="mb-5 flex justify-center">
+            <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center">
+              <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#C96C38" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
               </svg>
             </div>
           </div>
 
-          {/* Heading */}
-          <h1 className="text-[26px] font-semibold text-primary font-myriad mb-3">
-            Check Your Email
-          </h1>
-
-          {/* Message */}
-          <p className="text-[16px] text-gray-600 font-myriad leading-relaxed mb-6">
-            We've sent a verification email to{" "}
+          <h2 className="text-[28px] font-bold text-center text-primary mb-1">
+            Check your{" "}
+            <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+              email
+            </span>
+          </h2>
+          <p className="text-[15px] text-gray-500 leading-relaxed mb-5">
+            We&apos;ve sent a verification link to{" "}
             <span className="font-semibold text-primary">
               {user?.email || "your email address"}
             </span>
-            . Click the link in the email to verify your account.
+            . Click the link to verify your account.
           </p>
 
-          {/* Info Box */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-            <p className="text-[15px] text-amber-800 font-myriad leading-relaxed">
-              💡 <strong>Tip:</strong> Can't find the email? Check your spam or junk folder.
+          {/* Tip box */}
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left">
+            <p className="text-[14px] text-amber-800 leading-relaxed">
+              💡 <strong>Tip:</strong> Can&apos;t find the email? Check your spam or junk folder.
             </p>
           </div>
 
-          {/* Resend Button */}
+          {/* Resend button */}
           <button
-            type="button" // ✅ fix: prevents form submit
+            type="button"
             onClick={handleResend}
-            disabled={!canResend || resendMutation.isPending || countdown > 0}
-            className="w-full px-6 py-3.5 rounded-xl text-[16px] font-semibold font-myriad transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg mb-3"
+            disabled={!resendActive}
+            className="w-full py-4 rounded-full text-[15px] font-semibold transition-colors disabled:cursor-not-allowed mb-3 flex items-center justify-center gap-2"
             style={{
-              background: canResend && countdown === 0 && !resendMutation.isPending
-                ? "linear-gradient(135deg, #F5B731, #E8A020)"
-                : "#E5E7EB",
-              color: canResend && countdown === 0 && !resendMutation.isPending
-                ? "white"
-                : "#9CA3AF"
+              backgroundColor: resendActive ? "#C96C38" : "#E5E7EB",
+              color:           resendActive ? "#ffffff" : "#9CA3AF",
             }}
           >
             {resendMutation.isPending ? (
-              <span className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Sending...
-              </span>
+              <><Spinner size="sm" /> Sending…</>
             ) : countdown > 0 ? (
               `Resend in ${countdown}s`
             ) : (
@@ -114,27 +114,25 @@ const EmailVerificationPage = memo(() => {
 
           {/* Back to Login */}
           <button
-            type="button" // ✅ fix
+            type="button"
             onClick={handleGoToLogin}
-            className="w-full px-6 py-3 rounded-xl border border-gray-200 text-[16px] font-semibold text-gray-700 font-myriad hover:bg-gray-50 active:scale-95 transition-all"
+            className="w-full py-3.5 rounded-full border border-gray-200 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Back to Login
           </button>
 
-        </div>
-
-        {/* Footer Note */}
-        <p className="text-center text-[16px] text-gray-500 mt-6 font-myriad">
-          Already verified?{" "}
-          <button
-            type="button" // ✅ fix
-            onClick={handleGoToLogin}
-            className="text-secondary font-semibold hover:text-amber-700 hover:underline"
-          >
-            Log in here
-          </button>
-        </p>
-
+          <p className="text-sm text-center text-gray-400 mt-5">
+            Already verified?{" "}
+            <button
+              type="button"
+              onClick={handleGoToLogin}
+              className="font-semibold hover:underline"
+              style={{ color: "#C96C38" }}
+            >
+              Log in here
+            </button>
+          </p>
+        </MotionCard>
       </div>
     </div>
   );
