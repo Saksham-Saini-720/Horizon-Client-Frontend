@@ -11,8 +11,7 @@ const ProfileHeader = memo(({ user, onEdit }) => {
 
   return (
     <div
-      className="relative overflow-hidden px-5 pt-8 pb-16"
-      style={{ background: 'linear-gradient(150deg, #1a2550 0%, #2D368E 100%)' }}
+      className="relative overflow-hidden px-5 pt-8 pb-16 bg-gradient-to-br from-[#1a2550] to-secondary"
     >
       {/* ── Glow orbs ── */}
       <div

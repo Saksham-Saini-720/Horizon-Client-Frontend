@@ -155,13 +155,13 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="flex items-center gap-3 my-5">
+          {/* <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px bg-gray-100" />
             <span className="text-xs text-gray-400">or continue with</span>
             <div className="flex-1 h-px bg-gray-100" />
-          </div>
+          </div> */}
 
-          <div className="flex gap-3">
+          {/* <div className="flex gap-3">
             <button
               type="button"
               className="flex-1 flex items-center justify-center gap-2 border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
@@ -176,7 +176,7 @@ export default function LoginPage() {
               <FaApple className="w-5 h-5" />
               Apple
             </button>
-          </div>
+          </div> */}
 
           <p className="text-sm text-center text-gray-400 mt-5">
             New here?{" "}
