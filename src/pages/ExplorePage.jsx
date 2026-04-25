@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useMemo, useEffect, useRef  } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
@@ -13,16 +13,15 @@ import FeaturedCard from "../components/explore/FeaturedCard";
 import NewListingCard from "../components/explore/NewListingCard";
 import SectionHeader from "../components/explore/SectionHeader";
 import MostViewedCarousel from "../components/explore/MostViewedCarousel";
-import FilterChips from "../components/explore/FilterChips";
 import { FeaturedCardSkeleton, NewListingCardSkeleton } from "../components/ui/SkeletonCards";
 import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
 import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
 import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
 import Pagination from "../components/ui/Pagination";
-import one from "../assets/slides/one.jpeg";
-import two from "../assets/slides/two.jpeg";
-import three from "../assets/slides/three.jpeg";
-import four from "../assets/slides/four.jpeg";
+import auctionLogo from "../assets/icons/auction_logo.png";
+import greenVillage from "../assets/icons/green_village.png";
+import leading from "../assets/icons/Leading.png";
+import tree from "../assets/icons/tree.png";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
@@ -50,84 +49,13 @@ const ExplorePage = () => {
 
   const [activeModal, setActiveModal] = useState(null);
 
-  // --- Promo Carousel ---
+  // --- Our World Section ---
   const PROMO_SLIDES = [
-    {
-      id: 1,
-      image: one,
-    },
-    {
-      id: 2,
-      image: two,
-    },
-    {
-      id: 3,
-      image: three,
-    },
-    {
-      id: 4,
-      image: four,
-    },
+    { id: 1, image: auctionLogo,  label: "AUCTION",  bg: "#ECEAE5" },
+    { id: 2, image: greenVillage, label: "VILLAGE",   bg: "#B8CAB5" },
+    { id: 3, image: leading,      label: "LEADING",   bg: "#DDD0B0" },
+    { id: 4, image: tree,         label: "OUR TREES", bg: "#B8CAB5" },
   ];
-
-  const PEEK = 20;   // px visible from each side
-  const GAP  = -2;   // px gap between slides
-
-  const [carouselIndex, setCarouselIndex] = useState(0);
-  const carouselWrapRef = useRef(null);
-  const [slideWidth, setSlideWidth] = useState(0);
-  const touchStartX = useRef(0);
-
-  const [visibleCount, setVisibleCount] = useState(1);
-
-  useEffect(() => {
-    const calc = () => {
-      if (carouselWrapRef.current) {
-        const containerWidth = carouselWrapRef.current.offsetWidth;
-        const isLarge = window.innerWidth >= 768;
-        const count = isLarge ? 2 : 1;
-        setVisibleCount(count);
-
-        // slideWidth = (container - peek both sides - gaps between visible slides) / count
-        const totalGaps = (count - 1) * GAP;
-        setSlideWidth((containerWidth - PEEK * 2 - totalGaps) / count);
-      }
-    };
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
-  }, [GAP]);
-
-  // Auto-scroll every 3.5 seconds
-  useEffect(() => {
-  const interval = setInterval(() => {
-    setCarouselIndex((prev) => {
-      const next = prev + 1;
-      return next >= PROMO_SLIDES.length ? 0 : next;
-    });
-  }, 3500);
-  return () => clearInterval(interval);
-}, [PROMO_SLIDES.length]);
-
- const goPrev = useCallback(() => {
-  setCarouselIndex((prev) => Math.max(prev - visibleCount, 0));
-}, [visibleCount]);
-
-const goNext = useCallback(() => {
-  setCarouselIndex((prev) => {
-    const next = prev + visibleCount;
-    return next >= PROMO_SLIDES.length ? 0 : next;
-  });
-}, [visibleCount]);
-
-  const handleCarouselTouchStart = useCallback((e) => {
-    touchStartX.current = e.touches[0].clientX;
-  }, []);
-
-  const handleCarouselTouchEnd = useCallback((e) => {
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) diff > 0 ? goNext() : goPrev();
-  }, [goNext, goPrev]);
 
   const recent = useRecentSearches();
   const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
@@ -283,7 +211,6 @@ const goNext = useCallback(() => {
 
   return (
     <div className="min-h-screen bg-surface">
-      {/* Header WITHOUT FilterChips */}
       <ExploreHeader
         onSubmitSearch={handleSearch}
         recentSearches={recent.searches}
@@ -291,6 +218,10 @@ const goNext = useCallback(() => {
         onClearAllRecent={recent.clearAll}
         currentLocation={selectedLocation}
         onLocationChange={handleLocationChange}
+        activeFilter={activeFilter}
+        onToggle={handleFilterToggle}
+        dimmed={isFeaturedLoading || isListingsLoading}
+        onOpenFilters={() => setActiveModal('filters')}
       />
 
       {showNearby && (
@@ -316,92 +247,85 @@ const goNext = useCallback(() => {
       )}
 
       <div className="pb-28">
-        {/* Most Viewed Carousel */}
+        {/* Most Viewed Carousel — overlaps the header bottom edge */}
         {!showNearby && (
-          <MostViewedCarousel
-            properties={mostViewedQuery.data || []}
-            isLoading={mostViewedQuery.isLoading}
-            isError={mostViewedQuery.isError}
-            onRetry={() => mostViewedQuery.refetch()}
-          />
+          <div className="relative z-40 -mt-12">
+            <MostViewedCarousel
+              properties={mostViewedQuery.data || []}
+              isLoading={mostViewedQuery.isLoading}
+              isError={mostViewedQuery.isError}
+              onRetry={() => mostViewedQuery.refetch()}
+            />
+            {/* Premium heading below carousel */}
+            {!mostViewedQuery.isLoading && !mostViewedQuery.isError && (mostViewedQuery.data?.length ?? 0) > 0 && (
+              <div className="px-5 pt-3 pb-2 flex items-center justify-between ml-4">
+                <div className="flex items-center gap-3">
+                  <div>
+                    <h2 className="text-[21px] font-bold text-primary font-myriad tracking-tight leading-none">
+                      Most Viewed
+                    </h2>
+                    <p className="text-[10px] font-semibold text-gray-400 font-myriad tracking-[0.14em] uppercase mt-0.5">
+                      Trending Properties
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigate("/search?sort=views")}
+                  className="text-[13px] font-semibold text-primary-light font-myriad flex items-center gap-1 hover:opacity-75 transition-opacity"
+                >
+                  See All
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
         )}
 
-      
-        <div className=" top-[140px] z-40 bg-gradient-to-b from-white via-white to-transparent pt-3 shadow-sm">
-          <div className="relative">
-            {/* Subtle top gradient border */}
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-            
-            {/* Premium filter chips container */}
-            <div className="px-4">
-              <FilterChips
-                activeFilter={activeFilter}
-                onToggle={handleFilterToggle}
-                dimmed={isFeaturedLoading || isListingsLoading}
+        {/* Our World Section */}
+        <div className="mt-4 mb-2 py-2">
+          <div className="flex items-center justify-between px-5 mb-5">
+            <div className="relative inline-block pb-[6px]">
+              <h2 className="text-[23px] leading-none" style={{ color: "#1A1A1A" }}>
+                <span className="font-bold font-myriad text-secondary">Our </span>
+                <span className="text-primary-light" style={{ fontFamily: "'Georgia', serif", fontStyle: "italic", fontWeight: 400 }}>
+                  world
+                </span>
+              </h2>
+              <span
+                className="absolute left-0 bottom-0 h-[2px] w-[52px]"
+                style={{ backgroundColor: "#C96C38" }}
               />
             </div>
-            
-            {/* Subtle bottom gradient border */}
-            <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-          </div>
-        </div>
-
-        {/* Promo Carousel - 2 slides on large screen, 1 on small */}
-        <div className="mt-3 mb-2 py-1">
-          <div
-            ref={carouselWrapRef}
-            className="overflow-hidden w-full"
-            style={{ padding: `0 ${PEEK}px` }}
-          >
-            <div
-              className="flex"
-              style={{
-                transform: `translateX(${-carouselIndex * (slideWidth + GAP)}px)`,
-                transition: "transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-                willChange: "transform",
-              }}
-              onTouchStart={handleCarouselTouchStart}
-              onTouchEnd={handleCarouselTouchEnd}
+            <button
+              className="text-[11px] font-bold tracking-[0.18em] font-myriad uppercase"
+              style={{ color: "#C96C38" }}
             >
-              {PROMO_SLIDES.map((slide, i) => (
+              EXPLORE →
+            </button>
+          </div>
+
+          <div className="flex gap-7 px-5 overflow-x-auto scrollbar-hide pb-2">
+            {PROMO_SLIDES.map((slide) => (
+              <div key={slide.id} className="flex flex-col items-center gap-[10px] flex-shrink-0">
                 <div
-                  key={slide.id}
-                  className="relative flex-shrink-0 overflow-hidden my-3 rounded-2xl"
-                  style={{
-                    // Large screen (>=768px): 2 slides fit → half width minus gap & peek
-                    // Small screen (<768px): 1 slide → full width minus peek
-                    width: slideWidth > 0 ? `${slideWidth}px` : "calc(100% - 40px)",
-                    height: "clamp(120px, 18vw, 230px)",
-                    marginRight: `${GAP}px`,
-                    // opacity: i === carouselIndex ? 1 : 0.45,
-                    transform: i === carouselIndex ? "scale(1)" : "scale(0.93)",
-                    transition: "opacity 0.45s ease, transform 0.45s ease",
-                    boxShadow: i === carouselIndex
-                      ? "0 8px 24px rgba(0,0,0,0.45)"
-                      : "0 4px 12px rgba(0,0,0,0.12)",
-                  }}
+                  className="w-[78px] h-[78px] rounded-full overflow-hidden flex items-center justify-center p-[10px]"
+                  style={{ backgroundColor: slide.bg }}
                 >
                   <img
                     src={slide.image}
-                    alt={`slide-${slide.id}`}
-                    className="w-full h-full object-cover"
+                    alt={slide.label}
+                    className="w-full h-full object-contain"
                     draggable={false}
                   />
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Dot indicators */}
-          <div className="flex justify-center gap-1.5 mt-2">
-            {PROMO_SLIDES.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCarouselIndex(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === carouselIndex ? "w-5 bg-secondary" : "w-1.5 bg-gray-300"
-                }`}
-              />
+                <span
+                  className="text-[10px] font-semibold font-myriad tracking-[0.12em] text-center text-secondary"
+                >
+                  {slide.label}
+                </span>
+              </div>
             ))}
           </div>
         </div>

@@ -16,3 +16,12 @@
   font-weight: 700;
   font-style: normal;
 }
+
+/* Hide scrollbars everywhere the utility class is used */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

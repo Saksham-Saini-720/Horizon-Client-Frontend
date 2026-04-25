@@ -1,5 +1,4 @@
 import { memo, useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import MostViewedCard from "./MostViewedCard";
 import { MostViewedCardSkeleton } from "../ui/SkeletonCards";
 import EmptyState from "../states/EmptyState";
@@ -15,7 +14,6 @@ const MostViewedCarousel = memo(({
   isError = false,
   onRetry,
 }) => {
-  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const containerRef = useRef(null);
@@ -61,20 +59,7 @@ const MostViewedCarousel = memo(({
   // ── Loading ──
   if (isLoading) {
     return (
-      <div className="mt-6 mb-8">
-        <div className="px-4 mb-4">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center animate-pulse">
-              <span className="text-[16px]">🔥</span>
-            </div>
-            <h2 className="text-[20px] font-bold text-primary font-myriad">
-              Most Viewed Properties
-            </h2>
-          </div>
-          <p className="text-[14px] text-gray-500 font-myriad mt-1">
-            Trending properties everyone is watching
-          </p>
-        </div>
+      <div className="mb-2">
         <div className="flex gap-4 px-4 overflow-x-hidden">
           {Array(3).fill(0).map((_, i) => <MostViewedCardSkeleton key={i} />)}
         </div>
@@ -105,27 +90,7 @@ const MostViewedCarousel = memo(({
   }
 
   return (
-    <div className="mt-6 ">
-      {/* Header */}
-      <div className="px-4 mb-4 flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2.5 pl-8">
-            <h2 className="text-[20px] font-bold text-primary font-myriad">
-              Most Viewed Properties
-            </h2>
-          </div>
-          <p className="text-[13px] text-gray-500 font-myriad mt-1 ml-8">
-            Trending properties everyone is watching
-          </p>
-        </div>
-        <button
-          onClick={() => navigate("/search?sort=views")}
-          className="text-[13px] font-semibold text-primary-light hover:text-secondary/80 transition-colors font-myriad"
-        >
-          See All →
-        </button>
-      </div>
-
+    <div>
       {/* Carousel */}
       <div
         className="relative"
