@@ -3,8 +3,8 @@ import whiteLogo from "../../assets/icons/white_logo.png";
 
 const AuthPageHeader = memo(() => (
   <div
-    className="relative flex flex-col items-center justify-end pb-10 pt-14 overflow-hidden"
-    style={{ minHeight: "10vh", background: "linear-gradient(150deg, #1a2550 0%, #2D368E 100%)" }}
+    className="relative flex flex-col items-center justify-end pb-10 pt-14 overflow-hidden bg-gradient-to-br from-[#1a2550] to-secondary"
+    style={{ minHeight: "10vh" }}
   >
     {/* Primary glow orb — top-right */}
     <div

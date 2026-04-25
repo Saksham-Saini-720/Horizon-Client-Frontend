@@ -58,33 +58,22 @@ const PropertyDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  
+
   // State for enquiry trigger
   const [shouldOpenEnquiry, setShouldOpenEnquiry] = useState(false);
-  
+
   // Fetch property details
   const { data: property, isLoading, isError, error, refetch } = usePropertyDetail(id);
-  
+
   // Fetch agent details (only if authenticated)
-  const { 
-    data: agentDetails, 
-    isLoading: isAgentLoading 
+  const {
+    data: agentDetails,
+    isLoading: isAgentLoading,
   } = usePropertyAgent(id);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
-
-  // // Handle enquiry trigger from AgentCard
-  // const handleEnquire = useCallback(() => {
-  //   setShouldOpenEnquiry(true);
-  //   setTimeout(() => {
-  //     const actionsElement = document.querySelector('[data-property-actions]');
-  //     if (actionsElement) {
-  //       actionsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  //     }
-  //   }, 100);
-  // }, []);
 
   // Reset enquiry trigger after it's been handled
   useEffect(() => {
@@ -117,55 +106,58 @@ const PropertyDetailPage = () => {
   }
 
   // Determine which agent data to use
-  // If authenticated:
-  //   - If agentDetails exists (API returned agent) → use it
-  //   - If agentDetails is null (no dedicated agent assigned) → pass null to show "No Agent" state
-  //   - If not authenticated → use basic owner info from property
-  const displayAgent = isAuthenticated 
-    ? agentDetails  // Will be null if no agent assigned, or agent object if assigned
-    : property.agent; // Fallback for non-authenticated users
+  const displayAgent = isAuthenticated
+    ? agentDetails
+    : property.agent;
 
   // Success state
   return (
-    <div className="min-h-screen bg-white pb-24">
-      {/* Image Carousel with Header Overlay */}
-      <div className="relative min-h-60">
+    <div className="min-h-screen bg-gray-50 pb-44">
+      {/* Hero Image with Header Overlay */}
+      <div className="relative">
         <PropertyImageCarousel images={property.images} />
         <PropertyHeader propertyId={id} />
       </div>
 
-      {/* Property Info */}
-      <PropertyInfo property={property} />
+      {/* White floating card slides up over the image */}
+      <div className="-mt-8 relative z-10 rounded-t-[28px] bg-white pb-6 -mb-8 shadow-2xl">
+        {/* Drag handle indicator */}
+        <div className="flex justify-center pt-3 pb-0">
+          <div className="w-10 h-1 rounded-full bg-gray-200" />
+        </div>
 
-      {/* Stats */}
-      <PropertyStats
-        bedrooms={property.bedrooms}
-        bathrooms={property.bathrooms}
-        area={property.area}
-        areaUnit={property.areaUnit}
-      />
+        {/* Property Info: tags, title, location, price */}
+        <PropertyInfo property={property} />
 
-      {/* Description */}
-      {property.description && (
-        <PropertyDescription description={property.description} />
-      )}
+        {/* Bed / Bath / Sqft stats */}
+        <PropertyStats
+          bedrooms={property.bedrooms}
+          bathrooms={property.bathrooms}
+          area={property.area}
+          areaUnit={property.areaUnit}
+        />
 
-      {/* Amenities */}
-      {property.amenities && property.amenities.length > 0 && (
-        <PropertyAmenities amenities={property.amenities} />
-      )}
+        {/* Description */}
+        {property.description && (
+          <PropertyDescription description={property.description} />
+        )}
 
-      {/* Agent Card - Always show (with "No Agent" state if needed) */}
-      <AgentCard 
-        agent={displayAgent} 
-        property={property}
-        isLoading={isAuthenticated && isAgentLoading}
-        // onEnquire={handleEnquire}
-      />
+        {/* Amenities */}
+        {property.amenities && property.amenities.length > 0 && (
+          <PropertyAmenities amenities={property.amenities} />
+        )}
 
-      {/* Action Buttons (Fixed at bottom) */}
-      <PropertyActions 
-        agent={displayAgent} 
+        {/* Agent Card */}
+        <AgentCard
+          agent={displayAgent}
+          property={property}
+          isLoading={isAuthenticated && isAgentLoading}
+        />
+      </div>
+
+      {/* Fixed action bar (Schedule a tour + Enquiry) */}
+      <PropertyActions
+        agent={displayAgent}
         property={property}
         shouldOpenEnquiry={shouldOpenEnquiry}
       />

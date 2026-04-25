@@ -2,44 +2,74 @@
 import { memo } from "react";
 
 const PropertyInfo = memo(({ property }) => {
+  // Split title so the last word gets italic orange styling
+  const words = (property.title || '').trim().split(' ');
+  const lastWord = words.pop();
+  const titlePrefix = words.join(' ');
+
+  // Parse the formatted price string (e.g. "$ 1,650,000") to extract currency vs number
+  const rawCurrency = property.rawData?.currency || '';
+  const rawPrice = property.rawPrice;
+
+  const formattedNumber = rawPrice
+    ? new Intl.NumberFormat('en-US').format(rawPrice)
+    : property.price;
+
+  // Price per sqft
+  const sqftNum = parseInt((property.area || '').replace(/,/g, ''), 10);
+  const pricePerSqft = rawPrice && sqftNum > 0
+    ? Math.round(rawPrice / sqftNum)
+    : null;
+
   return (
-    <div className="px-5 pt-5">
-      {/* Tag + Type */}
+    <div className="px-5 pt-5 pb-4">
+
+      {/* Status / type tag badges */}
       <div className="flex items-center gap-2 mb-3">
-        <span className={`text-[12px] font-semibold px-3 py-1 rounded-full ${
-          property.tag === "For Sale" 
-            ? "bg-secondary text-white" 
-            : "bg-secondary text-white"
-        }`}>
+        <span className="text-[10px] font-semibold px-3 py-1.5 rounded-full border border-teal-500 text-teal-600 tracking-widest uppercase font-myriad">
           {property.tag}
         </span>
-        <span className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider">
-          {property.type}
-        </span>
+        {property.type && (
+          <span className="text-[10px] font-semibold px-3 py-1.5 rounded-full border border-amber-400 text-amber-600 tracking-widest uppercase font-myriad">
+            {property.type}
+          </span>
+        )}
       </div>
 
-      {/* Price */}
-      <p className="text-[28px] font-semibold text-primary font-myriad mb-2">
-        {property.price}
-      </p>
-
-      {/* Title */}
-      <h1 className="text-[20px] font-semibold text-primary font-myriad mb-2">
-        {property.title}
+      {/* Title — last word is italic orange for the premium look */}
+      <h1 className="text-[24px] font-bold text-primary font-myriad leading-tight mb-1.5">
+        {titlePrefix && <span>{titlePrefix} </span>}
+        <span className="italic text-primary-light">{lastWord}</span>
       </h1>
 
       {/* Location */}
-      <div className="flex items-center gap-1.5">
-        <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-        <p className="text-[15px] text-gray-600 font-myriad">
-          {property.location}
-        </p>
+      <p className="text-[13px] text-gray-500 font-myriad mb-4">
+        <span className="text-gray-400 mr-1">—</span>
+        {property.location}
+      </p>
+
+      {/* Dark navy price banner */}
+      <div className="bg-gradient-to-br from-[#1a2550] to-secondary rounded-2xl px-5 py-4 flex items-center justify-between">
+        <div className="flex items-baseline gap-2">
+          {rawCurrency && (
+            <span className="text-[11px] text-white/50 font-semibold font-myriad uppercase tracking-wider">
+              {rawCurrency}
+            </span>
+          )}
+          <span className="text-[28px] font-bold text-white font-myriad tracking-tight">
+            {formattedNumber}
+          </span>
+        </div>
+        {pricePerSqft && (
+          <span className="text-[13px] text-white/55 font-myriad">
+            ${pricePerSqft}/sqft
+          </span>
+        )}
       </div>
+
     </div>
   );
 });
 
+PropertyInfo.displayName = 'PropertyInfo';
 export default PropertyInfo;
