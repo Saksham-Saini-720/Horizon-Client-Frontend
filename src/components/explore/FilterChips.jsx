@@ -1,77 +1,52 @@
-import  { memo } from "react";
-import { FaHome } from "react-icons/fa";
-import { FaKey } from "react-icons/fa";
-import { FaDollarSign } from "react-icons/fa";
-import { FaBed } from "react-icons/fa6";
-import { FaLocationDot } from "react-icons/fa6";
-import { FaFilter } from "react-icons/fa";
-
+import { memo } from "react";
 
 const FILTERS = [
-  {
-    id: "buy", label: "Buy",
-    icon: (
-      <FaHome size={30} color="currentColor" />
-    ),
-  },
-  {
-    id: "rent", label: "Rent",
-    icon: (
-      <FaKey size={25} color="currentColor" />
-    ),
-  },
-  {
-    id: "price", label: "Price",
-    icon: (
-      <FaDollarSign size={30} color="currentColor" />
-    ),
-  },
-  {
-    id: "bedrooms", label: "Bedrooms",
-    icon: (
-      <FaBed size={30} color="currentColor" />
-    ),
-  },
-  {
-    id: "nearme", label: "Location",
-    icon: (
-      <FaLocationDot size={30} color="currentColor" />
-    ),
-  },
-  {
-    id: "filters", label: "Filters",
-    icon: (
-      <FaFilter size={30} color="currentColor" />
-    ),
-  },
+  { id: "buy",      label: "Buy" },
+  { id: "rent",     label: "Rent" },
+  { id: "price",    label: "Price" },
+  { id: "bedrooms", label: "Bedrooms" },
+  { id: "nearme",   label: "Location" },
+  { id: "filters",  label: "Filters" },
 ];
 
 const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => (
-  <div className={`flex items-start gap-2 px-4 py-4 overflow-x-auto scrollbar-hide transition-opacity duration-150 ${dimmed ? "opacity-60" : "opacity-100"}`}>
-    {FILTERS.map(({ id, label, icon }) => {
+  <div
+    className={`flex gap-2.5 overflow-x-auto scrollbar-hide mb-10 p-2 transition-opacity duration-150 ${
+      dimmed ? "opacity-60" : "opacity-100"
+    }`}
+  >
+    {FILTERS.map(({ id, label }) => {
       const isActive = activeFilter === id;
       return (
         <button
           key={id}
           onClick={() => onToggle(id)}
-          className="flex flex-col items-center gap-[7px] flex-shrink-0 w-[68px] active:scale-95 transition-transform"
+          className="flex-shrink-0 px-5 py-[7px] rounded-full text-[13px] font-semibold font-myriad active:scale-95 transition-all duration-150"
+          style={
+            isActive
+              ? {
+                  backgroundColor: "#C96C38",
+                  color: "#fff",
+                  border: "1.5px solid transparent",
+                  boxShadow:
+                    "0 0 0 3px rgba(201,108,56,0.30), 0 4px 18px rgba(201,108,56,0.60)",
+                }
+              : {
+                  background: "rgba(255,255,255,0.10)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  color: "rgba(255,255,255,0.88)",
+                  border: "1.5px solid rgba(255,255,255,0.30)",
+                  boxShadow: "0 4px 18px rgba(0,0,0,0.2)",
+                }
+          }
         >
-          <div className={`w-[60px] h-[60px] rounded-2xl flex items-center justify-center transition-all
-            ${isActive
-              ? "border-2 border-[#1a1a2e] bg-[#f0f0f8] text-[#1a1a2e]"
-              : "border border-[#e8e8e8] bg-white text-primary-light hover:bg-gray-50"
-            }`}
-          >
-            {icon}
-          </div>
-          <span className={`text-[11px] font-bold text-center leading-tight w-full
-            ${isActive ? "text-[#1a1a2e]" : "text-gray-400"}`}
-          >
-            {label}
-          </span>
+          {label}
         </button>
       );
     })}
   </div>
 ));
+
+FilterChips.displayName = "FilterChips";
 export default FilterChips;

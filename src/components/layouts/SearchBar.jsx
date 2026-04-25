@@ -119,6 +119,7 @@ const SearchBar = memo(({
   onClearAllRecent,       // () => void
   placeholder = "Search location, city, or area...",
   initialQuery = "",
+  showSearchButton = true,
 }) => {
   const inputRef             = useRef(null);
   const [query, setQuery]    = useState(initialQuery);
@@ -191,16 +192,18 @@ const SearchBar = memo(({
           </button>
         )}
 
-        <div className="w-px h-5 bg-gray-200 flex-shrink-0" />
-
-        {/* Search button */}
-        <button
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={handleSubmit}
-          className="flex-shrink-0 h-8 px-3 rounded-lg text-[15px] font-semibold text-white transition-all active:scale-95 bg-primary-light"
-        >
-          Search
-        </button>
+        {showSearchButton && (
+          <>
+            <div className="w-px h-5 bg-gray-200 flex-shrink-0" />
+            <button
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={handleSubmit}
+              className="flex-shrink-0 h-8 px-3 rounded-lg text-[15px] font-semibold text-white transition-all active:scale-95 bg-primary-light"
+            >
+              Search
+            </button>
+          </>
+        )}
       </div>
 
       {/* Dropdown */}

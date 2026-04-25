@@ -39,7 +39,7 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-bold/50 backdrop-blur-sm z-50 animate-in fade-in duration-300"
+        className="fixed inset-0 bg-bold/50 backdrop-blur-sm z-70 animate-in fade-in duration-300"
         onClick={onClose}
       />
 

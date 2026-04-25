@@ -45,7 +45,7 @@ const MostViewedCard = memo(({
   return (
     <div
       onClick={handleClick}
-      className="group relative flex-shrink-0 w-[320px] h-[300px] rounded-[28px] overflow-hidden cursor-pointer"
+      className="group relative flex-shrink-0 w-[320px] h-[300px] rounded-[28px] overflow-hidden cursor-pointer mb-3"
       style={{
         boxShadow: "0 8px 40px rgba(0,0,0,0.35)",
         transition: "transform 0.4s cubic-bezier(.22,.68,0,1.2), box-shadow 0.4s ease",
