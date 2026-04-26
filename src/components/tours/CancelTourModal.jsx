@@ -16,7 +16,7 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
     e.preventDefault();
     
     cancelMutation.mutate(
-      { tourId: tour.id, reason: reason.trim() || undefined },
+      { tourId: tour.id, reason: reason.trim() },
       {
         onSuccess: () => {
           onClose();
@@ -93,10 +93,11 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
             </div>
           </div>
 
-          {/* Reason (Optional) */}
+          {/* Reason */}
           <div className="mb-6">
             <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">
-              Reason for Cancellation 
+              Reason for Cancellation
+              <span className="text-red-500 ml-1">*</span>
             </label>
             <textarea
               value={reason}

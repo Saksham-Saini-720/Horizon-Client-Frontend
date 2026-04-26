@@ -15,6 +15,27 @@ import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterMod
 import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
 import Pagination from "../components/ui/Pagination";
 
+/* Reusable glow filter chip */
+const GlowChip = ({ children, onRemove }) => (
+  <span
+    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold font-myriad"
+    style={{
+      background: 'rgba(201,108,56,0.10)',
+      color: '#C96C38',
+      border: '1px solid rgba(201,108,56,0.28)',
+      boxShadow: '0 0 10px rgba(201,108,56,0.15)',
+    }}
+  >
+    {children}
+    <button
+      onClick={onRemove}
+      className="ml-0.5 hover:opacity-60 text-[14px] leading-none transition-opacity"
+    >
+      ×
+    </button>
+  </span>
+);
+
 const SearchPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,8 +51,8 @@ const SearchPage = () => {
     bathrooms: undefined,
     type: undefined,
     amenities: undefined,
-    page: 1,         
-    limit: 10,      
+    page: 1,
+    limit: 10,
   });
 
   const [activeModal, setActiveModal] = useState(null);
@@ -39,18 +60,17 @@ const SearchPage = () => {
   const recent = useRecentSearches();
   const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
 
-  
   const apiFilters = useMemo(() => {
     const f = {};
-    if (filters.purpose)             f.purpose   = filters.purpose;
-    if (filters.sort)                f.sort      = filters.sort;
-    if (filters.minPrice)            f.minPrice  = filters.minPrice;
-    if (filters.maxPrice)            f.maxPrice  = filters.maxPrice;
-    if (filters.bedrooms)            f.bedrooms  = filters.bedrooms;
-    if (filters.bathrooms)           f.bathrooms = filters.bathrooms;
-    if (filters.type)                f.type      = filters.type;
-    if (filters.amenities?.length)   f.amenities = filters.amenities;
-    if (query)                       f.search    = query;
+    if (filters.purpose)           f.purpose   = filters.purpose;
+    if (filters.sort)              f.sort      = filters.sort;
+    if (filters.minPrice)          f.minPrice  = filters.minPrice;
+    if (filters.maxPrice)          f.maxPrice  = filters.maxPrice;
+    if (filters.bedrooms)          f.bedrooms  = filters.bedrooms;
+    if (filters.bathrooms)         f.bathrooms = filters.bathrooms;
+    if (filters.type)              f.type      = filters.type;
+    if (filters.amenities?.length) f.amenities = filters.amenities;
+    if (query)                     f.search    = query;
     f.page  = filters.page;
     f.limit = filters.limit;
     return f;
@@ -68,7 +88,6 @@ const SearchPage = () => {
   const handleSearch = (newQuery) => {
     setSearchParams({ q: newQuery });
     submitSearch(newQuery);
-    // Reset to page 1 when searching
     setFilters(prev => ({ ...prev, page: 1 }));
   };
 
@@ -88,14 +107,12 @@ const SearchPage = () => {
     });
   };
 
-
   const activeFilter = useMemo(() => {
     if (filters.purpose === 'sale') return 'buy';
     if (filters.purpose === 'rent') return 'rent';
     return null;
   }, [filters.purpose]);
 
-  // Filter toggle handler
   const handleFilterToggle = useCallback((id) => {
     if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale', page: 1 }));
     else if (id === 'rent')     setFilters(p => ({ ...p, purpose: p.purpose === 'rent' ? null : 'rent', page: 1 }));
@@ -104,7 +121,6 @@ const SearchPage = () => {
     else if (id === 'filters')  setActiveModal('filters');
     else if (id === 'nearme')   navigate('/map');
   }, [navigate]);
-
 
   const handlePriceApply = useCallback((p) => {
     setFilters(prev => ({ ...prev, minPrice: p.minPrice, maxPrice: p.maxPrice, page: 1 }));
@@ -117,10 +133,6 @@ const SearchPage = () => {
   const handleFullApply = useCallback((all) => {
     setFilters(prev => ({ ...prev, ...all, page: 1 }));
   }, []);
-
-  // const handleSortChange = (e) => {
-  //   setFilters(prev => ({ ...prev, sort: e.target.value, page: 1 }));
-  // };
 
   const handlePageChange = useCallback((newPage) => {
     setFilters(prev => ({ ...prev, page: newPage }));
@@ -138,68 +150,171 @@ const SearchPage = () => {
   }, [filters]);
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-surface pb-28">
+    <div className="min-h-screen w-full overflow-x-hidden pb-28 bg-surface">
 
-      {/* Search Header */}
-      <SearchHeader
-        query={query}
-        onSearch={handleSearch}
-        onClearSearch={handleClearSearch}
-        onBack={() => navigate(-1)}
-        recentSearches={recent.searches}
-        onRemoveRecent={recent.remove}
-        onClearAllRecent={recent.clearAll}
-      />
+      {/* ===== PREMIUM DARK SEARCH HERO ===== */}
+      <div
+        className="relative overflow-hidden"
+        style={{ background: 'linear-gradient(158deg, #07091200 0%, #080c17 8%, #141924 52%, #0d1321 100%)' }}
+      >
+        {/* Glow orb — orange, top-right */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '-110px', right: '-110px',
+            width: '380px', height: '380px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(201,108,56,0.22) 0%, transparent 65%)',
+          }}
+        />
 
-      {/* Filter Chips */}
-      <FilterChips
-        activeFilter={activeFilter}
-        onToggle={handleFilterToggle}
-        dimmed={isLoading}
-      />
+        {/* Glow orb — indigo, bottom-left */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            bottom: '-90px', left: '-90px',
+            width: '300px', height: '300px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(45,54,142,0.26) 0%, transparent 65%)',
+          }}
+        />
+
+        {/* Accent glow orb — centre, subtle */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '20px', left: '40%',
+            width: '200px', height: '200px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(201,108,56,0.06) 0%, transparent 70%)',
+            transform: 'translateX(-50%)',
+          }}
+        />
+
+        {/* SVG arcs — top-right (orange) */}
+        <svg
+          className="absolute top-0 right-0 pointer-events-none"
+          width="270" height="270"
+          viewBox="0 0 270 270"
+          fill="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="sp_arcOrange" x1="270" y1="0" x2="0" y2="270" gradientUnits="userSpaceOnUse">
+              <stop offset="0%"   stopColor="#C96C38" stopOpacity="0.90" />
+              <stop offset="50%"  stopColor="#C96C38" stopOpacity="0.30" />
+              <stop offset="100%" stopColor="#C96C38" stopOpacity="0"    />
+            </linearGradient>
+          </defs>
+          <path d="M 270 0 A 270 270 0 0 1 0 270"  stroke="url(#sp_arcOrange)" strokeWidth="1.6" fill="none" />
+          <path d="M 270 0 A 218 218 0 0 1 52 270"  stroke="url(#sp_arcOrange)" strokeWidth="1.0" fill="none" opacity="0.55" />
+          <path d="M 270 0 A 165 165 0 0 1 105 270" stroke="url(#sp_arcOrange)" strokeWidth="0.7" fill="none" opacity="0.30" />
+        </svg>
+
+        {/* SVG arcs — top-left (blue) */}
+        <svg
+          className="absolute top-0 left-0 pointer-events-none"
+          width="170" height="170"
+          viewBox="0 0 170 170"
+          fill="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="sp_arcBlue" x1="0" y1="0" x2="170" y2="170" gradientUnits="userSpaceOnUse">
+              <stop offset="0%"   stopColor="#2D368E" stopOpacity="0.80" />
+              <stop offset="100%" stopColor="#2D368E" stopOpacity="0"    />
+            </linearGradient>
+          </defs>
+          <path d="M 0 0 A 170 170 0 0 1 170 170" stroke="url(#sp_arcBlue)" strokeWidth="1.3" fill="none" />
+          <path d="M 0 0 A 128 128 0 0 1 128 170" stroke="url(#sp_arcBlue)" strokeWidth="0.8" fill="none" opacity="0.50" />
+        </svg>
+
+        {/* Horizontal shimmer line */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '42%',
+            left: '8%', right: '8%',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(201,108,56,0.13), rgba(45,54,142,0.10), transparent)',
+          }}
+        />
+
+        {/* Foreground content */}
+        <div className="relative z-10">
+          <SearchHeader
+            query={query}
+            onSearch={handleSearch}
+            onClearSearch={handleClearSearch}
+            onBack={() => navigate(-1)}
+            recentSearches={recent.searches}
+            onRemoveRecent={recent.remove}
+            onClearAllRecent={recent.clearAll}
+          />
+
+          <FilterChips
+            activeFilter={activeFilter}
+            onToggle={handleFilterToggle}
+            dimmed={isLoading}
+          />
+        </div>
+
+        {/* Fade hero → surface */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-10 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, transparent, #F7F6F2)' }}
+        />
+      </div>
 
       {/* Sort + Map + Grid row */}
-      <div className="bg-white border-b border-gray-100">
+      <div
+        style={{
+          background: 'rgba(255,255,255,0.90)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
+        }}
+      >
         <div className="overflow-x-auto scrollbar-none w-full">
           <div className="inline-flex items-center justify-between w-full min-w-max px-4 py-3 gap-2">
             <div className="flex-1" />
 
             <div className="flex items-center gap-2">
-              {/* <select 
-                value={filters.sort}
-                onChange={handleSortChange}
-                className="px-2 py-1.5 rounded-lg border border-gray-200 text-[13px] font-semibold text-gray-700 font-myriad bg-white focus:outline-none focus:border-gray-300 max-w-[130px] whitespace-nowrap cursor-pointer"
-              >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
-              </select> */}
-
               <button
                 type="button"
                 onClick={() => navigate("/map")}
-                className="p-1.5 rounded-lg bg-primary text-white hover:bg-primary-light transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white flex-shrink-0 active:scale-95 transition-transform"
+                style={{
+                  background: 'linear-gradient(135deg, #C96C38 0%, #a85428 100%)',
+                  boxShadow: '0 0 14px rgba(201,108,56,0.45), 0 2px 6px rgba(0,0,0,0.15)',
+                }}
                 aria-label="Map view"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="6"  x2="21" y2="6"  />
                   <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
+                <span className="text-[12px] font-bold font-myriad">Map</span>
               </button>
 
               <button
                 type="button"
-                className="p-1.5 rounded-lg bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors flex-shrink-0"
+                className="p-1.5 rounded-lg flex-shrink-0 active:scale-95 transition-transform"
+                style={{
+                  background: 'rgba(255,255,255,0.9)',
+                  border: '1px solid rgba(0,0,0,0.10)',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                }}
                 aria-label="Grid view"
                 onClick={() => navigate("/map")}
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="7" height="7" />
-                  <rect x="14" y="3" width="7" height="7" />
+                <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3"  y="3"  width="7" height="7" />
+                  <rect x="14" y="3"  width="7" height="7" />
                   <rect x="14" y="14" width="7" height="7" />
-                  <rect x="3" y="14" width="7" height="7" />
+                  <rect x="3"  y="14" width="7" height="7" />
                 </svg>
               </button>
             </div>
@@ -207,65 +322,71 @@ const SearchPage = () => {
         </div>
       </div>
 
-      {/* Active filters chips */}
+      {/* Active filter chips */}
       {(activeFiltersCount > 0 || query) && (
-        <div className="px-4 pt-3 pb-2 bg-white border-b border-gray-100">
+        <div
+          className="px-4 pt-3 pb-3"
+          style={{
+            background: 'rgba(255,255,255,0.85)',
+            borderBottom: '1px solid rgba(0,0,0,0.05)',
+          }}
+        >
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[13px] text-gray-500 font-myriad">Active filters:</span>
-            
+            <span className="text-[11px] font-semibold text-gray-400 font-myriad uppercase tracking-wider">
+              Filters
+            </span>
+
             {query && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
-                Search: "{query}"
-                <button onClick={handleClearSearch} className="ml-1 hover:text-primary-dark">×</button>
-              </span>
+              <GlowChip onRemove={handleClearSearch}>
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+                {query}
+              </GlowChip>
             )}
 
             {filters.purpose === 'sale' && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, purpose: null, page: 1 }))}>
                 For Sale
-                <button onClick={() => setFilters(p => ({ ...p, purpose: null, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
-              </span>
+              </GlowChip>
             )}
-            
+
             {filters.purpose === 'rent' && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, purpose: null, page: 1 }))}>
                 For Rent
-                <button onClick={() => setFilters(p => ({ ...p, purpose: null, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
-              </span>
+              </GlowChip>
             )}
 
             {(filters.minPrice || filters.maxPrice) && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
-                Price: {filters.minPrice ? `$${filters.minPrice.toLocaleString()}` : '0'} - {filters.maxPrice ? `$${filters.maxPrice.toLocaleString()}` : '∞'}
-                <button onClick={() => setFilters(p => ({ ...p, minPrice: undefined, maxPrice: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
-              </span>
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, minPrice: undefined, maxPrice: undefined, page: 1 }))}>
+                {filters.minPrice ? `$${filters.minPrice.toLocaleString()}` : '0'} – {filters.maxPrice ? `$${filters.maxPrice.toLocaleString()}` : '∞'}
+              </GlowChip>
             )}
 
             {filters.bedrooms && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
-                {filters.bedrooms} Bedrooms
-                <button onClick={() => setFilters(p => ({ ...p, bedrooms: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
-              </span>
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, bedrooms: undefined, page: 1 }))}>
+                {filters.bedrooms} Beds
+              </GlowChip>
             )}
 
             {filters.bathrooms && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
-                {filters.bathrooms} Bathrooms
-                <button onClick={() => setFilters(p => ({ ...p, bathrooms: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
-              </span>
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, bathrooms: undefined, page: 1 }))}>
+                {filters.bathrooms} Baths
+              </GlowChip>
             )}
 
             {filters.type && (
-              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[12px] font-semibold">
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, type: undefined, page: 1 }))}>
                 {filters.type.charAt(0).toUpperCase() + filters.type.slice(1)}
-                <button onClick={() => setFilters(p => ({ ...p, type: undefined, page: 1 }))} className="ml-1 hover:text-primary-dark">×</button>
-              </span>
+              </GlowChip>
             )}
 
             {activeFiltersCount > 0 && (
               <button
                 onClick={handleClearSearch}
-                className="text-[12px] font-semibold text-secondary hover:text-amber-700 ml-2"
+                className="text-[12px] font-semibold font-myriad ml-1 transition-opacity hover:opacity-70"
+                style={{ color: '#C96C38' }}
               >
                 Clear All
               </button>
@@ -274,20 +395,24 @@ const SearchPage = () => {
         </div>
       )}
 
-      {/* Property Count & Pagination Info */}
+      {/* Property count */}
       <div className="px-4 pt-4 pb-2">
         {isLoading ? (
-          <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+          <div className="h-5 w-36 bg-gray-200 rounded-full animate-pulse" />
         ) : pagination ? (
-          <p className="text-[15px] text-gray-600 font-myriad">
-            Showing {properties.length > 0 ? ((pagination.page - 1) * pagination.limit + 1) : 0}-
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} properties
-            {filters.purpose === 'sale' && ' for sale'}
-            {filters.purpose === 'rent' && ' for rent'}
+          <p className="text-[14px] text-gray-500 font-myriad">
+            <span className="text-[17px] font-bold" style={{ color: '#171C26' }}>
+              {pagination.total.toLocaleString()}
+            </span>
+            {' '}propert{pagination.total === 1 ? 'y' : 'ies'} found
+            {filters.purpose === 'sale' && <span style={{ color: '#C96C38' }}> · For sale</span>}
+            {filters.purpose === 'rent' && <span style={{ color: '#C96C38' }}> · For rent</span>}
           </p>
         ) : (
-          <p className="text-[15px] text-gray-600 font-myriad">
-            {properties.length} properties
+          <p className="text-[14px] text-gray-500 font-myriad">
+            <span className="text-[17px] font-bold" style={{ color: '#171C26' }}>
+              {properties.length}
+            </span>{' '}properties
           </p>
         )}
       </div>
@@ -324,7 +449,13 @@ const SearchPage = () => {
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="mt-4 px-6 py-3 rounded-xl bg-white border-2 border-gray-200 text-[15px] font-semibold text-primary font-myriad hover:bg-gray-50 transition-all"
+                  className="mt-4 px-6 py-3 rounded-xl text-[15px] font-semibold font-myriad transition-all active:scale-95"
+                  style={{
+                    background: 'white',
+                    border: '2px solid rgba(201,108,56,0.30)',
+                    color: '#C96C38',
+                    boxShadow: '0 0 14px rgba(201,108,56,0.15)',
+                  }}
                 >
                   Clear Filters
                 </button>
@@ -334,7 +465,7 @@ const SearchPage = () => {
         )}
       </div>
 
-      {/* ⭐ Pagination Component */}
+      {/* Pagination */}
       {pagination && pagination.pages > 1 && (
         <Pagination
           currentPage={pagination.page}
@@ -344,7 +475,7 @@ const SearchPage = () => {
         />
       )}
 
-      {/* Filter Modals */}
+      {/* Filter Modals — logic unchanged */}
       <PriceFilterModal
         isOpen={activeModal === 'price'}
         onClose={() => setActiveModal(null)}
@@ -370,4 +501,3 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
-

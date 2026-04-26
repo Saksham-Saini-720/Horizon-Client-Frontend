@@ -221,30 +221,47 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
         </div>
 
         {/* Agent Section - Premium Design */}
-        {owner?.name && (
-          <div className="flex items-center gap-2.5 pt-4 border-t border-gray-200">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary via-amber-500 to-amber-600 flex items-center justify-center flex-shrink-0 shadow-md">
-              <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] text-gray-500 font-myriad font-medium">Listed by</p>
-              <p className="text-[14px] text-gray-900 font-bold font-myriad line-clamp-1">
-                {owner.name}
-              </p>
-            </div>
-            {isHovered && (
-              <div className="flex-shrink-0">
-                <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center animate-bounce">
-                  <svg className="w-3 h-3 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M9 18l6-6-6-6"/>
-                  </svg>
-                </div>
+        <div className="flex items-center gap-2.5 pt-4 border-t border-gray-200">
+          {owner?.name ? (
+            <>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-secondary via-amber-500 to-amber-600 flex items-center justify-center flex-shrink-0 shadow-md">
+                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
               </div>
-            )}
-          </div>
-        )}
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] text-gray-500 font-myriad font-medium">Listed by</p>
+                <p className="text-[14px] text-gray-900 font-bold font-myriad line-clamp-1">
+                  {owner.name}
+                </p>
+              </div>
+              {isHovered && (
+                <div className="flex-shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-secondary/10 flex items-center justify-center animate-bounce">
+                    <svg className="w-3 h-3 text-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] text-gray-400 font-myriad font-medium">Listed by</p>
+                <p className="text-[14px] text-gray-400 font-myriad line-clamp-1">Agent Not Assigned</p>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Shine effect on hover */}

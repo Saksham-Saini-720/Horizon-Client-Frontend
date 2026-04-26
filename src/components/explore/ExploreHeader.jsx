@@ -72,7 +72,7 @@ const ExploreHeader = memo(({
     <>
       {/* ── Sticky header shell ── */}
       <div
-        className="relative overflow-hidden"
+        className="relative"
         style={{
           background:
             "linear-gradient(165deg, #3641a8 0%, #2D368E 48%, #1d2670 100%)",
@@ -306,7 +306,7 @@ const ExploreHeader = memo(({
                     )}
                   </div>
                   <div className="h-px bg-gray-100 mx-4" />
-                  <div className="py-1">
+                  <div className="py-1" style={{ maxHeight: "200px", overflowY: "auto" }}>
                     {suggestions.map((term) => (
                       <div
                         key={term}

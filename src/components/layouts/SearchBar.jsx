@@ -7,7 +7,7 @@ const Dropdown = ({ items, label, query, onSelect, onRemove, onClearAll }) => {
   if (!items.length) return null;
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
+    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-[100]">
 
       {/* Header */}
       <div className="flex items-center justify-between px-4 pt-3 pb-2">

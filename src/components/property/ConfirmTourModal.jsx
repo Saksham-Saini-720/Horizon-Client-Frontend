@@ -12,6 +12,10 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
   const [showSuccess, setShowSuccess] = useState(false);
   const submitMutation = useSubmitTourRequest();
 
+  // Fall back to property owner info when no specific agent is assigned
+  const displayAgentName = agent?.name || property?.agent?.name || 'Property Agent';
+  const displayAgentAvatar = agent?.avatar || property?.agent?.avatar || null;
+
   // Handle confirm - NOW WITH CORRECT API FORMAT
   const handleConfirm = useCallback(async () => {
     // Format date as YYYY-MM-DD
@@ -207,20 +211,20 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
 
           {/* Agent Info */}
           <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-            {agent?.avatar ? (
-              <img 
-                src={agent.avatar} 
-                alt={agent.name} 
+            {displayAgentAvatar ? (
+              <img
+                src={displayAgentAvatar}
+                alt={displayAgentName}
                 className="w-12 h-12 rounded-full object-cover"
               />
             ) : (
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[18px] font-semibold font-myriad">
-                {agent?.name?.charAt(0) || 'A'}
+                {displayAgentName.charAt(0)}
               </div>
             )}
             <div>
               <p className="text-[15px] font-semibold text-primary font-myriad">
-                {agent?.name || 'Agent'}
+                {displayAgentName}
               </p>
               <p className="text-[12px] text-gray-500 font-myriad">
                 Will confirm your slot
