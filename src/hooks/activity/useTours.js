@@ -62,12 +62,13 @@ const transformTour = (tour) => {
     time: tour.confirmedDateTime
       ? formatTime(tour.confirmedDateTime)
       : tour.preferredTime || null,
-    agent: {
-      name: tour.agent?.firstName && tour.agent?.lastName
+    agent: tour.agent ? {
+      name: tour.agent.firstName && tour.agent.lastName
         ? `${tour.agent.firstName} ${tour.agent.lastName}`.trim()
-        : tour.agent?.name || 'Agent',
-      avatar: tour.agent?.avatar || tour.agent?.profileImage || null,
-    },
+        : tour.agent.name || 'Property Agent',
+      avatar: tour.agent.avatar || tour.agent.profileImage || null,
+      phone: tour.agent.phone || null,
+    } : null,
     proposedTimes: tour.status === 'pending' 
       ? (tour.preferredTimes || [tour.preferredTime]).filter(Boolean)
       : null,

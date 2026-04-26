@@ -89,6 +89,13 @@ const TourCard = memo(({ tour }) => {
     navigate(`/property/${property.id}`);
   }, [navigate, property.id]);
 
+  // Call agent
+  const handleContact = useCallback(() => {
+    if (agent?.phone) {
+      window.location.href = `tel:${agent.phone}`;
+    }
+  }, [agent]);
+
   return (
     <>
       <div className={`bg-white rounded-2xl border overflow-hidden shadow-md transition-all ${
@@ -238,32 +245,52 @@ const TourCard = memo(({ tour }) => {
           {/* Agent Info */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              {/* Agent Photo */}
-              <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[16px] font-semibold font-myriad ${
-                isCancelled ? 'opacity-50 grayscale' : ''
-              }`}>
-                {agent.avatar ? (
-                  <img 
-                    src={agent.avatar}
-                    alt={agent.name}
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                ) : (
-                  <span>{agent.name.charAt(0)}</span>
-                )}
-              </div>
-
-              {/* Agent Name */}
-              <p className={`text-[12px] font-semibold font-myriad ${
-                isCancelled ? 'text-gray-400' : 'text-primary'
-              }`}>
-                {agent.name}
-              </p>
+              {agent ? (
+                <>
+                  {/* Agent Photo */}
+                  <div className={`w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-secondary flex items-center justify-center text-white text-[16px] font-semibold font-myriad overflow-hidden ${
+                    isCancelled ? 'opacity-50 grayscale' : ''
+                  }`}>
+                    {agent.avatar ? (
+                      <img
+                        src={agent.avatar}
+                        alt={agent.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span>{agent.name.charAt(0)}</span>
+                    )}
+                  </div>
+                  {/* Agent Name */}
+                  <p className={`text-[12px] font-semibold font-myriad ${
+                    isCancelled ? 'text-gray-400' : 'text-primary'
+                  }`}>
+                    {agent.name}
+                  </p>
+                </>
+              ) : (
+                <>
+                  {/* No Agent Avatar */}
+                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  {/* No Agent Text */}
+                  <p className="text-[12px] font-myriad text-gray-400">Agent Not Assigned</p>
+                </>
+              )}
             </div>
 
-            {/* Contact Button - Always visible */}
-            {!isCancelled && (
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+            {/* Contact Button — only when agent has a phone and tour is active */}
+            {!isCancelled && agent?.phone && (
+              <button
+                onClick={handleContact}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
                 <svg
                   className="w-4 h-4 text-gray-600"
                   viewBox="0 0 24 24"

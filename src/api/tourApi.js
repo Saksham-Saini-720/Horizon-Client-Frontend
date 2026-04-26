@@ -58,7 +58,9 @@ export const cancelTourRequest = async (tourId, reason) => {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Failed to cancel tour');
+    const errData = error.response?.data?.error;
+    const message = errData?.details?.[0]?.message || errData?.message || 'Failed to cancel tour';
+    throw new Error(message);
   }
 };
 
