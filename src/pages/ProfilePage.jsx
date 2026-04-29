@@ -191,10 +191,10 @@ const ProfilePage = memo(() => {
 
   // Debounced auto-save for property type interests
   const debouncedInterests = useDebounce(interestedIn, 1500);
-  const isFirstRender = useRef(true);
+  const userChangedInterests = useRef(false);
 
   useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    if (!userChangedInterests.current) return;
     if (!profile) return;
     updatePreferences.mutate({
       propertyTypes: debouncedInterests,
@@ -207,14 +207,13 @@ const ProfilePage = memo(() => {
   }, [debouncedInterests]);
 
   const toggleContactPref = useCallback((key) => {
-    setContactPrefs(prev => {
-      const updated = { ...prev, [key]: !prev[key] };
-      updateNotifications.mutate(updated);
-      return updated;
-    });
-  }, [updateNotifications]);
+    const updated = { ...contactPrefs, [key]: !contactPrefs[key] };
+    setContactPrefs(updated);
+    updateNotifications.mutate(updated);
+  }, [updateNotifications, contactPrefs]);
 
   const toggleInterest = useCallback((type) => {
+    userChangedInterests.current = true;
     setInterestedIn(prev =>
       prev.includes(type) ? prev.filter(i => i !== type) : [...prev, type]
     );
@@ -371,7 +370,7 @@ const ProfilePage = memo(() => {
             {showPropertyTypes && (
               <div className="px-5 pb-5 pt-3 bg-gray-50 border-t border-gray-100">
                 <div className="flex flex-wrap gap-2">
-                  {['residential', 'commercial', 'land'].map(type => (
+                  {['apartment', 'house', 'villa', 'commercial', 'land'].map(type => (
                     <button
                       key={type}
                       onClick={() => toggleInterest(type)}

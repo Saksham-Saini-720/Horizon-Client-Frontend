@@ -91,23 +91,40 @@ const MiniCarousel = memo(({ images = [], title = "Property" }) => {
             </span>
           </div>
 
-          {/* Dot Indicators - Enhanced */}
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentIndex(index);
-                }}
-                className={`transition-all duration-300 rounded-full ${
-                  index === currentIndex 
-                    ? "w-6 h-2 bg-white shadow-lg" 
-                    : "w-2 h-2 bg-white/60 hover:bg-white/80"
-                }`}
-                aria-label={`Go to image ${index + 1}`}
-              />
-            ))}
+          {/* Sliding Dot Indicator */}
+          <div
+            className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 overflow-hidden"
+            style={{
+              width: "80px",
+              maskImage: "linear-gradient(to right, transparent, black 22%, black 78%, transparent)",
+              WebkitMaskImage: "linear-gradient(to right, transparent, black 22%, black 78%, transparent)",
+            }}
+          >
+            <div
+              className="flex items-center transition-transform duration-400 ease-out"
+              style={{ transform: `translateX(${35 - currentIndex * 10}px)` }}
+            >
+              {images.map((_, index) => {
+                const d = Math.abs(index - currentIndex);
+                return (
+                  <button
+                    key={index}
+                    onClick={(e) => { e.stopPropagation(); setCurrentIndex(index); }}
+                    className="w-[10px] flex-shrink-0 flex items-center justify-center"
+                    aria-label={`Go to image ${index + 1}`}
+                  >
+                    <div
+                      className="rounded-full bg-white transition-all duration-300"
+                      style={{
+                        width:   d === 0 ? 8 : d === 1 ? 6 : 5,
+                        height:  d === 0 ? 8 : d === 1 ? 6 : 5,
+                        opacity: d === 0 ? 1 : d === 1 ? 0.7 : d === 2 ? 0.4 : 0.15,
+                      }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </>
       )}

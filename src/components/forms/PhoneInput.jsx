@@ -222,8 +222,8 @@ const COUNTRIES = [
   { code: "ZW", name: "Zimbabwe", dial: "+263", flag: "🇿🇼" }
 ];
 
-const parseDefaultValue = (value) => {
-  if (!value) return { country: COUNTRIES[0], localNumber: "" };
+const parseDefaultValue = (value, fallback = COUNTRIES[0]) => {
+  if (!value) return { country: fallback, localNumber: "" };
 
   const sorted = [...COUNTRIES].sort((a, b) => b.dial.length - a.dial.length);
   const match = sorted.find((c) => value.startsWith(c.dial));
@@ -235,8 +235,45 @@ const parseDefaultValue = (value) => {
     };
   }
 
-  return { country: COUNTRIES[0], localNumber: value };
+  return { country: fallback, localNumber: value };
 };
+
+// Module-level singleton — one fetch per session, shared across all PhoneInput instances
+let _detectedCode = undefined; // undefined=pending, null=failed, string=ISO code
+let _fetchPromise = null;
+
+function detectUserCountry() {
+  if (_detectedCode !== undefined) return Promise.resolve(_detectedCode);
+
+  try {
+    const raw = localStorage.getItem("_ph_country");
+    if (raw) {
+      const { code, ts } = JSON.parse(raw);
+      if (Date.now() - ts < 86_400_000) {
+        _detectedCode = code;
+        return Promise.resolve(code);
+      }
+    }
+  } catch { /* localStorage unavailable */ }
+
+  if (!_fetchPromise) {
+    _fetchPromise = fetch("https://ipapi.co/json/")
+      .then((r) => r.json())
+      .then((d) => d.country_code || null)
+      .catch(() => null)
+      .then((code) => {
+        _detectedCode = code;
+        if (code) {
+          try {
+            localStorage.setItem("_ph_country", JSON.stringify({ code, ts: Date.now() }));
+          } catch { /* localStorage unavailable */ }
+        }
+        return code;
+      });
+  }
+
+  return _fetchPromise;
+}
 
 const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, defaultValue }) => {
 
@@ -249,6 +286,16 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
   const [error, setError]         = useState("");
   const dropdownRef               = useRef(null);
   const searchRef                 = useRef(null);
+
+  // Auto-detect country from IP on first render (skipped when editing an existing value)
+  useEffect(() => {
+    if (defaultValue) return;
+    detectUserCountry().then((code) => {
+      if (!code) return;
+      const country = COUNTRIES.find((c) => c.code === code);
+      if (country) setSelected(country);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Close dropdown on outside click
   useEffect(() => {

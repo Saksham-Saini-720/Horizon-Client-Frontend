@@ -237,8 +237,9 @@ export default function LoadingScreen({ onComplete }) {
             {/* Badge */}
             <p
               style={{
+                textAlign: "center",
                 color: "#E8793A",
-                fontSize: 15,
+                fontSize: 30,
                 fontStyle: "italic",
                 fontFamily: "'Georgia', serif",
                 marginBottom: 10,
@@ -261,7 +262,7 @@ export default function LoadingScreen({ onComplete }) {
             >
               {slide.heading}
               {/* small orange dot after the heading line */}
-              <span style={{ color: "#E8793A", marginLeft: 4, fontSize: 22 }}>•</span>
+              {/* <span style={{ color: "#E8793A", marginLeft: 4, fontSize: 22 }}>•</span> */}
             </h1>
 
             {/* Accent line */}
