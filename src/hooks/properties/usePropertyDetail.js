@@ -58,6 +58,9 @@ function transformPropertyDetail(apiProperty) {
     updatedAt
   } = apiProperty;
 
+  // Get ordered media items (videos first, then images)
+  const mediaItems = getAllMediaItems(apiProperty);
+
   // Format price
   const formattedPrice = formatPrice(price, currency, purpose);
 
@@ -108,6 +111,7 @@ function transformPropertyDetail(apiProperty) {
     description: description || 'No description available',
     amenities: formattedAmenities,
     images: allImages,
+    mediaItems: mediaItems,
     agent: agent,
     status: status,
     createdAt: createdAt,
@@ -147,6 +151,50 @@ function getCurrencySymbol(currency) {
     ZMW: 'ZK',
   };
   return symbols[currency] || '$';
+}
+
+/**
+ * Get ordered media items: videos first, then featured image, then gallery images
+ */
+function getAllMediaItems(apiProperty) {
+  const items = [];
+
+  // Videos first — from the computed gallery array (type === 'video')
+  // Falls back to apiProperty.videos if gallery has no video entries
+  const galleryVideos = (apiProperty.gallery || []).filter(m => m.type === 'video');
+  if (galleryVideos.length > 0) {
+    galleryVideos.forEach(v => {
+      items.push({ type: 'video', url: v.url, thumbnail: v.thumbnail || null, caption: v.caption || '' });
+    });
+  } else if (Array.isArray(apiProperty.videos)) {
+    apiProperty.videos.forEach(v => {
+      items.push({ type: 'video', url: v.url, thumbnail: v.thumbnail || null, caption: v.caption || '' });
+    });
+  }
+
+  // Featured image
+  const featured = apiProperty.images?.featured;
+  if (featured) {
+    const url = featured.large?.url || featured.medium?.url || featured.original?.url;
+    if (url) items.push({ type: 'image', url, thumbnail: featured.thumbnail?.url || url, caption: '' });
+  }
+
+  // Gallery images (deduped by url)
+  const seen = new Set(items.map(i => i.url));
+  (apiProperty.images?.gallery || []).forEach(img => {
+    const url = img.large?.url || img.medium?.url || img.original?.url;
+    if (url && !seen.has(url)) {
+      seen.add(url);
+      items.push({ type: 'image', url, thumbnail: img.thumbnail?.url || url, caption: '' });
+    }
+  });
+
+  // Fallback placeholder when nothing found
+  if (items.length === 0) {
+    items.push({ type: 'image', url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800', thumbnail: null, caption: '' });
+  }
+
+  return items;
 }
 
 /**

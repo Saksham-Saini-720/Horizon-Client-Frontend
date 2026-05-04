@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUnreadCount } from "../../store/slices/conversationSlice";
+import { useUnreadCount } from "../../hooks/conversations/useMarkAsRead";
 import {
   HiHome,
   HiHeart,
@@ -83,6 +84,7 @@ const NavItem = ({ to, icon, label, badge }) => (
 );
 
 export default function Footer() {
+  useUnreadCount();
   const unreadCount = useSelector(selectUnreadCount);
 
   return (

@@ -48,10 +48,11 @@ export const useConversationById = (conversationId, options = {}) => {
       return normalizeConversation(conv, messages, currentUserId, activeThread);
     },
     enabled: !!conversationId,
-    staleTime: 1000 * 15,
+    staleTime: 0,
     gcTime: 1000 * 60 * 5,
-    refetchInterval: 1000 * 15,
+    refetchInterval: 1000 * 5,
     refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
     retry: 1,
   });
 

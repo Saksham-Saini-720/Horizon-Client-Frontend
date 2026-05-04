@@ -57,17 +57,15 @@ export const updateClientPreferences = async (preferences) => {
 
 /**
  * Update Client Notifications
- * PUT /api/v1/profiles/client/notifications
- * Backend expects: { notifications: { inApp, email, push } }
+ * PUT /api/v1/profiles/notifications
+ * Backend expects: { inApp, email, push } at root level (stored on user.notificationPreferences)
  */
 export const updateClientNotifications = async (notifications) => {
   try {
-    const response = await axiosInstance.put('/profiles/client/notifications', {
-      notifications: {
-        inApp: notifications.inApp ?? true,
-        email: notifications.email ?? true,
-        push: notifications.push ?? false,
-      },
+    const response = await axiosInstance.put('/profiles/notifications', {
+      inApp: notifications.inApp ?? true,
+      email: notifications.email ?? true,
+      push: notifications.push ?? false,
     });
     return response.data;
   } catch (error) {

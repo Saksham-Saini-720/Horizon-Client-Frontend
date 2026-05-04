@@ -72,11 +72,12 @@ export const useUnreadCount = () => {
     queryKey: ['unreadCount'],
     queryFn: getUnreadCount,
     select: (data) => {
-      return data?.data?.unreadCount ?? data?.data?.count ?? 0;
+      return data?.data?.totalUnreadMessages ?? data?.data?.unreadThreads ?? 0;
     },
-    staleTime: 1000 * 30,
-    refetchInterval: 1000 * 30, // Poll every 30s
+    staleTime: 0,
+    refetchInterval: 1000 * 5,
     refetchIntervalInBackground: false,
+    refetchOnWindowFocus: true,
     retry: 1,
   });
 
