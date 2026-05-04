@@ -57,8 +57,10 @@ export const useConversations = (filters = {}) => {
       };
     },
     placeholderData: { conversations: [], total: 0 },
-    staleTime: 1000 * 30,
+    staleTime: 0,
     gcTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 5,
+    refetchIntervalInBackground: false,
     refetchOnWindowFocus: true,
     retry: 1,
   });
