@@ -2,10 +2,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { getConversations, getThreads } from '../../api/conversationApi';
+import { selectIsAuthenticated } from '../../store/slices/authSlice';
 
 export const useConversations = (filters = {}) => {
   const { status, search, page = 1, limit = 20 } = filters;
 
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUserId = useSelector(
     (state) => state.auth?.user?._id || state.auth?.user?.id
   );
@@ -15,6 +17,7 @@ export const useConversations = (filters = {}) => {
 
   const query = useQuery({
     queryKey: ['conversations', { status, search, page, limit }],
+    enabled: isAuthenticated,
     queryFn: async () => {
       const data = await getConversations({ status, search, page, limit });
       const conversations = data?.data?.conversations || data?.data || [];
@@ -57,11 +60,11 @@ export const useConversations = (filters = {}) => {
       };
     },
     placeholderData: { conversations: [], total: 0 },
-    staleTime: 0,
+    staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 5,
-    refetchInterval: 1000 * 5,
+    refetchInterval: 1000 * 30,
     refetchIntervalInBackground: false,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     retry: 1,
   });
 

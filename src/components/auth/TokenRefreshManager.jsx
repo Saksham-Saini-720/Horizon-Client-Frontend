@@ -55,8 +55,8 @@ export default function TokenRefreshManager() {
     if (!accessToken && refreshToken) {
       try {
         await refreshTokens();
-      } catch (error) {
-        throw new Error('Failed to refresh token after access token deletion', error);
+      } catch {
+        // onError in useTokenRefresh will clearAuth if refresh fails
       }
       return;
     }
@@ -65,8 +65,8 @@ export default function TokenRefreshManager() {
     if (accessToken && isTokenExpiring(accessToken, 2)) {
       try {
         await refreshTokens();
-      } catch (error) {
-        throw new Error('Failed to refresh token before expiry', error);
+      } catch {
+        // onError in useTokenRefresh will clearAuth if refresh fails
       }
     }
   }, [isAuthenticated, refreshTokens]);
@@ -87,66 +87,28 @@ export default function TokenRefreshManager() {
     return () => clearInterval(interval);
   }, [isAuthenticated, checkAndRefreshToken]);
 
-  // ─── Monitor localStorage for Manual Token Deletion ──────────────────────────
+  // ─── Monitor localStorage for Manual Token Deletion (other tabs only) ────────
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    let lastAccessToken = getTokens().accessToken;
-    let lastRefreshToken = getTokens().refreshToken;
+    const handleStorageChange = async (e) => {
+      if (e.key !== 'accessToken' && e.key !== 'refreshToken') return;
 
-    // Poll every second to detect same-tab manual deletion
-    const pollInterval = setInterval(async () => {
       const { accessToken, refreshToken } = getTokens();
 
-      // Both tokens deleted → AuthSync will handle logout
-      if (!accessToken && !refreshToken) {
-        if (lastAccessToken || lastRefreshToken) {
-          throw new Error('Both tokens manually deleted - triggering logout'); // This will be caught by AuthSync
-          // AuthSync will trigger logout
-        }
-        lastAccessToken = null;
-        lastRefreshToken = null;
-        return;
-      }
-
-      // Only accessToken deleted but refreshToken exists
-      if (!accessToken && refreshToken && lastAccessToken) {
+      // Only accessToken missing in another tab → try to refresh
+      if (!accessToken && refreshToken) {
         try {
           await refreshTokens();
-        } catch (error) {
-          throw new Error('Failed to refresh token after manual access token deletion', error);
-        }
-      }
-
-      // Update last known values
-      lastAccessToken = accessToken;
-      lastRefreshToken = refreshToken;
-    }, 1000); // Check every second
-
-    // Listen for storage events (from other tabs)
-    const handleStorageChange = async (e) => {
-      if (e.key === 'accessToken' || e.key === 'refreshToken') {
-        
-        const { accessToken, refreshToken } = getTokens();
-
-        // If only accessToken missing, try to refresh
-        if (!accessToken && refreshToken) {
-          try {
-            await refreshTokens();
-          } catch (error) {
-            throw new Error('Failed to refresh token after access token deletion in another tab',error);
-          }
+        } catch {
+          // AuthSync's interval will detect both tokens gone and trigger logout
         }
       }
     };
 
     window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      clearInterval(pollInterval);
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [isAuthenticated, refreshTokens]);
 
   return null; // This component doesn't render anything
