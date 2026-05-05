@@ -1,8 +1,9 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { markConversationAsRead, getUnreadCount } from '../../api/conversationApi';
 import { setUnreadCount, decrementUnread } from '../../store/slices/conversationSlice';
+import { selectIsAuthenticated } from '../../store/slices/authSlice';
 import { useEffect } from 'react';
 
 /**
@@ -67,17 +68,19 @@ export const useMarkAsRead = () => {
  */
 export const useUnreadCount = () => {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   const query = useQuery({
     queryKey: ['unreadCount'],
     queryFn: getUnreadCount,
+    enabled: isAuthenticated,
     select: (data) => {
       return data?.data?.totalUnreadMessages ?? data?.data?.unreadThreads ?? 0;
     },
-    staleTime: 0,
-    refetchInterval: 1000 * 5,
+    staleTime: 1000 * 30,
+    refetchInterval: 1000 * 60,
     refetchIntervalInBackground: false,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     retry: 1,
   });
 
