@@ -14,7 +14,7 @@ const StatCard = memo(({ icon, value, label }) => (
     <div className="mb-2 text-primary-light">
       {icon}
     </div>
-    <p className="text-[20px] font-bold text-primary font-myriad mb-0.5">
+    <p className="text-[22px] font-semibold text-secondary font-display mb-0.5">
       {value}
     </p>
     <p className="text-[10px] text-gray-400 font-myriad uppercase tracking-widest">

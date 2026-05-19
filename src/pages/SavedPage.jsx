@@ -192,30 +192,49 @@ const sortProperties = (properties, sortType) => {
   }
 };
 
-// ─── Filter Pill ─────────────────────────────────────────────────────────────
+// ─── Segmented Filter Control ────────────────────────────────────────────────
 
-const FilterPill = ({ value, label, count, activeFilter, onFilterChange }) => {
-  const active = activeFilter === value;
+const SegmentedFilters = ({ filter, setFilter, filterCounts }) => {
+  const tabs = [
+    { value: 'all',      label: 'All',      count: filterCounts.all },
+    { value: 'for-sale', label: 'For Sale', count: filterCounts.forSale },
+    { value: 'for-rent', label: 'For Rent', count: filterCounts.forRent },
+  ];
+
   return (
-    <button
-      onClick={() => onFilterChange(value)}
-      className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold font-myriad transition-all active:scale-95 whitespace-nowrap"
-      style={
-        active
-          ? { background: 'white', color: '#171C26' }
-          : { background: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.75)', border: '1px solid rgba(255,255,255,0.2)' }
-      }
+    <div
+      className="relative z-10 flex items-center p-1.5 rounded-full"
+      style={{
+        background: 'white',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+      }}
     >
-      {label}
-      {count !== undefined && (
-        <span
-          className="text-[11px]"
-          style={{ color: active ? '#C96C38' : 'rgba(255,255,255,0.5)' }}
-        >
-          {count}
-        </span>
-      )}
-    </button>
+      {tabs.map(({ value, label, count }) => {
+        const active = filter === value;
+        return (
+          <button
+            key={value}
+            onClick={() => setFilter(value)}
+            className="flex-1 flex items-center justify-center gap-1 tracking-wider py-2.5 rounded-full text-[13px] font-semibold font-myriad transition-all duration-200 active:scale-95 whitespace-nowrap"
+            style={
+              active
+                ? { background: '#1D165E', color: 'white', boxShadow: '0 2px 10px rgba(45,54,142,0.35)' }
+                : { color: '#9CA3AF' }
+            }
+          >
+            {label}
+            {count > 0 && (
+              <span
+                className="text-[11px] font-bold"
+                style={{ color: active ? '#C96C38' : '#D1D5DB' }}
+              >
+                {count}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
   );
 };
 
@@ -278,39 +297,30 @@ const SavedPage = () => {
 
   return (
     <div className="min-h-screen bg-surface pb-28">
-
-      {/* ── Premium Dark Gradient Header ── */}
       <div
         className="relative px-5 pt-12 pb-10 overflow-hidden bg-gradient-to-br from-[#1a2550] to-secondary"
       >
-        {/* Glow orb — top-right (large) */}
         <div
           className="absolute -top-6 -right-6 w-52 h-52 rounded-full pointer-events-none"
-          style={{ backgroundColor: '#C96C38', opacity: 0.35, filter: 'blur(64px)' }}
+          style={{ backgroundColor: '#C96C38', opacity: 0.2, filter: 'blur(64px)' }}
         />
-        {/* Glow orb — top-right (tight) */}
         <div
           className="absolute top-8 right-10 w-28 h-28 rounded-full pointer-events-none"
-          style={{ backgroundColor: '#C96C38', opacity: 0.22, filter: 'blur(40px)' }}
+          style={{ backgroundColor: '#C96C38', opacity: 0.1, filter: 'blur(40px)' }}
         />
-        {/* Glow orb — left balance */}
-        <div
+        {/* <div
           className="absolute top-12 -left-8 w-36 h-36 rounded-full pointer-events-none"
-          style={{ backgroundColor: '#C96C38', opacity: 0.12, filter: 'blur(56px)' }}
-        />
-
-        {/* Decorative arc lines */}
+          style={{ backgroundColor: '#C96C38', opacity: 0.05, filter: 'blur(56px)' }}
+        /> */}
         <div className="absolute inset-0 pointer-events-none opacity-10">
           <svg className="w-full h-full" viewBox="0 0 400 260" fill="none" preserveAspectRatio="xMidYMid slice">
             <ellipse cx="370" cy="50"  rx="210" ry="210" stroke="white" strokeWidth="0.8" />
             <ellipse cx="390" cy="90"  rx="160" ry="160" stroke="white" strokeWidth="0.5" />
           </svg>
         </div>
-
-        {/* ── Top row: label + clear-all button ── */}
-        <div className="relative z-10 flex items-center justify-between -mt-6 mb-3">
+        <div className="relative z-10 flex items-center justify-between -mt-6 ">
           <p
-            className="text-[11px] font-semibold tracking-[0.15em] uppercase font-myriad"
+            className="text-[12px] font-medium tracking-[0.15em] uppercase font-myriad"
             style={{ color: '#C96C38' }}
           >
             Shortlist &middot; {filterCounts.all} {filterCounts.all === 1 ? 'home' : 'homes'}
@@ -347,8 +357,8 @@ const SavedPage = () => {
         </div>
 
         {/* ── Title ── */}
-        <div className="relative z-10 mb-1.5">
-          <span className="text-[30px] font-bold text-white font-myriad">Your </span>
+        <div className="relative z-10 mb-0.5">
+          <span className="text-[30px] font-bold text-white font-display">Your </span>
           <span
             className="text-[30px] font-normal italic"
             style={{ color: '#C96C38', fontFamily: 'Georgia, serif' }}
@@ -359,7 +369,7 @@ const SavedPage = () => {
 
         {/* ── Subtitle ── */}
         <p
-          className="relative z-10 text-[13px] font-myriad mb-5"
+          className="relative z-10 text-[13px] font-display italic mb-3"
           style={{ color: 'rgba(255,255,255,0.55)' }}
         >
           {filterCounts.all > 0
@@ -367,12 +377,8 @@ const SavedPage = () => {
             : 'Start exploring to build your shortlist'}
         </p>
 
-        {/* ── Filter Pills ── */}
-        <div className="relative z-10 flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1">
-          <FilterPill value="all"      label="All"      count={filterCounts.all}     activeFilter={filter} onFilterChange={setFilter} />
-          <FilterPill value="for-sale" label="For Sale" count={filterCounts.forSale} activeFilter={filter} onFilterChange={setFilter} />
-          <FilterPill value="for-rent" label="For Rent" count={filterCounts.forRent} activeFilter={filter} onFilterChange={setFilter} />
-        </div>
+        {/* ── Filter Segmented Control ── */}
+        <SegmentedFilters filter={filter} setFilter={setFilter} filterCounts={filterCounts} />
       </div>
 
       {/* ── Content ── */}
@@ -387,7 +393,7 @@ const SavedPage = () => {
           ) : filterCounts.all === 0 ? (
             <EmptySaved />
           ) : processedProperties.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-5">
               {processedProperties.map((property) => (
                 <SavedPropertyCard key={property.id} property={property} />
               ))}

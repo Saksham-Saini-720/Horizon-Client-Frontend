@@ -17,6 +17,21 @@
   font-style: normal;
 }
 
+/* ── Display font — change the variable here to swap the font everywhere ── */
+:root {
+  --font-display: Georgia, 'Times New Roman', serif;
+}
+
+body, html, #root {
+  background-color: #ffffff;
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+}
+
 /* Hide scrollbars everywhere the utility class is used */
 .scrollbar-hide {
   -ms-overflow-style: none;

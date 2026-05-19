@@ -44,7 +44,7 @@ const ExplorePage = () => {
     type: undefined,
     amenities: undefined,
     page: 1,
-    limit: 10,
+    limit: 12,
   });
 
   const [activeModal, setActiveModal] = useState(null);
@@ -210,7 +210,7 @@ const ExplorePage = () => {
   const listingsError = showNearby ? nearbyQuery.isError : newListingsQuery.isError;
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-white">
       <ExploreHeader
         onSubmitSearch={handleSearch}
         recentSearches={recent.searches}
@@ -249,7 +249,7 @@ const ExplorePage = () => {
       <div className="pb-28">
         {/* Most Viewed Carousel — overlaps the header bottom edge */}
         {!showNearby && (
-          <div className="relative z-40 -mt-12">
+          <div className="relative z-40 -mt-20">
             <MostViewedCarousel
               properties={mostViewedQuery.data || []}
               isLoading={mostViewedQuery.isLoading}
@@ -261,7 +261,7 @@ const ExplorePage = () => {
               <div className="px-5 pt-3 pb-2 flex items-center justify-between ml-4">
                 <div className="flex items-center gap-3">
                   <div>
-                    <h2 className="text-[21px] font-bold text-primary font-myriad tracking-tight leading-none">
+                    <h2 className="text-[21px] font-bold text-primary font-display tracking-tight leading-none">
                       Most Viewed
                     </h2>
                     <p className="text-[10px] font-semibold text-gray-400 font-myriad tracking-[0.14em] uppercase mt-0.5">
@@ -288,7 +288,7 @@ const ExplorePage = () => {
           <div className="flex items-center justify-between px-5 mb-5">
             <div className="relative inline-block pb-[6px]">
               <h2 className="text-[23px] leading-none" style={{ color: "#1A1A1A" }}>
-                <span className="font-bold font-myriad text-secondary">Our </span>
+                <span className="font-bold font-display text-secondary">Our </span>
                 <span className="text-primary-light" style={{ fontFamily: "'Georgia', serif", fontStyle: "italic", fontWeight: 400 }}>
                   world
                 </span>
@@ -369,7 +369,7 @@ const ExplorePage = () => {
               title="Nearby Properties"
               onSeeAll={() => navigate('/map', { state: { location: selectedLocation } })}
             />
-            <div className="px-4 flex flex-col gap-4">
+            <div className="px-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {isFeaturedLoading ? (
                 Array(10).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
               ) : featuredError ? (
@@ -398,7 +398,7 @@ const ExplorePage = () => {
         {!showNearby && (
           <div id="new-listings-section">
             <SectionHeader title="New Listings" onSeeAll={() => navigate('/search?new=true')} />
-            <div className="px-4 flex flex-col gap-4">
+            <div className="px-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {isListingsLoading ? (
                 Array(10).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
               ) : listingsError ? (

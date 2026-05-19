@@ -11,7 +11,7 @@ export default {
           light:   '#C96C38',
         },
         secondary: '#2D368E',
-        surface: '#F7F6F2',
+        surface: '#ffffff',
       },
       fontFamily: {
         myriad: ['MyriadPro', 'sans-serif'],

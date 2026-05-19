@@ -52,7 +52,7 @@ const SearchPage = () => {
     type: undefined,
     amenities: undefined,
     page: 1,
-    limit: 10,
+    limit: 12,
   });
 
   const [activeModal, setActiveModal] = useState(null);
@@ -103,7 +103,7 @@ const SearchPage = () => {
       type: undefined,
       amenities: undefined,
       page: 1,
-      limit: 10,
+      limit: 12,
     });
   };
 
@@ -418,9 +418,9 @@ const SearchPage = () => {
       </div>
 
       {/* Results */}
-      <div className="px-4 flex flex-col gap-4 max-w-full">
+      <div className="px-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {isLoading ? (
-          Array(10).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
+          Array(12).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
         ) : isError ? (
           <ErrorState
             title="Failed to load results"

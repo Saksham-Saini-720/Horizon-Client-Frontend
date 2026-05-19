@@ -16,16 +16,16 @@ const ProfileHeader = memo(({ user, onEdit }) => {
       {/* ── Glow orbs ── */}
       <div
         className="absolute -top-10 -right-10 w-56 h-56 rounded-full pointer-events-none"
-        style={{ background: '#C96C38', opacity: 0.32, filter: 'blur(72px)' }}
+        style={{ background: '#C96C38', opacity: 0.2, filter: 'blur(72px)' }}
       />
       <div
         className="absolute top-6 right-10 w-32 h-32 rounded-full pointer-events-none"
-        style={{ background: '#C96C38', opacity: 0.18, filter: 'blur(44px)' }}
+        style={{ background: '#C96C38', opacity: 0.1, filter: 'blur(44px)' }}
       />
-      <div
+      {/* <div
         className="absolute top-14 -left-10 w-44 h-44 rounded-full pointer-events-none"
         style={{ background: '#C96C38', opacity: 0.1, filter: 'blur(60px)' }}
-      />
+      /> */}
 
       {/* ── Decorative arc lines ── */}
       <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.13 }}>
@@ -35,9 +35,9 @@ const ProfileHeader = memo(({ user, onEdit }) => {
           className="w-full h-full"
           preserveAspectRatio="xMidYMid slice"
         >
-          <ellipse cx="390" cy="30"  rx="230" ry="230" stroke="white" strokeWidth="0.9" />
-          <ellipse cx="410" cy="70"  rx="180" ry="180" stroke="white" strokeWidth="0.7" />
-          <ellipse cx="370" cy="10"  rx="280" ry="280" stroke="white" strokeWidth="0.5" />
+          {/* <ellipse cx="390" cy="30"  rx="230" ry="230" stroke="white" strokeWidth="0.9" /> */}
+          <ellipse cx="410" cy="80"  rx="170" ry="160" stroke="white" strokeWidth="0.7" />
+          {/* <ellipse cx="370" cy="10"  rx="280" ry="280" stroke="white" strokeWidth="0.5" /> */}
         </svg>
       </div>
 
@@ -83,10 +83,10 @@ const ProfileHeader = memo(({ user, onEdit }) => {
           />
         ) : (
           <div
-            className="w-[72px] h-[72px] flex-shrink-0 rounded-full flex items-center justify-center text-white text-[26px] font-bold font-myriad"
+            className="w-[75px] h-[75px] flex-shrink-0 rounded-full flex items-center justify-center text-white text-[26px] font-semibold font-display"
             style={{
               background: 'linear-gradient(135deg, #C96C38 0%, #e08050 100%)',
-              border: '3px solid rgba(255,255,255,0.18)',
+              border: '5px solid rgba(255,255,255,1)',
               boxShadow: '0 4px 18px rgba(201,108,56,0.45)',
             }}
           >
@@ -96,12 +96,12 @@ const ProfileHeader = memo(({ user, onEdit }) => {
 
         {/* Name · Email · Badge */}
         <div className="flex-1 min-w-0">
-          <h2 className="text-[20px] font-bold text-white font-myriad leading-snug mb-[2px] truncate">
+          <h2 className="text-[22px] font-semibold text-white font-display tracking-wide mb-[2px] truncate">
             {user?.firstName} {user?.lastName}
           </h2>
 
           <p
-            className="text-[13px] font-myriad mb-[10px] truncate"
+            className="text-[13px] font-display italic mb-[10px] truncate"
             style={{ color: 'rgba(255,255,255,0.55)' }}
           >
             {user?.email}
@@ -110,7 +110,7 @@ const ProfileHeader = memo(({ user, onEdit }) => {
           {/* Badge */}
           {user?.verified ? (
             <div
-              className="inline-flex items-center gap-[5px] px-[10px] py-[4px] rounded-full"
+              className="inline-flex items-center gap-[5px] px-[10px] py-[4px] rounded-md"
               style={{
                 background: 'rgba(34,197,94,0.18)',
                 border: '1px solid rgba(74,222,128,0.45)',

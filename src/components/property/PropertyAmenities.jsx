@@ -16,7 +16,7 @@ const PropertyAmenities = memo(({ amenities }) => {
     <div className="px-5 pt-5 pb-5 border-t border-gray-100">
       {/* Heading with orange underline accent */}
       <div className="mb-4">
-        <h2 className="text-[18px] font-bold text-primary font-myriad">
+        <h2 className="text-[18px] font-bold text-secondary font-display">
           Amenities
         </h2>
         <div className="mt-1.5 w-8 h-0.5 rounded-full bg-primary-light" />

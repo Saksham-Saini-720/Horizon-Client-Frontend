@@ -47,7 +47,7 @@ const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => {
             <button
               key={id}
               onClick={() => onToggle(id)}
-              className="flex-shrink-0 px-5 py-[7px] rounded-full text-[13px] font-semibold font-myriad active:scale-95 transition-all duration-150"
+              className="flex-shrink-0 px-5 py-[7px] rounded-full text-[13px] font-medium tracking-wide font-myriad active:scale-95 transition-all duration-150"
               style={
                 isActive
                   ? {

@@ -60,7 +60,7 @@ const Navbar = () => {
             </svg>
           </button>
         )}
-        <h1 className="text-[24px] font-bold text-white  m-0 truncate font-myriad">
+        <h1 className="text-[24px] font-bold text-white m-0 truncate font-display">
           {title}
         </h1>
       </div>

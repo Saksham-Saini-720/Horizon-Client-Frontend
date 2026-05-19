@@ -120,7 +120,7 @@ const AgentCard = memo(({ agent, property, isLoading }) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-white text-[17px] font-bold font-myriad leading-none">
+            <span className="text-white text-[17px] font-bold font-display leading-none">
               {initials}
             </span>
           )}
@@ -128,7 +128,7 @@ const AgentCard = memo(({ agent, property, isLoading }) => {
 
         {/* Name + area · rating */}
         <div className="flex-1 min-w-0">
-          <p className="text-[16px] font-bold text-primary font-myriad truncate">
+          <p className="text-[16px] font-bold text-secondary font-display truncate">
             {agent.name || 'Property Agent'}
           </p>
           <div className="flex items-center gap-1 mt-0.5 flex-wrap">

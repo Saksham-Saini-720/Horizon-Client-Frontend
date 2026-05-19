@@ -4,9 +4,9 @@ import { MostViewedCardSkeleton } from "../ui/SkeletonCards";
 import EmptyState from "../states/EmptyState";
 import ErrorState from "../states/ErrorState";
 
-const CARD_WIDTH = 320;
-const CARD_GAP = 14;
-const PEEK = 34; // how much of prev/next card shows on sides
+const CARD_WIDTH = 360;
+const CARD_GAP = 8;
+const PEEK = 17; // how much of prev/next card shows on sides
 
 const MostViewedCarousel = memo(({
   properties = [],
@@ -53,7 +53,7 @@ const MostViewedCarousel = memo(({
   // offset = currentIndex * (CARD_WIDTH + CARD_GAP) - (containerWidth - CARD_WIDTH) / 2
   const offset =
     containerWidth > 0
-      ? currentIndex * (CARD_WIDTH + CARD_GAP) - (containerWidth - CARD_WIDTH) / 2
+      ? currentIndex * (CARD_WIDTH + CARD_GAP) - (containerWidth - CARD_WIDTH) / 2 + PEEK
       : currentIndex * (CARD_WIDTH + CARD_GAP);
 
   // ── Loading ──

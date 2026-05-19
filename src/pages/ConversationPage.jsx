@@ -70,7 +70,7 @@ const ConversationPage = () => {
   // ── Loading ──
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="min-h-screen flex flex-col bg-white">
         <HeaderSkeleton />
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
@@ -85,7 +85,7 @@ const ConversationPage = () => {
   // ── Error ──
   if (isError) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="min-h-screen flex flex-col bg-white">
         <HeaderSkeleton />
         <div className="flex-1 flex flex-col items-center justify-center py-16 px-6">
           <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
@@ -111,7 +111,7 @@ const ConversationPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-white">
 
       {/* ── Fixed Header ── */}
       <div className="fixed top-0 left-0 right-0 z-50 overflow-hidden shadow-xl bg-gradient-to-br from-[#1a2550] to-secondary">

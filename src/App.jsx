@@ -15,7 +15,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 // ─── Suspense Fallback ─────────────────────────────────────────────────────────
 
 const PageLoader = () => (
-  <div className="min-h-screen bg-surface flex items-center justify-center">
+  <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="flex flex-col items-center">
       <div className="w-16 h-16 border-4 border-gray-200 border-t-secondary rounded-full animate-spin" />
       <p className="mt-4 text-[15px] text-gray-500 font-myriad">
@@ -69,7 +69,7 @@ export default function App() {
             <Route 
               path="404" 
               element={
-                <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-4 text-center pb-28">
+                <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center pb-28">
                   <h1 className="text-[48px] font-semibold text-primary font-myriad mb-2">
                     404
                   </h1>
