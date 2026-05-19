@@ -26,42 +26,62 @@ const PropertyInfo = memo(({ property }) => {
 
       {/* Status / type tag badges */}
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-[10px] font-semibold px-3 py-1.5 rounded-full border border-teal-500 text-teal-600 tracking-widest uppercase font-myriad">
+        <span
+          className="text-[11px] font-semibold px-3 py-[2px] rounded-full tracking-widest uppercase font-myriad"
+          style={{
+            background: "rgba(20,184,166,0.10)",
+            border: "1px solid rgba(20,184,166,0.28)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            color: "#0d9488",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5)",
+          }}
+        >
           {property.tag}
         </span>
         {property.type && (
-          <span className="text-[10px] font-semibold px-3 py-1.5 rounded-full border border-amber-400 text-amber-600 tracking-widest uppercase font-myriad">
+          <span
+            className="text-[11px] font-semibold px-3 py-[2px] rounded-full tracking-widest uppercase font-myriad"
+            style={{
+              background: "rgba(245,158,11,0.10)",
+              border: "1px solid rgba(245,158,11,0.28)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              color: "#d97706",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5)",
+            }}
+          >
             {property.type}
           </span>
         )}
       </div>
 
       {/* Title — last word is italic orange for the premium look */}
-      <h1 className="text-[24px] font-bold text-primary font-myriad leading-tight mb-1.5">
+      <h1 className="text-[24px] font-bold text-secondary font-display leading-tight mb-1.5">
         {titlePrefix && <span>{titlePrefix} </span>}
         <span className="italic text-primary-light">{lastWord}</span>
       </h1>
 
       {/* Location */}
-      <p className="text-[13px] text-gray-500 font-myriad mb-4">
+      <p className="text-[13px] text-gray-500 italic font-display mb-4">
         <span className="text-gray-400 mr-1">—</span>
         {property.location}
       </p>
 
       {/* Dark navy price banner */}
-      <div className="bg-gradient-to-br from-[#1a2550] to-secondary rounded-2xl px-5 py-4 flex items-center justify-between">
+      <div className="bg-gradient-to-br from-[#1a2550] to-secondary rounded-2xl px-5 py-3 flex items-center justify-between">
         <div className="flex items-baseline gap-2">
           {rawCurrency && (
-            <span className="text-[11px] text-white/50 font-semibold font-myriad uppercase tracking-wider">
+            <span className="text-[11px] text-primary-light font-semibold font-display uppercase tracking-wider">
               {rawCurrency}
             </span>
           )}
-          <span className="text-[28px] font-bold text-white font-myriad tracking-tight">
+          <span className="text-[32px] font-bold text-white font-display tracking-tight">
             {formattedNumber}
           </span>
         </div>
         {pricePerSqft && (
-          <span className="text-[13px] text-white/55 font-myriad">
+          <span className="text-[13px] text-white/55 font-display">
             ${pricePerSqft}/sqft
           </span>
         )}

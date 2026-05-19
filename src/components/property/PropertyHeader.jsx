@@ -56,43 +56,24 @@ const PropertyHeader = memo(({ propertyId }) => {
 
   return (
     <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4">
-      {/* Back Button */}
+      {/* Back Button — simple chevron */}
       <button
         onClick={handleBack}
         className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white active:scale-95 transition-all"
+        aria-label="Go back"
       >
-        <svg className="w-6 h-6 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        <svg className="w-5 h-5 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 18l-6-6 6-6" />
         </svg>
       </button>
 
-      {/* Right Actions */}
+      {/* Right Actions — Share then Heart */}
       <div className="flex gap-2">
-        {/* Heart Button */}
-        <button
-          onClick={handleToggleSave}
-          className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white active:scale-95 transition-all"
-        >
-          <svg 
-            className={`w-5 h-5 transition-all ${
-              saved 
-                ? "fill-red-500 text-red-500 scale-110" 
-                : "text-gray-900"
-            }`}
-            viewBox="0 0 24 24" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round"
-          >
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </button>
-
         {/* Share Button */}
         <button
           onClick={handleShare}
           className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white active:scale-95 transition-all"
+          aria-label="Share property"
         >
           <svg className="w-5 h-5 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <circle cx="18" cy="5" r="3"/>
@@ -100,6 +81,28 @@ const PropertyHeader = memo(({ propertyId }) => {
             <circle cx="18" cy="19" r="3"/>
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </button>
+
+        {/* Heart Button */}
+        <button
+          onClick={handleToggleSave}
+          className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white active:scale-95 transition-all"
+          aria-label={saved ? "Unsave property" : "Save property"}
+        >
+          <svg
+            className={`w-5 h-5 transition-all ${
+              saved
+                ? "fill-red-500 text-red-500 scale-110"
+                : "text-gray-900"
+            }`}
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </button>
       </div>

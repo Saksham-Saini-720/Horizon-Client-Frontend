@@ -87,7 +87,7 @@ export default function LoginPage() {
           animate={{ y: 0,   opacity: 1 }}
           transition={{ type: "spring", stiffness: 110, damping: 18, delay: 0.05 }}
         >
-          <h2 className="text-[28px] font-bold text-center text-primary mb-1">
+          <h2 className="text-[28px] font-display font-semibold text-center text-secondary mb-1">
             Welcome{" "}
             <span
               className="italic font-normal"
@@ -96,7 +96,7 @@ export default function LoginPage() {
               back
             </span>
           </h2>
-          <p className="text-sm text-gray-400 italic text-center mb-6">
+          <p className="text-sm font-display text-gray-400 italic text-center mb-6">
             Sign in to continue your search
           </p>
 

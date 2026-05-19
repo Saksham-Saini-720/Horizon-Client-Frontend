@@ -110,7 +110,7 @@ const MapPage = () => {
 
   if (useGPS && locationLoading && !gpsLocation) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center bg-gray-50">
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
         <div className="w-16 h-16 rounded-full border-4 border-gray-200 border-t-blue-500 animate-spin mb-4" />
         <p className="text-[16px] font-semibold text-gray-700 font-myriad">Getting your location…</p>
         <p className="text-[15px] text-gray-400 mt-1 font-myriad">Please allow location access</p>

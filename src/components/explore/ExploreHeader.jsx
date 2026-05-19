@@ -72,7 +72,7 @@ const ExploreHeader = memo(({
     <>
       {/* ── Sticky header shell ── */}
       <div
-        className="relative"
+        className="relative pb-9"
         style={{
           background:
             "linear-gradient(165deg, #3641a8 0%, #2D368E 48%, #1d2670 100%)",
@@ -157,51 +157,68 @@ const ExploreHeader = memo(({
           </div>
 
           {/* ── Location row ── */}
-          <button
-            onClick={() => setShowLocationPicker(true)}
-            className="flex items-center gap-1.5 px-4 pt-1 pb-0.5 active:opacity-75 transition-opacity"
-          >
-            {/* Glowing dot */}
-            <span
-              className="w-[7px] h-[7px] rounded-full flex-shrink-0"
+          <div className="px-4 ">
+            <button
+              onClick={() => setShowLocationPicker(true)}
+              className="inline-flex items-center gap-2 active:opacity-75 transition-opacity"
               style={{
-                backgroundColor: "#34D399",
-                boxShadow: "0 0 6px 2px rgba(52,211,153,0.55)",
-              }}
-            />
-            <span
-              className="text-[10.5px] font-bold uppercase font-myriad"
-              style={{ color: "rgba(255,255,255,0.65)", letterSpacing: "2px" }}
-            >
-              {currentLocation?.name || "Lusaka, Zambia"}
-            </span>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              style={{
-                width: 10,
-                height: 10,
-                color: "rgba(255,255,255,0.35)",
-                flexShrink: 0,
+                background: "rgba(255,255,255,0.13)",
+                border: "1px solid rgba(255,255,255,0.22)",
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
+                borderRadius: 999,
+                padding: "5px 10px 5px 10px",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.12)",
               }}
             >
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
+              {/* Orange dot */}
+              <span
+                className="w-[7px] h-[7px] rounded-full flex-shrink-0"
+                style={{
+                  backgroundColor: "#C96C38",
+                  boxShadow: "0 0 6px 2px rgba(201,108,56,0.6)",
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "'Myriad Pro', 'Myriad', sans-serif",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "rgba(255,255,255,0.88)",
+                }}
+              >
+                {currentLocation?.name || "Lusaka, Zambia"}
+              </span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                style={{
+                  width: 9,
+                  height: 9,
+                  color: "rgba(255,255,255,0.45)",
+                  flexShrink: 0,
+                }}
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
 
           {/* ── Greeting ── */}
           <div className="px-4 pt-2.5 pb-5">
             <h1
-              className="font-bold text-white font-myriad leading-tight"
-              style={{ fontSize: 30, letterSpacing: "-0.4px" }}
+              className="text-white font-display"
+              style={{ fontSize: 28, fontWeight: 550, letterSpacing: "0.01em" }}
             >
               {firstName ? `Hi ${firstName}, find your` : "Find your"}
             </h1>
             <h1
-              className="font-bold leading-tight"
+              className="font-semibold leading-tight"
               style={{
                 fontSize: 30,
                 fontStyle: "italic",
@@ -215,17 +232,18 @@ const ExploreHeader = memo(({
           </div>
 
           {/* ── Search row ── */}
-          <div className="px-4 pb-3.5 flex items-center gap-2.5">
+          <div className="px-6 pb-3.5">
 
-            {/* Custom search input with inline dropdown */}
-            <div className="flex-1 relative">
+            <div className="relative">
               <div
-                className="flex items-center gap-2.5 rounded-2xl px-4 py-3 transition-all duration-200"
+                className="flex items-center gap-2.5 transition-all duration-200"
                 style={{
                   background: "rgba(255,255,255,0.10)",
                   border: searchFocused
                     ? "1.5px solid rgba(201,108,56,0.7)"
-                    : "1.5px solid rgba(255,255,255,0.30)",
+                    : "1.5px solid rgba(255,255,255,0.22)",
+                  borderRadius: 999,
+                  padding: "6px 6px 6px 16px",
                   backdropFilter: "blur(20px)",
                   WebkitBackdropFilter: "blur(20px)",
                   boxShadow: searchFocused
@@ -233,7 +251,7 @@ const ExploreHeader = memo(({
                     : "0 4px 18px rgba(0,0,0,0.2)",
                 }}
               >
-                {/* Magnifier icon — white */}
+                {/* Magnifier icon */}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -246,7 +264,7 @@ const ExploreHeader = memo(({
                   <path d="M21 21l-4.35-4.35" />
                 </svg>
 
-                {/* Input — white text */}
+                {/* Input */}
                 <input
                   ref={searchInputRef}
                   type="text"
@@ -254,36 +272,50 @@ const ExploreHeader = memo(({
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleKeyDown}
                   onFocus={() => setSearchFocused(true)}
-                  onBlur={() =>
-                    setTimeout(() => setSearchFocused(false), 160)
-                  }
+                  onBlur={() => setTimeout(() => setSearchFocused(false), 160)}
                   placeholder="Search neighbourhoods, lofts..."
-                  className="flex-1 bg-transparent outline-none border-none text-[15px] text-white font-myriad placeholder:text-white/45"
+                  className="flex-1 bg-transparent outline-none border-none text-[15px] text-white font-myriad placeholder:text-white/45 placeholder:italic placeholder:font-display"
                 />
 
                 {/* Clear button */}
-                {searchQuery ? (
+                {searchQuery && (
                   <button
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => {
-                      setSearchQuery("");
-                      searchInputRef.current?.focus();
-                    }}
-                    className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
+                    onClick={() => { setSearchQuery(""); searchInputRef.current?.focus(); }}
+                    className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ background: "rgba(255,255,255,0.18)" }}
                   >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      style={{ width: 11, height: 11, color: "rgba(255,255,255,0.8)" }}
-                    >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                      style={{ width: 11, height: 11, color: "rgba(255,255,255,0.8)" }}>
                       <path d="M18 6L6 18M6 6l12 12" />
                     </svg>
                   </button>
-                ) : null}
+                )}
+
+                {/* Orange filter circle — inside the pill on the right */}
+                <button
+                  onClick={onOpenFilters}
+                  className="w-11 h-11 rounded-full flex-shrink-0 flex items-center justify-center active:scale-95 transition-all duration-150"
+                  style={{
+                    backgroundColor: "#C96C38",
+                    boxShadow: "0 2px 10px rgba(201,108,56,0.6)",
+                  }}
+                  aria-label="Open filters"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-4 h-4 text-white"
+                  >
+                    <line x1="4" y1="6" x2="20" y2="6" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="11" y1="18" x2="13" y2="18" />
+                  </svg>
+                </button>
               </div>
 
               {/* Recent searches dropdown */}
@@ -362,30 +394,6 @@ const ExploreHeader = memo(({
               )}
             </div>
 
-            {/* Orange filter button */}
-            <button
-              onClick={onOpenFilters}
-              className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center active:scale-95 transition-all duration-150"
-              style={{
-                backgroundColor: "#C96C38",
-                boxShadow: "0 4px 16px rgba(201,108,56,0.55)",
-              }}
-              aria-label="Open filters"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-5 h-5 text-white"
-              >
-                <line x1="4" y1="6" x2="20" y2="6" />
-                <line x1="8" y1="12" x2="16" y2="12" />
-                <line x1="11" y1="18" x2="13" y2="18" />
-              </svg>
-            </button>
           </div>
 
           {/* ── Filter chips ── */}

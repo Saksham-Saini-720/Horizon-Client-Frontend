@@ -239,7 +239,7 @@ export default function LoadingScreen({ onComplete }) {
               style={{
                 textAlign: "center",
                 color: "#E8793A",
-                fontSize: 30,
+                fontSize: 28,
                 fontStyle: "italic",
                 fontFamily: "'Georgia', serif",
                 marginBottom: 10,
@@ -253,11 +253,12 @@ export default function LoadingScreen({ onComplete }) {
             <h1
               style={{
                 color: "white",
-                fontSize: 30,
+                fontSize: 26,
                 fontWeight: 700,
                 lineHeight: 1.22,
                 margin: "0 0 2px 0",
                 letterSpacing: "-0.3px",
+                fontFamily: "'Georgia', serif",
               }}
             >
               {slide.heading}
@@ -269,7 +270,7 @@ export default function LoadingScreen({ onComplete }) {
             <h1
               style={{
                 color: "#E8793A",
-                fontSize: 30,
+                fontSize: 28,
                 fontWeight: 800,
                 fontStyle: "italic",
                 fontFamily: "'Georgia', serif",

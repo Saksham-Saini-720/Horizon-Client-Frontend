@@ -51,14 +51,14 @@ const SettingsRow = ({
     className={`w-full flex items-center gap-3 px-4 py-4 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left ${className}`}
   >
     <div
-      className={`w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}
+      className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}
     >
       {icon}
     </div>
     <div className="flex-1 min-w-0">
-      <p className="text-[15px] font-semibold text-primary font-myriad">{title}</p>
+      <p className="text-[16px] tracking-wide font-semibold text-secondary font-myriad">{title}</p>
       {subtitle && (
-        <p className="text-[12px] text-gray-400 font-myriad mt-0.5">{subtitle}</p>
+        <p className="text-[12px] text-gray-400 tracking-wider font-myriad mt-0.5">{subtitle}</p>
       )}
     </div>
     {badge != null && (
@@ -69,7 +69,7 @@ const SettingsRow = ({
     {rightEl}
     {chevron && (
       <svg
-        className="w-4 h-4 text-gray-300 flex-shrink-0"
+        className="w-4 h-4 text-gray-400 flex-shrink-0"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -86,7 +86,7 @@ const Divider = () => <div className="h-px bg-gray-100 mx-4" />;
 
 // ── Section label ─────────────────────────────────────────────────────────────
 const SectionLabel = ({ children }) => (
-  <p className="text-[12px] font-semibold tracking-[0.2em] text-gray-400 uppercase mb-2 ml-1">
+  <p className="text-[11px] font-bold tracking-[0.1em] text-gray-400 uppercase mb-2 ml-1">
     {children}
   </p>
 );
@@ -95,7 +95,7 @@ const SectionLabel = ({ children }) => (
 const NotLoggedInState = () => {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 pb-28">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 pb-28">
       <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
         <svg
           className="w-12 h-12 text-gray-400"
@@ -126,7 +126,7 @@ const NotLoggedInState = () => {
 
 // ── Loading skeleton ──────────────────────────────────────────────────────────
 const ProfileSkeleton = () => (
-  <div className="min-h-screen bg-gray-100 pb-24 animate-pulse">
+  <div className="min-h-screen bg-white pb-24 animate-pulse">
     <div className="bg-gradient-to-br from-[#1a2550] to-secondary h-72" />
     <div className="px-4 -mt-10">
       <div className="bg-white h-20 rounded-2xl shadow-lg" />
@@ -234,7 +234,7 @@ const ProfilePage = memo(() => {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 pb-28">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 pb-28">
         <div className="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center mb-6">
           <svg className="w-12 h-12 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="10" />
@@ -260,7 +260,7 @@ const ProfilePage = memo(() => {
 
   if (!displayUser) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 pb-28">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 pb-28">
         <h2 className="text-[24px] font-semibold text-primary mb-4">No User Data</h2>
         <button onClick={() => navigate('/login')} className="px-8 py-3.5 rounded-xl bg-primary text-white">
           Back to Login
@@ -271,12 +271,11 @@ const ProfilePage = memo(() => {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-100 pb-28">
+    <div className="min-h-screen bg-white pb-28">
       {/* Dark gradient header */}
       <ProfileHeader user={displayUser} onEdit={() => setShowEditModal(true)} />
 
       <div className="px-4">
-        {/* Stats bar — overlaps header with negative margin */}
         <div className="-mt-10 mb-6 relative z-10">
           <QuickAccessGrid
             savedCount={savedCount}

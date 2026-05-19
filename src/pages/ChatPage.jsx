@@ -85,7 +85,7 @@ const ChatPage = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 pb-24">
+    <div className="min-h-screen flex flex-col bg-white pb-24">
 
       {/* ── Premium Header ── */}
       <div className="sticky top-0 z-50 overflow-hidden shadow-xl bg-gradient-to-br from-[#1a2550] to-secondary">
@@ -106,7 +106,7 @@ const ChatPage = () => {
         {/* Title row */}
         <div className="relative z-10 flex items-center justify-between px-5 pt-12 pb-3">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-[22px] font-bold text-white font-myriad tracking-tight">
+            <h1 className="text-[22px] font-bold text-white font-display tracking-tight">
               Inbox
             </h1>
             {unreadCount > 0 && (

@@ -17,7 +17,7 @@ export const FeaturedCardSkeleton = () => (
 
 export const NewListingCardSkeleton = () => (
   <div className="bg-white rounded-2xl overflow-hidden border border-gray-100">
-    <ShimmerBox className="h-52 rounded-none" />
+    <ShimmerBox className="h-[220px] sm:h-[260px] rounded-none" />
     <div className="px-4 pt-3 pb-4 space-y-2">
       <ShimmerBox className="h-5 w-1/3" />
       <ShimmerBox className="h-4 w-2/3" />

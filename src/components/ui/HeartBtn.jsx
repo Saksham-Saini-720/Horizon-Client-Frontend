@@ -40,7 +40,7 @@ const HeartBtn = memo(({ size = "sm", propertyId }) => {
       className={`${sizeClass} rounded-full bg-white shadow-md flex items-center justify-center transition-all active:scale-90 hover:shadow-lg`}
     >
       <svg
-        className={`w-4 h-4 transition-all duration-300 ${
+        className={`w-3 h-3 transition-all duration-300 ${
           saved
             ? "fill-red-500 text-red-500 scale-110"
             : "text-gray-400 hover:text-red-400"

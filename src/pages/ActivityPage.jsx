@@ -22,7 +22,7 @@ const ActivityPage = memo(() => {
     {
       id: 'inquiries',
       icon: (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       ),
@@ -35,7 +35,7 @@ const ActivityPage = memo(() => {
     {
       id: 'tours',
       icon: (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
           <line x1="16" y1="2" x2="16" y2="6" />
           <line x1="8" y1="2" x2="8" y2="6" />
@@ -51,7 +51,7 @@ const ActivityPage = memo(() => {
     {
       id: 'chats',
       icon: (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
         </svg>
       ),
@@ -70,7 +70,7 @@ const ActivityPage = memo(() => {
   ];
 
   return (
-    <div className="min-h-screen pb-24 bg-gray-50">
+    <div className="min-h-screen pb-24 bg-white">
 
       {/* ── Sticky premium header ── */}
       <div
@@ -128,28 +128,28 @@ const ActivityPage = memo(() => {
         </svg>
 
         {/* Title */}
-        <div className="relative px-4 pt-5 pb-3">
-          <div className="flex items-center gap-2.5 mb-0.5">
+        <div className="relative px-4 pt-4 pb-3">
+          <div className="flex items-center gap-2">
             {/* Glowing accent bar */}
             <div
-              className="w-[3px] h-7 rounded-full"
+              className="w-[3px] h-5 rounded-full"
               style={{
                 background: 'linear-gradient(180deg, #c084fc, #818cf8)',
                 boxShadow: '0 0 10px rgba(192,132,252,0.9), 0 0 20px rgba(129,140,248,0.5)',
               }}
             />
-            <h1 className="text-[24px] font-bold text-white font-myriad tracking-wide">
+            <h1 className="text-[24px] font-bold text-white font-display tracking-wide">
               Activity
             </h1>
+            <span className="text-[11px] font-display italic ml-1" style={{ color: 'rgba(196,210,255,0.55)' }}>
+              Manage your property interactions
+            </span>
           </div>
-          <p className="text-[13px] font-myriad ml-[19px]" style={{ color: 'rgba(196,210,255,0.6)' }}>
-            Manage your property interactions
-          </p>
         </div>
 
         {/* Stats grid */}
-        <div className="relative px-3 pb-3">
-          <div className="grid grid-cols-3 gap-2.5">
+        <div className="relative px-3 pb-2">
+          <div className="grid grid-cols-3 gap-2">
             {stats.map((stat) => (
               <StatsCard
                 key={stat.id}

@@ -60,7 +60,7 @@ const NavItem = ({ to, icon, label, badge }) => (
 
         {/* Label */}
         <span
-          className="text-[10px] font-semibold font-myriad tracking-wider uppercase transition-colors duration-200"
+          className="text-[10px] font-medium font-myriad tracking-widest uppercase transition-colors duration-200"
           style={{ color: isActive ? '#C96C38' : 'rgba(255,255,255,0.32)' }}
         >
           {label}
