@@ -12,10 +12,34 @@ const PRICE_RANGES = [
 const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }) => {
   const [minPrice, setMinPrice] = useState(currentFilters.minPrice || '');
   const [maxPrice, setMaxPrice] = useState(currentFilters.maxPrice || '');
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
+  const handleMinChange = (e) => {
+    setMinPrice(e.target.value);
+    if (maxPrice !== '' && e.target.value !== '' && parseInt(e.target.value) > parseInt(maxPrice)) {
+      setError('Min price cannot be greater than max price.');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleMaxChange = (e) => {
+    setMaxPrice(e.target.value);
+    if (minPrice !== '' && e.target.value !== '' && parseInt(minPrice) > parseInt(e.target.value)) {
+      setError('Min price cannot be greater than max price.');
+    } else {
+      setError('');
+    }
+  };
+
   const handleApply = () => {
+    if (minPrice !== '' && maxPrice !== '' && parseInt(minPrice) > parseInt(maxPrice)) {
+      setError('Min price cannot be greater than max price.');
+      return;
+    }
+    setError('');
     onApply({
       minPrice: minPrice ? parseInt(minPrice) : undefined,
       maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
@@ -97,9 +121,9 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
               <input
                 type="number"
                 value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
+                onChange={handleMinChange}
                 placeholder="e.g. 100000"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
+                className={`w-full px-4 py-3 rounded-xl border text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none transition-colors ${error ? 'border-red-400 focus:border-red-400' : 'border-gray-200 focus:border-secondary'}`}
               />
             </div>
             <div>
@@ -109,12 +133,15 @@ const PriceFilterModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
               <input
                 type="number"
                 value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
+                onChange={handleMaxChange}
                 placeholder="e.g. 500000"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors"
+                className={`w-full px-4 py-3 rounded-xl border text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none transition-colors ${error ? 'border-red-400 focus:border-red-400' : 'border-gray-200 focus:border-secondary'}`}
               />
             </div>
           </div>
+          {error && (
+            <p className="mt-2 text-[13px] font-semibold text-red-500 font-myriad">{error}</p>
+          )}
         </div>
 
         {/* Actions */}

@@ -131,7 +131,7 @@ const ProfileHeader = memo(({ user, onEdit }) => {
             </div>
           ) : (
             <div
-              className="inline-flex items-center gap-[5px] px-[10px] py-[4px] rounded-full"
+              className="inline-flex items-center gap-[5px] px-[10px] py-[4px] rounded-md"
               style={{
                 background: 'rgba(251,191,36,0.18)',
                 border: '1px solid rgba(251,191,36,0.45)',

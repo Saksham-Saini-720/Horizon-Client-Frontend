@@ -13,7 +13,7 @@ const SectionHeader = memo(({ title, onSeeAll }) => {
       <div className="relative inline-block pb-[6px]">
               <h2 className="text-[23px] leading-none" style={{ color: "#1A1A1A" }}>
                 <span className="font-bold font-display text-secondary">{arr[0]} </span>
-                <span className="text-primary-light" style={{ fontFamily: "'Georgia', serif", fontStyle: "italic", fontWeight: 400 }}>
+                <span className="text-primary-light" style={{ fontFamily: "'Georgia', serif", fontStyle: "italic", fontWeight: 600 }}>
                   {arr[1]}
                 </span>
               </h2>
@@ -26,19 +26,9 @@ const SectionHeader = memo(({ title, onSeeAll }) => {
       {onSeeAll && (
         <button 
           onClick={onSeeAll} 
-          className="flex items-center gap-0.5 text-[15px] font-semibold text-primary-light font-myriad hover:text-secondary transition-colors"
+          className="flex items-center gap-0.5 text-[12px] font-semibold tracking-[0.2em] font-myriad uppercase text-primary-light hover:text-secondary transition-colors"
         >
-          See all
-          <svg 
-            className="w-4 h-4" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2.5" 
-            strokeLinecap="round"
-          >
-            <path d="M9 18l6-6-6-6"/>
-          </svg>
+          SEE ALL →
         </button>
       )}
     </div>

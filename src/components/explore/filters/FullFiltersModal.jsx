@@ -1,4 +1,5 @@
 import { memo, useState, useEffect } from 'react';
+import Footer from '../../layouts/Footer';
 
 const MAX_PRICE = 10_000_000;
 
@@ -38,8 +39,8 @@ const AMENITIES = Object.keys(AMENITY_LABELS);
 
 const formatPrice = (val) => {
   if (val >= 1_000_000) return `$${(val / 1_000_000).toFixed(1)}M`;
-  if (val >= 1000)      return `$${Math.round(val / 1000)}k`;
-  return `$${val}`;
+  if (val >= 1000)      return `ZMW ${Math.round(val / 1000)}k`;
+  return `ZMW ${val}`;
 };
 
 const buildState = (cf) => ({
@@ -158,14 +159,14 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
         }
       `}</style>
 
-      {/* ── Full-screen dark navy backdrop ── */}
-      <div
-        className="fixed inset-0 z-50 flex flex-col"
-        style={{ background: 'linear-gradient(160deg, #141852 0%, #1e2870 60%, #2D368E 100%)' }}
-      >
+      {/* ── Full-screen wrapper — z-30 so footer (z-40) sits on top ── */}
+      <div className="fixed inset-0 z-30 flex flex-col bg-white">
 
         {/* ── Header ── */}
-        <div className="relative overflow-hidden flex-shrink-0">
+        <div
+          className="relative overflow-hidden flex-shrink-0"
+          style={{ background: 'linear-gradient(160deg, #141852 0%, #1e2870 60%, #2D368E 100%)' }}
+        >
           {/* decorative rings top-right */}
           <svg className="absolute top-0 right-0 pointer-events-none" width="150" height="140" viewBox="0 0 150 140" style={{ opacity: 0.10 }}>
             <circle cx="130" cy="10" r="75"  fill="none" stroke="white" strokeWidth="0.8" />
@@ -180,11 +181,11 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
             filter: 'blur(24px)',
           }} />
 
-          <div className="relative px-5 pt-12 pb-6">
+          <div className="relative px-5 pt-12 pb-10 flex items-center gap-4">
             {/* Back button — squircle shape */}
             <button
               onClick={onClose}
-              className="flex items-center justify-center mb-4 transition-opacity active:opacity-70"
+              className="flex-shrink-0 flex items-center justify-center transition-opacity active:opacity-70"
               style={{
                 width: 36, height: 36,
                 borderRadius: 12,
@@ -197,26 +198,28 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
               </svg>
             </button>
 
-            {/* "FILTERS" label — orange, matches screenshot */}
-            <p
-              className="text-[11px] font-bold font-myriad tracking-[0.18em] mb-1"
-              style={{ color: '#C96C38' }}
-            >
-              FILTERS
-            </p>
+            <div>
+              {/* "FILTERS" label — orange, matches screenshot */}
+              <p
+                className="text-[11px] font-bold font-myriad tracking-[0.18em] mb-1"
+                style={{ color: '#C96C38' }}
+              >
+                FILTERS
+              </p>
 
-            {/* Title */}
-            <h1 className="text-[30px] font-medium font-display text-white leading-tight">
-              Refine your{' '}
-              <em style={{ fontStyle: 'italic', color: '#C96C38' }}>search</em>
-            </h1>
+              {/* Title */}
+              <h1 className="text-[30px] font-medium font-display text-white leading-tight">
+                Refine your{' '}
+                <em style={{ fontStyle: 'italic', color: '#C96C38' }}>search</em>
+              </h1>
+            </div>
           </div>
         </div>
 
-        {/* ── Floating white card (mx margins + all corners rounded) ── */}
+        {/* ── White content card — overlaps header like login page ── */}
         <div
-          className="flex-1 overflow-hidden flex flex-col bg-white mx-3 mb-3"
-          style={{ borderRadius: 24 }}
+          className="flex-1 overflow-hidden flex flex-col bg-white -mt-7 shadow-2xl relative z-10 mx-5"
+          style={{ borderTopLeftRadius: 32, borderTopRightRadius: 32 }}
         >
 
           {/* Scrollable content */}
@@ -381,7 +384,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
           {/* ── Footer inside card ── */}
           <div
-            className="flex-shrink-0 px-4 pt-3 pb-5 flex gap-3"
+            className="flex-shrink-0 px-4 pt-3 pb-24 flex gap-3"
             style={{ borderTop: '1px solid #f0f0f0' }}
           >
             <button
@@ -415,6 +418,8 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
         {/* ── /floating card ── */}
 
       </div>
+
+      <Footer />
     </>
   );
 });

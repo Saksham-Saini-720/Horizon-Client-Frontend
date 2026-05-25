@@ -249,7 +249,7 @@ const ExplorePage = () => {
       <div className="pb-28">
         {/* Most Viewed Carousel — overlaps the header bottom edge */}
         {!showNearby && (
-          <div className="relative z-40 -mt-20">
+          <div className="relative z-1000 -mt-20">
             <MostViewedCarousel
               properties={mostViewedQuery.data || []}
               isLoading={mostViewedQuery.isLoading}
@@ -271,12 +271,9 @@ const ExplorePage = () => {
                 </div>
                 <button
                   onClick={() => navigate("/search?sort=views")}
-                  className="text-[13px] font-semibold text-primary-light font-myriad flex items-center gap-1 hover:opacity-75 transition-opacity"
+                  className="text-primary-light text-[12px] font-semibold tracking-[0.2em] font-myriad uppercase flex items-center gap-1 hover:opacity-75 transition-opacity"
                 >
-                  See All
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
+                  See All →
                 </button>
               </div>
             )}
@@ -289,7 +286,7 @@ const ExplorePage = () => {
             <div className="relative inline-block pb-[6px]">
               <h2 className="text-[23px] leading-none" style={{ color: "#1A1A1A" }}>
                 <span className="font-bold font-display text-secondary">Our </span>
-                <span className="text-primary-light" style={{ fontFamily: "'Georgia', serif", fontStyle: "italic", fontWeight: 400 }}>
+                <span className="text-primary-light" style={{ fontFamily: "'Georgia', serif", fontStyle: "italic", fontWeight: 600 }}>
                   world
                 </span>
               </h2>
@@ -299,7 +296,7 @@ const ExplorePage = () => {
               />
             </div>
             <button
-              className="text-[11px] font-bold tracking-[0.18em] font-myriad uppercase"
+              className="text-[12px] font-semibold tracking-[0.2em] font-myriad uppercase"
               style={{ color: "#C96C38" }}
             >
               EXPLORE →
@@ -321,7 +318,7 @@ const ExplorePage = () => {
                   />
                 </div>
                 <span
-                  className="text-[10px] font-semibold font-myriad tracking-[0.12em] text-center text-secondary"
+                  className="text-[11px] font-medium font-myriad tracking-[0.12em] text-center text-secondary"
                 >
                   {slide.label}
                 </span>

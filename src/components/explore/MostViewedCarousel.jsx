@@ -22,8 +22,10 @@ const MostViewedCarousel = memo(({
   // Measure container width
   useEffect(() => {
     if (!containerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      setContainerWidth(entries[0].contentRect.width);
+    const observer = new ResizeObserver(() => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
     });
     observer.observe(containerRef.current);
     setContainerWidth(containerRef.current.offsetWidth);
@@ -101,7 +103,7 @@ const MostViewedCarousel = memo(({
         <div
           ref={containerRef}
           className="overflow-hidden"
-          style={{ paddingLeft: PEEK, paddingRight: PEEK }}
+          style={{ paddingLeft: PEEK, paddingRight: PEEK, paddingTop: 12, marginTop: -12 }}
         >
           <div
             className="flex transition-transform duration-700 ease-[cubic-bezier(.77,0,.18,1)]"

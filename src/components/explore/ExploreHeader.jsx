@@ -26,7 +26,9 @@ const ExploreHeader = memo(({
   const searchInputRef = useRef(null);
   const user = useSelector(selectUser);
 
-  const firstName = user?.firstName || null;
+  const firstName = user?.firstName
+    ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)
+    : null;
   const initials  = user
     ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase()
     : "";
@@ -72,7 +74,7 @@ const ExploreHeader = memo(({
     <>
       {/* ── Sticky header shell ── */}
       <div
-        className="relative pb-9"
+        className="relative pb-9 "
         style={{
           background:
             "linear-gradient(165deg, #3641a8 0%, #2D368E 48%, #1d2670 100%)",
@@ -108,7 +110,7 @@ const ExploreHeader = memo(({
         <div className="relative">
 
           {/* ── Row 1: Logo + Avatar ── */}
-          <div className="flex items-center justify-between px-4 pt-4 pb-1.5">
+          <div className="flex items-center justify-between px-6 pt-4 pb-1.5">
             <HorizonLogo size={20} />
 
             {user ? (
@@ -157,7 +159,7 @@ const ExploreHeader = memo(({
           </div>
 
           {/* ── Location row ── */}
-          <div className="px-4 ">
+          <div className="px-6 pt-1.5 pb-1">
             <button
               onClick={() => setShowLocationPicker(true)}
               className="inline-flex items-center gap-2 active:opacity-75 transition-opacity"
@@ -210,7 +212,7 @@ const ExploreHeader = memo(({
           </div>
 
           {/* ── Greeting ── */}
-          <div className="px-4 pt-2.5 pb-5">
+          <div className="px-6 pt-2.5 pb-5">
             <h1
               className="text-white font-display"
               style={{ fontSize: 28, fontWeight: 550, letterSpacing: "0.01em" }}
@@ -397,7 +399,7 @@ const ExploreHeader = memo(({
           </div>
 
           {/* ── Filter chips ── */}
-          <div className="px-4 pb-4">
+          <div className="px-4 pb-1">
             <FilterChips
               activeFilter={activeFilter}
               onToggle={onToggle}
