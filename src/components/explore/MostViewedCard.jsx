@@ -47,7 +47,7 @@ const MostViewedCard = memo(({
   return (
     <div
       onClick={handleClick}
-      className="group relative flex-shrink-0 w-[360px] rounded-[28px] overflow-hidden cursor-pointer bg-white"
+      className="mb-5 group relative flex-shrink-0 w-[360px] rounded-[28px] overflow-hidden cursor-pointer bg-white"
       style={{
         boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
         border: "1px solid rgba(0,0,0,0.06)",
@@ -141,10 +141,11 @@ const MostViewedCard = memo(({
           <div
             className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full"
             style={{
-              background: "rgba(29,70,180,0.88)",
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-              boxShadow: "0 2px 10px rgba(29,70,180,0.45)",
+              background: "rgba(30,50,140,0.75)",
+              backdropFilter: "blur(15px)",
+              WebkitBackdropFilter: "blur(15px)",
+              border: "1px solid rgba(100,130,255,0.5)",
+              boxShadow: "0 2px 10px rgba(20,40,120,0.9)",
             }}
           >
             <svg viewBox="0 0 24 24" fill="white" style={{ width: 10, height: 10, flexShrink: 0 }}>
@@ -313,7 +314,13 @@ const MostViewedCard = memo(({
           </span>
           <div
             className="flex items-center gap-1 px-3 py-1.5 rounded-full"
-            style={{ background: "linear-gradient(135deg, #2D368E, #3641a8)" }}
+            style={{
+              background: "rgba(30,50,140,0.9)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              border: "1px solid rgba(100,130,255,0.3)",
+              boxShadow: "0 2px 10px rgba(20,40,120,0.3)",
+            }}
           >
             <span className="text-white font-myriad font-bold" style={{ fontSize: 10.5 }}>
               Details

@@ -11,6 +11,7 @@ const PasswordInput = memo(({
   showStrength = false,
   hint,
   className = "",
+  onChange,
 }) => {
   const [fieldError, setFieldError]   = useState("");
   const [strength, setStrength]       = useState(0);
@@ -27,11 +28,12 @@ const PasswordInput = memo(({
     return score;
   }, []);
 
-  const handleChange = useCallback(() => {
+  const handleChange = useCallback((e) => {
     if (showStrength && inputRef.current) {
       setStrength(calculateStrength(inputRef.current.value));
     }
-  }, [showStrength, inputRef, calculateStrength]);
+    onChange?.(e);
+  }, [showStrength, inputRef, calculateStrength, onChange]);
 
   const handleBlur = useCallback(() => {
     if (!validator) return;

@@ -11,11 +11,19 @@ import AuthPageHeader from "../components/auth/AuthPageHeader";
 // extracted so ESLint sees `motion` as used (dot-notation JSX isn't tracked)
 const MotionCard = motion.div;
 
+const PASSWORD_RULES = [
+  { label: "At least 8 characters",       test: (v) => v.length >= 8 },
+  { label: "One uppercase letter (A–Z)",  test: (v) => /[A-Z]/.test(v) },
+  { label: "One lowercase letter (a–z)",  test: (v) => /[a-z]/.test(v) },
+  { label: "One number (0–9)",            test: (v) => /[0-9]/.test(v) },
+  { label: "One special character",       test: (v) => /[^A-Za-z0-9]/.test(v) },
+];
+
 const VALIDATORS = {
   firstName: (v) => !v.trim() ? "First name required" : null,
   lastName:  (v) => !v.trim() ? "Last name required" : null,
   email:     (v) => !/\S+@\S+\.\S+/.test(v) ? "Enter a valid email" : null,
-  password:  (v) => v.length < 8 ? "Min 8 characters required" : null,
+  password:  (v) => PASSWORD_RULES.some(r => !r.test(v)) ? "Password doesn't meet all requirements" : null,
 };
 
 const MailIcon = () => (
@@ -40,6 +48,7 @@ export default function RegisterPage() {
 
   const [phoneValue, setPhoneValue] = useState("");
   const [phoneError, setPhoneError] = useState("");
+  const [passwordValue, setPasswordValue] = useState("");
 
   const registerMutation = useRegisterMutation();
 
@@ -166,9 +175,28 @@ export default function RegisterPage() {
                 placeholder="Min 8 characters"
                 required
                 validator={VALIDATORS.password}
-                hint="Use letters, numbers & symbols"
                 leftIcon={<LockIcon />}
+                onChange={(e) => setPasswordValue(e.target.value)}
               />
+              {passwordValue.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {PASSWORD_RULES.map((rule) => {
+                    const met = rule.test(passwordValue);
+                    return (
+                      <li key={rule.label} className={`flex items-center gap-1.5 text-[12px] ${met ? "text-green-600" : "text-gray-400"}`}>
+                        <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${met ? "bg-green-600 border-green-600" : "border-gray-300"}`}>
+                          {met && (
+                            <svg viewBox="0 0 10 8" className="w-2 h-2 fill-white">
+                              <path d="M1 4l3 3 5-6" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          )}
+                        </span>
+                        {rule.label}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
 
             {/* Phone */}

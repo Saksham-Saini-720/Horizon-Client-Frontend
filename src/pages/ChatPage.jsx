@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ConversationItem from '../components/chat/ConversationItem';
 import { useConversations } from '../hooks/conversations/useConversations';
@@ -69,6 +69,7 @@ const ErrorState = ({ error, onRetry }) => (
 const ChatPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceRef = useRef(null);
 
   useUnreadCount();
   const unreadCount = useSelector(selectUnreadCount);
@@ -76,8 +77,8 @@ const ChatPage = () => {
   const handleSearchChange = useCallback((e) => {
     const val = e.target.value;
     setSearchQuery(val);
-    clearTimeout(window._chatSearchTimeout);
-    window._chatSearchTimeout = setTimeout(() => setDebouncedSearch(val), 300);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setDebouncedSearch(val), 400);
   }, []);
 
   const { conversations, isLoading, isError, error, refetch } = useConversations({

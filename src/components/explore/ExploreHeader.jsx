@@ -1,4 +1,4 @@
-import { memo, useState, useRef, useCallback } from "react";
+import { memo, useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../store/slices/authSlice";
@@ -14,7 +14,7 @@ const ExploreHeader = memo(({
   onClearAllRecent,
   currentLocation,
   onLocationChange,
-  activeFilter,
+  activeFilters,
   onToggle,
   dimmed,
   onOpenFilters,
@@ -24,7 +24,16 @@ const ExploreHeader = memo(({
   const [searchQuery, setSearchQuery]               = useState("");
   const [searchFocused, setSearchFocused]           = useState(false);
   const searchInputRef = useRef(null);
+  const debounceRef    = useRef(null);
   const user = useSelector(selectUser);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      onSubmitSearch?.(searchQuery.trim());
+    }, 400);
+    return () => clearTimeout(debounceRef.current);
+  }, [searchQuery, onSubmitSearch]);
 
   const firstName = user?.firstName
     ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1)
@@ -44,6 +53,7 @@ const ExploreHeader = memo(({
   const handleSubmit = useCallback(() => {
     const q = searchQuery.trim();
     if (!q) return;
+    clearTimeout(debounceRef.current);
     setSearchFocused(false);
     searchInputRef.current?.blur();
     onSubmitSearch?.(q);
@@ -159,7 +169,7 @@ const ExploreHeader = memo(({
           </div>
 
           {/* ── Location row ── */}
-          <div className="px-6 pt-1.5 pb-1">
+          <div className="px-6 pt-1.5 mt-4 pb-1">
             <button
               onClick={() => setShowLocationPicker(true)}
               className="inline-flex items-center gap-2 active:opacity-75 transition-opacity"
@@ -283,7 +293,7 @@ const ExploreHeader = memo(({
                 {searchQuery && (
                   <button
                     onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => { setSearchQuery(""); searchInputRef.current?.focus(); }}
+                    onClick={() => { clearTimeout(debounceRef.current); setSearchQuery(""); onSubmitSearch?.(""); searchInputRef.current?.focus(); }}
                     className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ background: "rgba(255,255,255,0.18)" }}
                   >
@@ -401,7 +411,7 @@ const ExploreHeader = memo(({
           {/* ── Filter chips ── */}
           <div className="px-4 pb-1">
             <FilterChips
-              activeFilter={activeFilter}
+              activeFilters={activeFilters}
               onToggle={onToggle}
               dimmed={dimmed}
             />

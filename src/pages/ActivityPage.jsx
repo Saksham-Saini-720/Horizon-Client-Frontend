@@ -1,7 +1,6 @@
 import { memo, useState } from 'react';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
-import { useConversations } from '../hooks/conversations/useConversations';
 import StatsCard from '../components/activity/StatsCard';
 import InquiriesTab from '../components/activity/InquiriesTab';
 import ToursTab from '../components/activity/ToursTab';
@@ -10,13 +9,12 @@ import MessagesTab from '../components/activity/MessagesTab';
 const ActivityPage = memo(() => {
   const [activeTab, setActiveTab] = useState('inquiries');
 
-  const { data: enquiries = [] }                     = useEnquiries();
-  const { data: tours = [] }                         = useTours();
-  const { conversations = [], total: convTotal = 0 } = useConversations();
+  const { data: enquiries = [] } = useEnquiries();
+  const { data: tours = [] }     = useTours();
 
-  const inquiriesCount = enquiries.length;
-  const toursCount     = tours.length;
-  const messagesCount  = convTotal || conversations.length;
+  const inquiriesCount      = enquiries.length;
+  const toursCount          = tours.filter(t => t.status !== 'cancelled').length;
+  const cancelledToursCount = tours.filter(t => t.status === 'cancelled').length;
 
   const stats = [
     {
@@ -49,17 +47,19 @@ const ActivityPage = memo(() => {
       iconBg:    'rgba(201, 108, 56, 0.18)',
     },
     {
-      id: 'chats',
+      id: 'cancelled',
       icon: (
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
         </svg>
       ),
-      label: 'Chats',
-      count: messagesCount,
-      glowColor: 'rgba(34, 197, 94, 0.55)',
-      iconColor: '#4ade80',
-      iconBg:    'rgba(34, 197, 94, 0.18)',
+      label: 'Cancelled',
+      count: cancelledToursCount,
+      glowColor: 'rgba(239, 68, 68, 0.55)',
+      iconColor: '#f87171',
+      iconBg:    'rgba(239, 68, 68, 0.18)',
     },
   ];
 

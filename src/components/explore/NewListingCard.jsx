@@ -304,7 +304,13 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
           </span>
           <div
             className="flex items-center gap-1 px-3 py-1.5 rounded-full"
-            style={{ background: "linear-gradient(135deg, #2D368E, #3641a8)" }}
+            style={{
+              background: "rgba(30,50,140,0.9)",
+              backdropFilter: "blur(15px)",
+              WebkitBackdropFilter: "blur(15px)",
+              border: "1px solid rgba(100,130,255,0.5)",
+              boxShadow: "0 2px 10px rgba(20,40,120,0.9)",
+            }}
           >
             <span className="text-white font-myriad font-bold" style={{ fontSize: 10.5 }}>
               Details

@@ -207,10 +207,9 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
             label="Phone Number"
             required
             onChange={handlePhoneChange}
+            defaultValue={formData.phone}
+            error={errors.phone}
           />
-          {errors.phone && (
-            <p className="text-[11px] text-red-500 -mt-3">{errors.phone}</p>
-          )}
 
           {/* Email */}
           <div>

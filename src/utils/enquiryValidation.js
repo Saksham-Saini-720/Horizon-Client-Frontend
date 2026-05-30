@@ -28,9 +28,8 @@ export const validateEnquiryForm = (data) => {
   if (!data.phone || data.phone.trim().length === 0) {
     errors.phone = 'Phone number is required';
   } else {
-    // E.164 format: +[country code][number]
-    // Example: +260977888999, +14155552671
-    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    // E.164: +[country code][number], minimum 8 chars total (e.g. +1234567)
+    const phoneRegex = /^\+[1-9]\d{6,14}$/;
     if (!phoneRegex.test(data.phone.trim())) {
       errors.phone = 'Phone must be in E.164 format (e.g., +260977888999)';
     }

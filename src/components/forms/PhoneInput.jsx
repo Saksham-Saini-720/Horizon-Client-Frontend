@@ -275,7 +275,7 @@ function detectUserCountry() {
   return _fetchPromise;
 }
 
-const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, defaultValue }) => {
+const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, defaultValue, error: propError }) => {
 
   const parsed = parseDefaultValue(defaultValue);
 
@@ -283,7 +283,7 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
   const [number, setNumber]       = useState(parsed.localNumber);
   const [open, setOpen]           = useState(false);
   const [search, setSearch]       = useState("");
-  const [error, setError]         = useState("");
+  const [localError, setLocalError] = useState("");
   const dropdownRef               = useRef(null);
   const searchRef                 = useRef(null);
 
@@ -333,10 +333,11 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
     // Only allow digits, spaces, dashes
     const val = e.target.value.replace(/[^\d\s-]/g, "");
     setNumber(val);
-    setError("");
+    setLocalError("");
 
-    // Combine dial code + number for parent
-    const full = `${selected.dial}${val.replace(/\D/g, "")}`;
+    // Only emit a value when there's an actual local number
+    const digits = val.replace(/\D/g, "");
+    const full = digits ? `${selected.dial}${digits}` : "";
     if (inputRef) inputRef.current = { value: full };
     onChange?.(full);
   }, [selected, inputRef, onChange]);
@@ -345,15 +346,18 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
     setSelected(country);
     setOpen(false);
     setSearch("");
-    // Update combined value
-    const full = `${country.dial}${number.replace(/\D/g, "")}`;
+    // Only emit a value when there's an actual local number
+    const digits = number.replace(/\D/g, "");
+    const full = digits ? `${country.dial}${digits}` : "";
     if (inputRef) inputRef.current = { value: full };
     onChange?.(full);
   }, [number, inputRef, onChange]);
 
   const handleBlur = useCallback(() => {
-    setError(validate(number));
+    setLocalError(validate(number));
   }, [number, validate]);
+
+  const displayError = propError || localError;
 
   return (
     <div className={className}>
@@ -365,7 +369,7 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
       )}
 
       <div className={`flex rounded-xl border overflow-visible transition-colors ${
-        error ? "border-red-300" : "border-gray-200 focus-within:border-gray-800"
+        displayError ? "border-red-300" : "border-gray-200 focus-within:border-gray-800"
       }`}>
 
         {/* Country selector */}
@@ -436,8 +440,8 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
         />
       </div>
 
-      {error && (
-        <p className="text-[13px] text-red-500 mt-1.5">{error}</p>
+      {displayError && (
+        <p className="text-[13px] text-red-500 mt-1.5">{displayError}</p>
       )}
     </div>
   );

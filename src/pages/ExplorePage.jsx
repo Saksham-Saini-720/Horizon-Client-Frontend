@@ -165,11 +165,15 @@ const ExplorePage = () => {
     else               { setIsSearching(false); }
   }, [submitSearch]);
 
-  const activeFilter = useMemo(() => {
-    if (filters.purpose === 'sale') return 'buy';
-    if (filters.purpose === 'rent') return 'rent';
-    return null;
-  }, [filters.purpose]);
+  const activeFilters = useMemo(() => {
+    const active = [];
+    if (filters.purpose === 'sale') active.push('buy');
+    if (filters.purpose === 'rent') active.push('rent');
+    if (filters.minPrice || filters.maxPrice) active.push('price');
+    if (filters.bedrooms) active.push('bedrooms');
+    if (filters.bathrooms || filters.type || filters.amenities?.length) active.push('filters');
+    return active;
+  }, [filters]);
 
   const handleFilterToggle = useCallback((id) => {
     if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale', page: 1 }));
@@ -218,7 +222,7 @@ const ExplorePage = () => {
         onClearAllRecent={recent.clearAll}
         currentLocation={selectedLocation}
         onLocationChange={handleLocationChange}
-        activeFilter={activeFilter}
+        activeFilters={activeFilters}
         onToggle={handleFilterToggle}
         dimmed={isFeaturedLoading || isListingsLoading}
         onOpenFilters={() => setActiveModal('filters')}
@@ -249,7 +253,7 @@ const ExplorePage = () => {
       <div className="pb-28">
         {/* Most Viewed Carousel — overlaps the header bottom edge */}
         {!showNearby && (
-          <div className="relative z-1000 -mt-20">
+          <div className="relative z-1000 -mt-20 ">
             <MostViewedCarousel
               properties={mostViewedQuery.data || []}
               isLoading={mostViewedQuery.isLoading}
