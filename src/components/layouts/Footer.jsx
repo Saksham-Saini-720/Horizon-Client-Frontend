@@ -11,7 +11,7 @@ import {
 } from "react-icons/hi2";
 
 const NavItem = ({ to, icon, label, badge }) => (
-  <NavLink to={to} className="relative flex flex-col items-center gap-0.5 py-3 px-3 transition-all">
+  <NavLink to={to} className="relative flex flex-col items-center gap-0.5 py-2 px-3 transition-all">
     {({ isActive }) => (
       <>
         {/* Active glow blob behind icon */}

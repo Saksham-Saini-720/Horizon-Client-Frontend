@@ -259,6 +259,7 @@ export default function LoadingScreen({ onComplete }) {
                 margin: "0 0 2px 0",
                 letterSpacing: "-0.3px",
                 fontFamily: "'Georgia', serif",
+                textAlign: "center",
               }}
             >
               {slide.heading}
@@ -277,6 +278,7 @@ export default function LoadingScreen({ onComplete }) {
                 lineHeight: 1.22,
                 margin: "0 0 16px 0",
                 letterSpacing: "-0.3px",
+                textAlign: "center",
               }}
             >
               {slide.headingAccent}
@@ -291,6 +293,7 @@ export default function LoadingScreen({ onComplete }) {
                 margin: 0,
                 fontStyle: "italic",
                 fontFamily: "'Georgia', serif",
+                textAlign: "center",
               }}
             >
               {slide.sub}

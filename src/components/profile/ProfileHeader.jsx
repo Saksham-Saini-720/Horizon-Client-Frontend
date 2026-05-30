@@ -1,6 +1,7 @@
 
 import { memo } from 'react';
 import whiteLogo from '../../assets/icons/white_logo.png';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileHeader = memo(({ user, onEdit }) => {
   const getInitials = (firstName, lastName) => {
@@ -8,6 +9,8 @@ const ProfileHeader = memo(({ user, onEdit }) => {
     const last = lastName?.charAt(0) || '';
     return (first + last).toUpperCase() || 'U';
   };
+
+  const navigate = useNavigate();
 
   return (
     <div
@@ -43,7 +46,7 @@ const ProfileHeader = memo(({ user, onEdit }) => {
 
       {/* ── Top bar: Logo · Gear ── */}
       <div className="relative z-10 flex items-center justify-between mb-4">
-        <img src={whiteLogo} alt="Horizon" className="h-9 object-contain" />
+        <img onClick={()=>navigate("/")} src={whiteLogo} alt="Horizon" className="h-9 object-contain" />
 
         <button
           onClick={onEdit}
@@ -96,7 +99,7 @@ const ProfileHeader = memo(({ user, onEdit }) => {
 
         {/* Name · Email · Badge */}
         <div className="flex-1 min-w-0">
-          <h2 className="text-[22px] font-semibold text-white font-display tracking-wide mb-[2px] truncate">
+          <h2 className="text-[22px] font-semibold text-white font-display tracking-wide mb-[2px] truncate" style={{ textTransform: 'capitalize' }}>
             {user?.firstName} {user?.lastName}
           </h2>
 

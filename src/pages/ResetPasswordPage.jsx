@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import useResetPassword from "../hooks/auth/useResetPassword";
@@ -8,10 +8,17 @@ import AuthPageHeader from "../components/auth/AuthPageHeader";
 
 const MotionCard = motion.div;
 
+const PASSWORD_RULES = [
+  { label: "At least 8 characters",       test: (v) => v.length >= 8 },
+  { label: "One uppercase letter (A–Z)",  test: (v) => /[A-Z]/.test(v) },
+  { label: "One lowercase letter (a–z)",  test: (v) => /[a-z]/.test(v) },
+  { label: "One number (0–9)",            test: (v) => /[0-9]/.test(v) },
+  { label: "One special character",       test: (v) => /[^A-Za-z0-9]/.test(v) },
+];
+
 const validatePassword = (password) => {
   if (!password) return "Password is required";
-  if (password.length < 8) return "Password must be at least 8 characters";
-  return null;
+  return PASSWORD_RULES.some(r => !r.test(password)) ? "Password doesn't meet all requirements" : null;
 };
 
 const validateConfirmPassword = (password, confirmPassword) => {
@@ -26,6 +33,7 @@ export default function ResetPasswordPage() {
   const passwordRef            = useRef(null);
   const confirmPasswordRef     = useRef(null);
   const resetPasswordMutation  = useResetPassword();
+  const [passwordValue, setPasswordValue] = useState("");
 
   useEffect(() => {
     if (!token) navigate("/forgot-password");
@@ -161,12 +169,31 @@ export default function ResetPasswordPage() {
                     placeholder="••••••••"
                     required
                     validator={validatePassword}
-                    showStrength={true}
+                    onChange={(e) => setPasswordValue(e.target.value)}
                   />
+                  {passwordValue.length > 0 && (
+                    <ul className="mt-2 space-y-1">
+                      {PASSWORD_RULES.map((rule) => {
+                        const met = rule.test(passwordValue);
+                        return (
+                          <li key={rule.label} className={`flex items-center gap-1.5 text-[12px] ${met ? "text-green-600" : "text-gray-400"}`}>
+                            <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${met ? "bg-green-600 border-green-600" : "border-gray-300"}`}>
+                              {met && (
+                                <svg viewBox="0 0 10 8" className="w-2 h-2 fill-white">
+                                  <path d="M1 4l3 3 5-6" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              )}
+                            </span>
+                            {rule.label}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
 
                 {/* Confirm Password */}
-                <div className="mb-4">
+                <div className="mb-6">
                   <p className="text-[10px] font-semibold tracking-[0.15em] text-gray-400 uppercase mb-1.5">
                     Confirm Password
                   </p>
@@ -177,19 +204,6 @@ export default function ResetPasswordPage() {
                     required
                     validator={(value) => validateConfirmPassword(passwordRef.current?.value ?? "", value)}
                   />
-                </div>
-
-                {/* Password requirements */}
-                <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 mb-6">
-                  <p className="text-[11px] font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
-                    Password must contain
-                  </p>
-                  <ul className="text-[12px] text-gray-500 space-y-0.5">
-                    <li>• At least 8 characters</li>
-                    <li>• Mix of uppercase &amp; lowercase (recommended)</li>
-                    <li>• At least one number (recommended)</li>
-                    <li>• At least one special character (recommended)</li>
-                  </ul>
                 </div>
 
                 <button

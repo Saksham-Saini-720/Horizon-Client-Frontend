@@ -9,7 +9,7 @@ const FILTERS = [
   { id: "filters",  label: "Filters" },
 ];
 
-const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => {
+const FilterChips = memo(({ activeFilters = [], onToggle, dimmed = false }) => {
   const scrollRef = useRef(null);
   const [showArrow, setShowArrow] = useState(false);
 
@@ -42,7 +42,7 @@ const FilterChips = memo(({ activeFilter, onToggle, dimmed = false }) => {
         className="flex gap-2.5 overflow-x-auto scrollbar-hide p-2"
       >
         {FILTERS.map(({ id, label }) => {
-          const isActive = activeFilter === id;
+          const isActive = activeFilters.includes(id);
           return (
             <button
               key={id}

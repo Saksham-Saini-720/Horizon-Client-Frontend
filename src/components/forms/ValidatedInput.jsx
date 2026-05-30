@@ -13,6 +13,7 @@ const ValidatedInput = memo(({
   className = "",
   extraClass = "",
   leftIcon,
+  onChange,
 }) => {
   const [fieldError, setFieldError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -59,6 +60,7 @@ const ValidatedInput = memo(({
           required={required}
           onBlur={handleBlur}
           onFocus={handleFocus}
+          onChange={onChange}
           className={`w-full bg-transparent py-3.5 text-[16px] text-gray-800 placeholder-gray-400
             outline-none rounded-xl ${extraClass}
             ${leftIcon ? 'pl-10' : 'pl-4'} ${isPassword ? 'pr-11' : 'pr-4'}`}

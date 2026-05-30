@@ -5,6 +5,17 @@ import { transformPropertyResponse } from '../../utils/propertyTransform';
 
 const LUSAKA_CENTER = { lat: -15.4167, lng: 28.2833 };
 
+// Haversine distance in metres between two lat/lng points
+const haversineMeters = (lat1, lng1, lat2, lng2) => {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
 // Scatter markers around city center if no real coordinates
 const assignApproxCoords = (properties, cityLat, cityLng) => {
   return properties.map((p, i) => {
@@ -24,27 +35,19 @@ export const useMapProperties = (longitude, latitude, maxDistance = 5000, cityNa
   return useQuery({
     queryKey: ['mapProperties', longitude, latitude, maxDistance, cityName],
     queryFn: async () => {
-      // Step 1: Try nearby endpoint
+      // Step 1: Try nearby endpoint with the selected radius
       if (longitude && latitude) {
         const nearbyResp = await getNearbyProperties(longitude, latitude, maxDistance, 30);
         const { properties: nearby } = transformPropertyResponse(nearbyResp);
         if (nearby.length > 0) {
           return nearby;
         }
-
-        // Step 2: Try 50km radius
-        const wideResp = await getNearbyProperties(longitude, latitude, 50000, 30);
-        const { properties: wide } = transformPropertyResponse(wideResp);
-        if (wide.length > 0) {
-          return wide;
-        }
       }
 
-      // Step 3: getAllProperties — filter by city name
+      // Step 2: getAllProperties — filter by city name, then by selected radius
       const allResp = await getAllProperties({ limit: 100 });
       const { properties: all } = transformPropertyResponse(allResp);
 
-      // KEY FIX: Only show properties matching selected city
       let filtered = all;
       if (cityName) {
         const city = cityName.toLowerCase();
@@ -53,16 +56,25 @@ export const useMapProperties = (longitude, latitude, maxDistance = 5000, cityNa
           return loc.includes(city);
         });
 
-        // If no match at all, return empty — don't show wrong city's properties
         if (filtered.length === 0) {
           return [];
         }
       }
 
-      return assignApproxCoords(filtered, latitude, longitude);
+      // Assign approximate coordinates so we can distance-filter them
+      const withCoords = assignApproxCoords(filtered, latitude, longitude);
+
+      // Only return properties whose approximate position falls within the selected radius
+      if (latitude && longitude) {
+        return withCoords.filter(p =>
+          haversineMeters(latitude, longitude, p.latitude, p.longitude) <= maxDistance
+        );
+      }
+
+      return withCoords;
     },
     enabled: true,
-    staleTime:            1000 * 60 * 5,
+    staleTime:            0,
     gcTime:               1000 * 60 * 10,
     refetchOnMount:       false,
     refetchOnWindowFocus: false,

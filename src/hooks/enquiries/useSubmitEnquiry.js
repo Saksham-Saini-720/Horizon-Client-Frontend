@@ -1,5 +1,5 @@
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { submitPropertyEnquiry } from '../../api/enquiryApi';
 import { addInquiry } from '../../store/slices/activitySlice';
@@ -15,6 +15,7 @@ import toast from 'react-hot-toast';
  */
 export const useSubmitEnquiry = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ propertyId, data }) => {
@@ -27,6 +28,10 @@ export const useSubmitEnquiry = () => {
       // Extract data from response
       const enquiryData = response.data || response;
       
+      // Refetch tours so QuickAccessGrid count updates immediately
+      queryClient.invalidateQueries({ queryKey: ['tours'] });
+      queryClient.refetchQueries({ queryKey: ['tours'] });
+
       // Save to Redux activity slice
       dispatch(addInquiry({
         id: enquiryData.enquiry_id || Date.now(),

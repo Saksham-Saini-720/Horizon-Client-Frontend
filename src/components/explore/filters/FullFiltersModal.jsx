@@ -39,8 +39,8 @@ const AMENITIES = Object.keys(AMENITY_LABELS);
 
 const formatPrice = (val) => {
   if (val >= 1_000_000) return `$${(val / 1_000_000).toFixed(1)}M`;
-  if (val >= 1000)      return `ZMW ${Math.round(val / 1000)}k`;
-  return `ZMW ${val}`;
+  if (val >= 1000)      return `$${Math.round(val / 1000)}k`;
+  return `$${val}`;
 };
 
 const buildState = (cf) => ({
@@ -201,14 +201,14 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
             <div>
               {/* "FILTERS" label — orange, matches screenshot */}
               <p
-                className="text-[11px] font-bold font-myriad tracking-[0.18em] mb-1"
+                className="text-[12px] font-bold font-myriad tracking-[0.18em] mb-1"
                 style={{ color: '#C96C38' }}
               >
                 FILTERS
               </p>
 
               {/* Title */}
-              <h1 className="text-[30px] font-medium font-display text-white leading-tight">
+              <h1 className="text-[25px] font-medium font-display text-white leading-tight">
                 Refine your{' '}
                 <em style={{ fontStyle: 'italic', color: '#C96C38' }}>search</em>
               </h1>

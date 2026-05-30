@@ -98,9 +98,9 @@ export const useTours = (filters = {}, options = {}) => {
       
       return validTours.map(transformTour);
     },
-    staleTime: 5 * 60 * 1000, // ✅ 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-    refetchOnMount: false, // ✅ Changed from 'always'
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnMount: true,
     refetchOnWindowFocus: false, // ✅ Changed from true
     retry: 1, // ✅ Only retry once
     ...options,

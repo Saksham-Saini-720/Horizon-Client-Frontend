@@ -1,5 +1,5 @@
 
-import { memo, useState, useRef } from "react";
+import { memo, useState, useRef, useEffect } from "react";
 
 const SearchHeader = memo(({
   query,
@@ -7,19 +7,32 @@ const SearchHeader = memo(({
   onClearSearch,
   onBack
 }) => {
-  const inputRef = useRef(null);
+  const inputRef    = useRef(null);
+  const debounceRef = useRef(null);
   const [localQuery, setLocalQuery] = useState(query);
-  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused]   = useState(false);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const q = localQuery.trim();
+    debounceRef.current = setTimeout(() => {
+      if (q) onSearch(q);
+      else onClearSearch();
+    }, 400);
+    return () => clearTimeout(debounceRef.current);
+  }, [localQuery, onSearch, onClearSearch]);
 
   const handleSearch = () => {
-    if (localQuery.trim()) {
-      onSearch(localQuery.trim());
-      setIsFocused(false);
-      inputRef.current?.blur();
-    }
+    const q = localQuery.trim();
+    if (!q) return;
+    clearTimeout(debounceRef.current);
+    onSearch(q);
+    setIsFocused(false);
+    inputRef.current?.blur();
   };
 
   const handleClear = () => {
+    clearTimeout(debounceRef.current);
     setLocalQuery("");
     onClearSearch();
     inputRef.current?.focus();
