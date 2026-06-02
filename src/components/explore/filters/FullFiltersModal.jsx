@@ -38,9 +38,9 @@ const AMENITY_LABELS = {
 const AMENITIES = Object.keys(AMENITY_LABELS);
 
 const formatPrice = (val) => {
-  if (val >= 1_000_000) return `$${(val / 1_000_000).toFixed(1)}M`;
-  if (val >= 1000)      return `$${Math.round(val / 1000)}k`;
-  return `$${val}`;
+  if (val >= 1_000_000) return `ZMW ${(val / 1_000_000).toFixed(1)}M`;
+  if (val >= 1000)      return `ZMW ${Math.round(val / 1000)}k`;
+  return `ZMW ${val}`;
 };
 
 const buildState = (cf) => ({
@@ -106,7 +106,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
 
   const handleApply = () => {
     onApply({
-      type:      filters.type                  || undefined,
+      type:      filters.type,   // null = user picked "Any" (clears preference); string = specific type
       purpose:   filters.purpose               || undefined,
       minPrice:  filters.minPrice  > 0         ? filters.minPrice  : undefined,
       maxPrice:  filters.maxPrice  < MAX_PRICE ? filters.maxPrice  : undefined,

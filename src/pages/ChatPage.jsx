@@ -78,7 +78,7 @@ const ChatPage = () => {
     const val = e.target.value;
     setSearchQuery(val);
     clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setDebouncedSearch(val), 400);
+    debounceRef.current = setTimeout(() => setDebouncedSearch(val), 300);
   }, []);
 
   const { conversations, isLoading, isError, error, refetch } = useConversations({
@@ -118,11 +118,11 @@ const ChatPage = () => {
           </div>
 
           {/* Decorative chat icon */}
-          <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
+          {/* <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center">
             <svg className="w-5 h-5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
-          </div>
+          </div> */}
         </div>
 
         {/* Search bar */}

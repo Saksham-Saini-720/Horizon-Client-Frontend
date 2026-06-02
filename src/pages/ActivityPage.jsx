@@ -1,4 +1,5 @@
 import { memo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
 import StatsCard from '../components/activity/StatsCard';
@@ -7,7 +8,14 @@ import ToursTab from '../components/activity/ToursTab';
 import MessagesTab from '../components/activity/MessagesTab';
 
 const ActivityPage = memo(() => {
-  const [activeTab, setActiveTab] = useState('inquiries');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(location.state?.tab ?? 'inquiries');
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    navigate(location.pathname, { replace: true, state: { tab: tabId } });
+  };
 
   const { data: enquiries = [] } = useEnquiries();
   const { data: tours = [] }     = useTours();
@@ -174,7 +182,7 @@ const ActivityPage = memo(() => {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 className={`relative pb-3 text-[14px] font-semibold font-myriad transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'text-white'

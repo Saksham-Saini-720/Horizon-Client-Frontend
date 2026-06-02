@@ -8,9 +8,8 @@ const MessagesTab = memo(() => {
   const { conversations, isLoading, isError, refetch } = useConversations();
 
   const handleClick = (conv) => {
-    // Navigate with threadId so correct thread opens
     const url = `/chat/${conv.conversationId || conv.id}${conv.threadId ? `?thread=${conv.threadId}` : ''}`;
-    navigate(url);
+    navigate(url, { state: { from: '/inquiries', tab: 'messages' } });
   };
 
   if (isLoading) {

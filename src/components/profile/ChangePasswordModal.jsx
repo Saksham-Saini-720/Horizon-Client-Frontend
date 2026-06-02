@@ -48,30 +48,36 @@ const PasswordField = memo(({ label, value, onChange, error, placeholder }) => {
   );
 });
 
-// ── Password strength indicator ──────────────────────────────────────────────
-const StrengthBar = memo(({ password }) => {
-  if (!password) return null;
-  const checks = [
-    password.length >= 8,
-    /[A-Z]/.test(password),
-    /[a-z]/.test(password),
-    /[0-9]/.test(password),
-    /[^A-Za-z0-9]/.test(password),
-  ];
-  const score = checks.filter(Boolean).length;
-  const labels = ['', 'Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
-  const colors = ['', 'bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400', 'bg-green-500'];
-  const textColors = ['', 'text-red-500', 'text-orange-500', 'text-yellow-600', 'text-green-500', 'text-green-600'];
+// ── Password rules ───────────────────────────────────────────────────────────
+const PASSWORD_RULES = [
+  { label: 'At least 8 characters',       test: (v) => v.length >= 8 },
+  { label: 'One uppercase letter (A–Z)',  test: (v) => /[A-Z]/.test(v) },
+  { label: 'One lowercase letter (a–z)',  test: (v) => /[a-z]/.test(v) },
+  { label: 'One number (0–9)',            test: (v) => /[0-9]/.test(v) },
+  { label: 'One special character',       test: (v) => /[^A-Za-z0-9]/.test(v) },
+];
 
+// ── Password checklist ───────────────────────────────────────────────────────
+const PasswordChecklist = memo(({ password }) => {
+  if (!password) return null;
   return (
-    <div className="mt-2">
-      <div className="flex gap-1 mb-1">
-        {[1,2,3,4,5].map(i => (
-          <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= score ? colors[score] : 'bg-gray-200'}`}/>
-        ))}
-      </div>
-      <p className={`text-[11px] font-medium ${textColors[score]}`}>{labels[score]}</p>
-    </div>
+    <ul className="mt-2 space-y-1">
+      {PASSWORD_RULES.map((rule) => {
+        const met = rule.test(password);
+        return (
+          <li key={rule.label} className={`flex items-center gap-1.5 text-[12px] ${met ? 'text-green-600' : 'text-gray-400'}`}>
+            <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${met ? 'bg-green-600 border-green-600' : 'border-gray-300'}`}>
+              {met && (
+                <svg viewBox="0 0 10 8" className="w-2 h-2 fill-white">
+                  <path d="M1 4l3 3 5-6" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </span>
+            {rule.label}
+          </li>
+        );
+      })}
+    </ul>
   );
 });
 
@@ -93,13 +99,11 @@ const ChangePasswordModal = memo(({ isOpen, onClose }) => {
 
   const validate = () => {
     const errs = {};
-    if (!form.current)           errs.current = 'Current password is required';
-    if (!form.newPass)           errs.newPass = 'New password is required';
-    else if (form.newPass.length < 8)          errs.newPass = 'Min 8 characters';
-    else if (!/[A-Z]/.test(form.newPass))      errs.newPass = 'Must contain uppercase letter';
-    else if (!/[a-z]/.test(form.newPass))      errs.newPass = 'Must contain lowercase letter';
-    if (form.newPass !== form.confirm)         errs.confirm = 'Passwords do not match';
-    if (form.newPass === form.current && form.newPass) errs.newPass = 'New password must be different';
+    if (!form.current) errs.current = 'Current password is required';
+    if (!form.newPass) errs.newPass = 'New password is required';
+    else if (PASSWORD_RULES.some(r => !r.test(form.newPass))) errs.newPass = "Password doesn't meet all requirements";
+    else if (form.newPass === form.current)                    errs.newPass = 'New password must be different';
+    if (form.newPass !== form.confirm) errs.confirm = 'Passwords do not match';
     return errs;
   };
 
@@ -189,7 +193,7 @@ const ChangePasswordModal = memo(({ isOpen, onClose }) => {
                 error={errors.newPass}
                 placeholder="Min 8 chars, upper & lowercase"
               />
-              <StrengthBar password={form.newPass}/>
+              <PasswordChecklist password={form.newPass}/>
             </div>
 
             <PasswordField

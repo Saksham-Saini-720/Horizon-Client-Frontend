@@ -36,7 +36,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
         preferredTimes: selectedTimes, // Keep all selected times for frontend display
         numberOfPeople: 1, // Default to 1, can be made configurable later
         message: note || '',
-        visitType: visitType, // Keep in frontend state (not sent to API)
+        visitType: visitType,
         property: {
           id: property.id,
           title: property.title,
@@ -140,7 +140,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
 
           {/* Details */}
           <div className="space-y-4">
-            {/* Visit Type */}
+            
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
               <span className="text-[15px] text-gray-500 font-myriad">
                 Visit Type

@@ -1,6 +1,8 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../store/slices/authSlice";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
 import useSearchSubmit from "../hooks/utils/useDebounceSearch";
 import { useFeaturedPropertiesFiltered, useNewListingsFiltered } from "../hooks/properties/usePropertiesWithFilters";
@@ -35,19 +37,63 @@ const ExplorePage = () => {
 
   const [isSearching, setIsSearching] = useState(false);
 
-  const [filters, setFilters] = useState({
-    purpose: null,
-    minPrice: undefined,
-    maxPrice: undefined,
-    bedrooms: undefined,
-    bathrooms: undefined,
-    type: undefined,
-    amenities: undefined,
-    page: 1,
-    limit: 12,
+  const [filters, setFilters] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('exploreFilters');
+      return saved ? JSON.parse(saved) : {
+        purpose: null,
+        minPrice: undefined,
+        maxPrice: undefined,
+        bedrooms: undefined,
+        bathrooms: undefined,
+        type: undefined,
+        amenities: undefined,
+        page: 1,
+        limit: 12,
+      };
+    } catch {
+      return {
+        purpose: null,
+        minPrice: undefined,
+        maxPrice: undefined,
+        bedrooms: undefined,
+        bathrooms: undefined,
+        type: undefined,
+        amenities: undefined,
+        page: 1,
+        limit: 12,
+      };
+    }
   });
 
   const [activeModal, setActiveModal] = useState(null);
+
+  // Read preference directly from Redux — updated optimistically on every toggle, no async wait
+  const user = useSelector(selectUser);
+  const prefType = user?.preferences?.interestedIn?.[0];
+
+  // When the user updates their preference, lift the null sentinel so the new preference applies.
+  // Render-time state update: safe because it converges in one extra render with no infinite loop.
+  const [prevPrefType, setPrevPrefType] = useState(prefType);
+  if (prefType !== prevPrefType) {
+    setPrevPrefType(prefType);
+    if (filters.type === null) setFilters(prev => ({ ...prev, type: undefined }));
+  }
+
+  // null means user explicitly cleared the type chip; undefined means "not set — fall back to preference"
+  const effectiveType = filters.type !== undefined ? filters.type : prefType;
+
+  useEffect(() => {
+    try {
+      // Don't persist null — null means "cleared for this visit only"
+      // so the preference re-applies on the next mount
+      const toSave = { ...filters };
+      if (toSave.type === null) delete toSave.type;
+      sessionStorage.setItem('exploreFilters', JSON.stringify(toSave));
+    } catch {
+      return;
+    }
+  }, [filters]);
 
   // --- Our World Section ---
   const PROMO_SLIDES = [
@@ -67,12 +113,12 @@ const ExplorePage = () => {
     if (filters.maxPrice)            f.maxPrice  = filters.maxPrice;
     if (filters.bedrooms)            f.bedrooms  = filters.bedrooms;
     if (filters.bathrooms)           f.bathrooms = filters.bathrooms;
-    if (filters.type)                f.type      = filters.type;
+    if (effectiveType)               f.type      = effectiveType;
     if (filters.amenities?.length)   f.amenities = filters.amenities;
     f.page  = filters.page;
     f.limit = filters.limit;
     return f;
-  }, [filters]);
+  }, [filters, effectiveType]);
 
   const showNearby = !!(selectedLocation && !isSearching);
 
@@ -121,8 +167,8 @@ const ExplorePage = () => {
         return baths === bathroomCount;
       });
     }
-    if (filters.type) {
-      filtered = filtered.filter(p => p.type?.toLowerCase() === filters.type.toLowerCase());
+    if (effectiveType) {
+      filtered = filtered.filter(p => p.type?.toLowerCase() === effectiveType.toLowerCase());
     }
     if (filters.amenities?.length > 0) {
       filtered = filtered.filter(p => {
@@ -133,7 +179,7 @@ const ExplorePage = () => {
     }
     
     return filtered;
-  }, [nearbyQuery.data, filters, showNearby]);
+  }, [nearbyQuery.data, filters, showNearby, effectiveType]);
 
   const featuredQuery = useFeaturedPropertiesFiltered(
     { purpose: filters.purpose },
@@ -171,9 +217,9 @@ const ExplorePage = () => {
     if (filters.purpose === 'rent') active.push('rent');
     if (filters.minPrice || filters.maxPrice) active.push('price');
     if (filters.bedrooms) active.push('bedrooms');
-    if (filters.bathrooms || filters.type || filters.amenities?.length) active.push('filters');
+    if (filters.bathrooms || effectiveType || filters.amenities?.length) active.push('filters');
     return active;
-  }, [filters]);
+  }, [filters, effectiveType]);
 
   const handleFilterToggle = useCallback((id) => {
     if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale', page: 1 }));
@@ -247,6 +293,24 @@ const ExplorePage = () => {
               Clear
             </button>
           </div>
+        </div>
+      )}
+
+      {effectiveType && (
+        <div className="px-4 py-2.5 flex items-center gap-2 border-b border-gray-100">
+          <span className="text-[13px] text-gray-400 font-myriad">Type:</span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold font-myriad bg-amber-50 border border-amber-200 text-amber-800">
+            {effectiveType.charAt(0).toUpperCase() + effectiveType.slice(1)}
+            {!filters.type && <span className="text-[11px] font-normal text-amber-500"> · pref</span>}
+            <button
+              onClick={() => setFilters(p => ({ ...p, type: null, page: 1 }))}
+              className="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-amber-200 transition-colors"
+            >
+              <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M18 6 6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </span>
         </div>
       )}
 
@@ -428,7 +492,7 @@ const ExplorePage = () => {
       {/* Modals */}
       <PriceFilterModal isOpen={activeModal === 'price'} onClose={() => setActiveModal(null)} onApply={handlePriceApply} currentFilters={filters} />
       <BedroomsFilterModal isOpen={activeModal === 'bedrooms'} onClose={() => setActiveModal(null)} onApply={handleBedroomsApply} currentFilters={filters} />
-      <FullFiltersModal isOpen={activeModal === 'filters'} onClose={() => setActiveModal(null)} onApply={handleFullApply} currentFilters={filters} />
+      <FullFiltersModal isOpen={activeModal === 'filters'} onClose={() => setActiveModal(null)} onApply={handleFullApply} currentFilters={{ ...filters, type: effectiveType }} />
     </div>
   );
 };

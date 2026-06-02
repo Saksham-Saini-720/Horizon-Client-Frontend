@@ -1,7 +1,8 @@
 
-import { memo, useState, useEffect, useRef, useCallback } from 'react';
+import { memo, useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../store/slices/authSlice';
 import { useUpdatePreferences, useUpdateNotifications } from '../../hooks/profile/useUpdateProfile';
-import { useDebounce } from '../../hooks/utils/useDebounce';
 
 const ALL_LOCATIONS = [
   'Kabulonga', 'Roma', 'Ibex Hill', 'Woodlands', 'Longacres',
@@ -80,7 +81,8 @@ const SavingDot = ({ isPending }) => isPending ? (
 
 // ── Main Preferences ────────────────────────────────────────────────────────
 const Preferences = memo(({ profile }) => {
-  const updatePreferences  = useUpdatePreferences();
+  const dispatch            = useDispatch();
+  const updatePreferences   = useUpdatePreferences();
   const updateNotifications = useUpdateNotifications();
 
   // ── Local state ──
@@ -105,25 +107,6 @@ const Preferences = memo(({ profile }) => {
     if (profile.preferences?.locations)    setLocations(profile.preferences.locations);
   }, [profile?._id]);
 
-  // ── Debounced auto-save for interestedIn ──
-  const debouncedInterests = useDebounce(interestedIn, 1500);
-  const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    // Skip on first render — don't save stale initial value
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
-    if (!profile) return;
-
-    updatePreferences.mutate({
-      propertyTypes: debouncedInterests,
-      locations,
-      budget:     profile.preferences?.budget,
-      amenities:  profile.preferences?.amenities || [],
-      purpose:    profile.preferences?.purpose   || 'both',
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedInterests]);  // Only trigger on debounced value change
-
   // ── Handlers ──
   const toggleContactPref = useCallback((key) => {
     setContactPrefs(prev => {
@@ -134,10 +117,24 @@ const Preferences = memo(({ profile }) => {
   }, [updateNotifications]);
 
   const toggleInterest = useCallback((type) => {
-    setInterestedIn(prev =>
-      prev.includes(type) ? prev.filter(i => i !== type) : [...prev, type]
-    );
-  }, []);
+    const updated = interestedIn.includes(type)
+      ? interestedIn.filter(i => i !== type)
+      : [...interestedIn, type];
+    setInterestedIn(updated);
+
+    // Optimistically update Redux so ExplorePage/SearchPage see the new preference instantly
+    dispatch(updateUser({
+      preferences: { ...profile?.preferences, interestedIn: updated },
+    }));
+
+    updatePreferences.mutate({
+      propertyTypes: updated,
+      locations,
+      budget:    profile?.preferences?.budget,
+      amenities: profile?.preferences?.amenities || [],
+      purpose:   profile?.preferences?.purpose   || 'both',
+    });
+  }, [interestedIn, locations, profile, updatePreferences, dispatch]);
 
   // Save immediately when location added/removed
   // const saveLocations = useCallback((newLocations) => {
@@ -222,7 +219,7 @@ const Preferences = memo(({ profile }) => {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {['residential', 'commercial', 'land'].map(type => (
+            {['house', 'apartment', 'commercial', 'land'].map(type => (
               <button
                 key={type}
                 onClick={() => toggleInterest(type)}
@@ -238,7 +235,7 @@ const Preferences = memo(({ profile }) => {
             ))}
           </div>
           <p className="text-[11px] text-gray-400 font-myriad mt-3">
-            Auto-saves after 1.5 seconds
+            Saves immediately on selection
           </p>
         </div>
 

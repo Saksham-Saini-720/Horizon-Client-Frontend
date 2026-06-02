@@ -1,8 +1,10 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../store/slices/authSlice";
 import useRecentSearches from "../hooks/searches/useRecentSearches";
-import useSearchSubmit from "../hooks/utils/useDebounceSearch";
+
 import { usePropertiesWithFilters } from "../hooks/properties/usePropertiesWithFilters";
 import EmptyState from "../components/states/EmptyState";
 import ErrorState from "../components/states/ErrorState";
@@ -38,6 +40,7 @@ const GlowChip = ({ children, onRemove }) => (
 
 const SearchPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const query = searchParams.get("q") ?? "";
@@ -57,8 +60,13 @@ const SearchPage = () => {
 
   const [activeModal, setActiveModal] = useState(null);
 
+  // Read preference directly from Redux — updated optimistically on every toggle, no async wait
+  const user = useSelector(selectUser);
+  const prefType = user?.preferences?.interestedIn?.[0];
+  // null means user explicitly cleared the type chip; undefined means "not set — fall back to preference"
+  const effectiveType = filters.type !== undefined ? filters.type : prefType;
+
   const recent = useRecentSearches();
-  const { submitSearch } = useSearchSubmit({ onSearch: recent.add });
 
   const apiFilters = useMemo(() => {
     const f = {};
@@ -68,13 +76,13 @@ const SearchPage = () => {
     if (filters.maxPrice)          f.maxPrice  = filters.maxPrice;
     if (filters.bedrooms)          f.bedrooms  = filters.bedrooms;
     if (filters.bathrooms)         f.bathrooms = filters.bathrooms;
-    if (filters.type)              f.type      = filters.type;
+    if (effectiveType)             f.type      = effectiveType;
     if (filters.amenities?.length) f.amenities = filters.amenities;
     if (query)                     f.search    = query;
     f.page  = filters.page;
     f.limit = filters.limit;
     return f;
-  }, [filters, query]);
+  }, [filters, query, effectiveType]);
 
   const { data, isLoading, isError, error, refetch } = usePropertiesWithFilters(apiFilters);
 
@@ -85,14 +93,14 @@ const SearchPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [filters.page]);
 
-  const handleSearch = (newQuery) => {
-    setSearchParams({ q: newQuery });
-    submitSearch(newQuery);
+  const handleSearch = useCallback((newQuery) => {
+    setSearchParams({ q: newQuery }, { replace: true });
+    recent.add(newQuery);
     setFilters(prev => ({ ...prev, page: 1 }));
-  };
+  }, [setSearchParams, recent]);
 
-  const handleClearSearch = () => {
-    setSearchParams({});
+  const handleClearSearch = useCallback(() => {
+    setSearchParams({}, { replace: true });
     setFilters({
       purpose: null,
       sort: 'newest',
@@ -105,7 +113,7 @@ const SearchPage = () => {
       page: 1,
       limit: 12,
     });
-  };
+  }, [setSearchParams]);
 
   const activeFilters = useMemo(() => {
     const active = [];
@@ -113,9 +121,9 @@ const SearchPage = () => {
     if (filters.purpose === 'rent') active.push('rent');
     if (filters.minPrice || filters.maxPrice) active.push('price');
     if (filters.bedrooms) active.push('bedrooms');
-    if (filters.bathrooms || filters.type || filters.amenities?.length) active.push('filters');
+    if (filters.bathrooms || effectiveType || filters.amenities?.length) active.push('filters');
     return active;
-  }, [filters]);
+  }, [filters, effectiveType]);
 
   const handleFilterToggle = useCallback((id) => {
     if      (id === 'buy')      setFilters(p => ({ ...p, purpose: p.purpose === 'sale' ? null : 'sale', page: 1 }));
@@ -148,10 +156,10 @@ const SearchPage = () => {
     if (filters.minPrice || filters.maxPrice) count++;
     if (filters.bedrooms) count++;
     if (filters.bathrooms) count++;
-    if (filters.type) count++;
+    if (effectiveType) count++;
     if (filters.amenities?.length) count++;
     return count;
-  }, [filters]);
+  }, [filters, effectiveType]);
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden pb-28 bg-surface">
@@ -250,7 +258,7 @@ const SearchPage = () => {
             query={query}
             onSearch={handleSearch}
             onClearSearch={handleClearSearch}
-            onBack={() => navigate(-1)}
+            onBack={() => location.key !== 'default' ? navigate(-1) : navigate('/explore')}
             recentSearches={recent.searches}
             onRemoveRecent={recent.remove}
             onClearAllRecent={recent.clearAll}
@@ -380,9 +388,9 @@ const SearchPage = () => {
               </GlowChip>
             )}
 
-            {filters.type && (
-              <GlowChip onRemove={() => setFilters(p => ({ ...p, type: undefined, page: 1 }))}>
-                {filters.type.charAt(0).toUpperCase() + filters.type.slice(1)}
+            {effectiveType && (
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, type: null, page: 1 }))}>
+                {effectiveType.charAt(0).toUpperCase() + effectiveType.slice(1)}
               </GlowChip>
             )}
 
@@ -498,7 +506,7 @@ const SearchPage = () => {
         isOpen={activeModal === 'filters'}
         onClose={() => setActiveModal(null)}
         onApply={handleFullApply}
-        currentFilters={filters}
+        currentFilters={{ ...filters, type: effectiveType }}
       />
     </div>
   );

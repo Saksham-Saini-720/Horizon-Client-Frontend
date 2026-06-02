@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { startConversation } from '../../api/conversationApi';
 import { submitPropertyEnquiry } from '../../api/enquiryApi';
 import { addMessage, addInquiry } from '../../store/slices/activitySlice';
+import { toTitleCase } from '../../utils/propertyTransform';
 import toast from 'react-hot-toast';
 
 export const useStartConversation = () => {
@@ -44,7 +45,7 @@ export const useStartConversation = () => {
       };
       const propertyData = {
         id:       variables.property?.id,
-        title:    variables.property?.title || 'Property',
+        title:    toTitleCase(variables.property?.title || 'Property'),
         img:      variables.property?.images?.[0] || variables.property?.img || null,
         location: variables.property?.location || '',
         price:    variables.property?.price || '',

@@ -13,7 +13,7 @@ export default defineConfig({
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:3000 https://api.saasflow.us; frame-src 'none'; object-src 'none'; base-uri 'self';",
+      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:3000 https://api.saasflow.us https://nominatim.openstreetmap.org https://api.bigdatacloud.net https://photon.komoot.io; frame-src 'none'; object-src 'none'; base-uri 'self';",
     },
   },
 })

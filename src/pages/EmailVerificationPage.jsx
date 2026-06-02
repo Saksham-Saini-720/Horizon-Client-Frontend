@@ -116,9 +116,18 @@ const EmailVerificationPage = memo(() => {
           <button
             type="button"
             onClick={handleGoToLogin}
-            className="w-full py-3.5 rounded-full border border-gray-200 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full py-3.5 rounded-full border border-gray-200 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors mb-3"
           >
             Back to Login
+          </button>
+
+          {/* Back to Home */}
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="w-full py-3.5 rounded-full border border-gray-200 text-[15px] font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Back to Home
           </button>
 
           <p className="text-sm text-center text-gray-400 mt-5">

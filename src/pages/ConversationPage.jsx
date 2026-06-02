@@ -1,6 +1,6 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useConversationById } from '../hooks/conversations/useConversationById';
 import { useSendMessage } from '../hooks/conversations/useSendMessage';
@@ -11,6 +11,7 @@ import PropertyBanner from '../components/chat/PropertyBanner';
 const ConversationPage = () => {
   const { id: conversationId } = useParams();
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [searchParams] = useSearchParams();
   const threadId = searchParams.get('thread') || null;
   const messagesEndRef = useRef(null);
@@ -133,7 +134,7 @@ const ConversationPage = () => {
 
           {/* Back button */}
           <button
-            onClick={() => navigate('/chat')}
+            onClick={() => navigate(state?.from ?? '/chat', { state: state?.tab ? { tab: state.tab } : undefined })}
             className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center active:bg-white/20 transition-colors flex-shrink-0"
           >
             <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

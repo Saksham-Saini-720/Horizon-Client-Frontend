@@ -1,6 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getUserTours } from '../../api/tourApi';
+import { toTitleCase } from '../../utils/propertyTransform';
 
 /**
  * Format location from object or string
@@ -51,7 +52,7 @@ const transformTour = (tour) => {
     property: {
       id: tour.property?._id || tour.property?.id,
       img: tour.property?.images?.featured?.thumbnail?.url || tour.property?.image || '/placeholder.jpg',
-      title: tour.property?.title || 'Property',
+      title: toTitleCase(tour.property?.title || 'Property'),
       location: formatLocation(tour.property?.location),
     },
     status: tour.status || 'pending',

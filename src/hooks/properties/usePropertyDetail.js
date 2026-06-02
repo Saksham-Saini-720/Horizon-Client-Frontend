@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPropertyById, viewPropertyTracked } from "../../api/propertyApi";
 import { useAuth } from "../utils/useRedux";
+import { toTitleCase } from "../../utils/propertyTransform";
 
 /**
  * Hook to fetch property details from API
@@ -99,7 +100,7 @@ function transformPropertyDetail(apiProperty) {
     id: _id,
     price: formattedPrice,
     rawPrice: price,
-    title: title || 'Untitled Property',
+    title: toTitleCase(title || 'Untitled Property'),
     location: formattedLocation,
     tag: tag,
     type: type?.toUpperCase() || 'PROPERTY',

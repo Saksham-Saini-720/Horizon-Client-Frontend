@@ -1,11 +1,13 @@
 
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { getConversations, getThreads } from '../../api/conversationApi';
 import { selectIsAuthenticated } from '../../store/slices/authSlice';
+import { toTitleCase } from '../../utils/propertyTransform';
 
 export const useConversations = (filters = {}) => {
-  const { status, search, page = 1, limit = 20 } = filters;
+  const { status, search, page = 1, limit = 100 } = filters;
 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUserId = useSelector(
@@ -16,10 +18,12 @@ export const useConversations = (filters = {}) => {
   );
 
   const query = useQuery({
-    queryKey: ['conversations', { status, search, page, limit }],
+    // search is intentionally excluded from the key — filtering is done client-side
+    // so the full list stays cached while the user types
+    queryKey: ['conversations', { status, page, limit }],
     enabled: isAuthenticated,
     queryFn: async () => {
-      const data = await getConversations({ status, search, page, limit });
+      const data = await getConversations({ status, page, limit });
       const conversations = data?.data?.conversations || data?.data || [];
 
       // Each conversation can have MULTIPLE threads (one per property)
@@ -68,9 +72,22 @@ export const useConversations = (filters = {}) => {
     retry: 1,
   });
 
+  const conversations = useMemo(() => {
+    const all = query.data?.conversations ?? [];
+    const q = search?.trim().toLowerCase();
+    if (!q) return all;
+    return all.filter(item =>
+      item.property?.title?.toLowerCase().includes(q) ||
+      item.property?.location?.toLowerCase().includes(q) ||
+      item.participant?.name?.toLowerCase().includes(q) ||
+      item.lastMessage?.toLowerCase().includes(q) ||
+      item.subject?.toLowerCase().includes(q)
+    );
+  }, [query.data?.conversations, search]);
+
   return {
-    conversations: query.data?.conversations ?? [],
-    total:         query.data?.total         ?? 0,
+    conversations,
+    total:         conversations.length,
     isLoading:     query.isLoading,
     isFetching:    query.isFetching,
     isError:       query.isError,
@@ -101,11 +118,17 @@ const normalizeItem = (conv, thread, currentUserId, currentUserRole) => {
 
   // Property from thread
   const prop = thread?.property;
-  const property = prop
+  // location is a nested object {address, city, state, country} — flatten to string for search
+  const locationStr = prop?.location
+    ? [prop.location.address, prop.location.city, prop.location.state, prop.location.country]
+        .filter(Boolean)
+        .join(', ')
+    : '';
+  const property = prop && (prop._id || prop.id)
     ? {
         id:       prop._id || prop.id,
-        title:    prop.title || 'Property',
-        location: prop.location || '',
+        title:    toTitleCase(prop.title || 'Property'),
+        location: locationStr,
         image:    prop.images?.featured?.thumbnail?.url ||
                   prop.images?.featured?.original?.url || null,
       }

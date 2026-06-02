@@ -2,11 +2,7 @@
 import { memo, useState, useCallback } from 'react';
 import ConfirmTourModal from './ConfirmTourModal';
 
-/**
- * RequestTourModal Component
- * Step 1: Visit type, date, time selection
- * UPDATED: Removed Redux dispatch (now handled by API hook in ConfirmTourModal)
- */
+
 const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
   const [visitType, setVisitType] = useState('in-person');
   const [selectedDate, setSelectedDate] = useState(null);
@@ -117,13 +113,13 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
         </div>
 
         <div className="px-6 py-6 space-y-6">
-          {/* Visit Type */}
+          
           <div>
             <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-3">
               Visit Type
             </label>
             <div className="grid grid-cols-2 gap-4">
-              {/* In Person */}
+             
               <button
                 onClick={() => setVisitType('in-person')}
                 className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${
@@ -146,7 +142,7 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
                 </div>
               </button>
 
-              {/* Virtual Tour */}
+             
               <button
                 onClick={() => setVisitType('virtual')}
                 className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${

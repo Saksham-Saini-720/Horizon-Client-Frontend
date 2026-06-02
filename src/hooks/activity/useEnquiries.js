@@ -1,6 +1,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getUserEnquiries } from '../../api/enquiryApi';
+import { toTitleCase } from '../../utils/propertyTransform';
 
 const formatLocation = (location) => {
   if (typeof location === 'string') return location;
@@ -34,7 +35,7 @@ const transformEnquiry = (enquiry) => ({
   property: {
     id:       enquiry.property?._id || enquiry.property?.id,
     img:      enquiry.property?.images?.featured?.thumbnail?.url || enquiry.property?.image || '/placeholder.jpg',
-    title:    enquiry.property?.title || 'Property',
+    title:    toTitleCase(enquiry.property?.title || 'Property'),
     location: formatLocation(enquiry.property?.location),
     price:    enquiry.property?.price || 'Price',
   },
@@ -80,8 +81,18 @@ export const useEnquiries = (filters = {}, options = {}) => {
         e => !apiKeys.has(`${e.property?.id}-${e.message}`)
       );
 
-      const merged = [...fromAPI, ...uniqueLocal];
-      
+      const merged = [
+        ...fromAPI,
+        ...uniqueLocal.map(e => ({
+          ...e,
+          property: e.property
+            ? { ...e.property, title: toTitleCase(e.property.title || 'Property') }
+            : e.property,
+        })),
+      ];
+
+      merged.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
       return merged;
     },
     staleTime:            0,

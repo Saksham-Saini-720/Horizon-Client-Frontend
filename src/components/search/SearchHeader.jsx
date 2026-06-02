@@ -7,20 +7,27 @@ const SearchHeader = memo(({
   onClearSearch,
   onBack
 }) => {
-  const inputRef    = useRef(null);
-  const debounceRef = useRef(null);
+  const inputRef         = useRef(null);
+  const debounceRef      = useRef(null);
+  const onSearchRef      = useRef(onSearch);
+  const onClearSearchRef = useRef(onClearSearch);
+  const isFirstRender    = useRef(true);
   const [localQuery, setLocalQuery] = useState(query);
   const [isFocused, setIsFocused]   = useState(false);
 
+  useEffect(() => { onSearchRef.current = onSearch; }, [onSearch]);
+  useEffect(() => { onClearSearchRef.current = onClearSearch; }, [onClearSearch]);
+
   useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     const q = localQuery.trim();
     debounceRef.current = setTimeout(() => {
-      if (q) onSearch(q);
-      else onClearSearch();
+      if (q) onSearchRef.current(q);
+      else onClearSearchRef.current();
     }, 400);
     return () => clearTimeout(debounceRef.current);
-  }, [localQuery, onSearch, onClearSearch]);
+  }, [localQuery]);
 
   const handleSearch = () => {
     const q = localQuery.trim();
@@ -51,7 +58,8 @@ const SearchHeader = memo(({
       <div className="flex items-center gap-3">
         {/* Back Arrow */}
         <button
-          onClick={onBack}
+          type="button"
+          onPointerDown={(e) => { e.preventDefault(); onBack(); }}
           className="w-10 h-10 rounded-full flex items-center justify-center transition-all flex-shrink-0 active:scale-95"
           style={{
             background: 'rgba(255,255,255,0.08)',

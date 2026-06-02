@@ -1,4 +1,9 @@
 
+export function toTitleCase(str) {
+  if (!str) return str;
+  return str.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+
 export function transformProperty(apiProperty) {
   if (!apiProperty) return null;
 
@@ -36,7 +41,7 @@ export function transformProperty(apiProperty) {
     id:       _id,
     price:    formattedPrice,
     rawPrice: price,
-    title:    title || description || 'Untitled Property',
+    title:    toTitleCase(title || description || 'Untitled Property'),
     location: formattedLocation,
     beds:     details?.bedrooms  ? `${details.bedrooms} Bed${details.bedrooms > 1 ? 's' : ''}`   : null,
     baths:    details?.bathrooms ? `${details.bathrooms} Bath${details.bathrooms > 1 ? 's' : ''}` : null,

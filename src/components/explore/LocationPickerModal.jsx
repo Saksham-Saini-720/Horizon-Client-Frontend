@@ -1,25 +1,60 @@
 
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
 
-const searchNominatim = async (query) => {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=8&addressdetails=1`;
-  const res = await fetch(url, {
-    headers: { 'Accept-Language': 'en', 'User-Agent': 'HorizonProperties/1.0' }
-  });
-  if (!res.ok) throw new Error('Search failed');
-  return res.json();
+const searchLocations = async (query) => {
+  const q = encodeURIComponent(query);
+
+  // Try Nominatim first
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=8&addressdetails=1`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) return { source: 'nominatim', data };
+    }
+  } catch { /* fall through */ }
+
+  // Fallback: Photon (Komoot) — different provider, same OSM data
+  const res2 = await fetch(`https://photon.komoot.io/api/?q=${q}&limit=8&lang=en`);
+  if (!res2.ok) throw new Error('Search failed');
+  const data2 = await res2.json();
+  return { source: 'photon', data: data2.features || [] };
 };
 
-const reverseGeocode = async (lat, lng) => {
-  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
-  const res = await fetch(url, {
-    headers: { 'Accept-Language': 'en', 'User-Agent': 'HorizonProperties/1.0' }
-  });
-  if (!res.ok) throw new Error('Reverse geocode failed');
-  return res.json();
+const reverseGeocodeToName = async (lat, lng) => {
+  const services = [
+    async () => {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`);
+      if (!res.ok) throw new Error();
+      const d = await res.json();
+      if (d.error) throw new Error();
+      const a = d.address || {};
+      return a.city || a.town || a.village || a.county || a.suburb || a.neighbourhood || d.display_name?.split(',')[0];
+    },
+    async () => {
+      const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+      if (!res.ok) throw new Error();
+      const d = await res.json();
+      return d.city || d.locality || d.principalSubdivision || d.countryName;
+    },
+    async () => {
+      const res = await fetch(`https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}&limit=1`);
+      if (!res.ok) throw new Error();
+      const d = await res.json();
+      const p = d.features?.[0]?.properties || {};
+      return p.city || p.name || p.county;
+    },
+  ];
+
+  for (const service of services) {
+    try {
+      const name = await service();
+      if (name) return name.trim();
+    } catch { /* try next */ }
+  }
+  return null;
 };
 
-const formatResult = (item) => {
+const formatNominatim = (item) => {
   const addr = item.address || {};
   const name = addr.city || addr.town || addr.village || addr.county || item.display_name.split(',')[0];
   const country = addr.country || '';
@@ -31,6 +66,22 @@ const formatResult = (item) => {
     displayName: [name, state, country].filter(Boolean).join(', '),
     lat: parseFloat(item.lat),
     lng: parseFloat(item.lon),
+  };
+};
+
+const formatPhoton = (feature) => {
+  const p = feature.properties || {};
+  const name = p.city || p.name || p.county || '';
+  const country = p.country || '';
+  const state = p.state || '';
+  const [lng, lat] = feature.geometry?.coordinates || [0, 0];
+  return {
+    name,
+    country,
+    state,
+    displayName: [name, state, country].filter(Boolean).join(', '),
+    lat,
+    lng,
   };
 };
 
@@ -68,8 +119,11 @@ const LocationPickerModal = memo(({ isOpen, onClose, onSelectLocation }) => {
 
     searchTimer.current = setTimeout(async () => {
       try {
-        const results = await searchNominatim(searchQuery);
-        setSearchResults(results.map(formatResult));
+        const result = await searchLocations(searchQuery);
+        const formatted = result.source === 'nominatim'
+          ? result.data.map(formatNominatim)
+          : result.data.map(formatPhoton).filter(r => r.name);
+        setSearchResults(formatted);
       } catch {
         setSearchError('Search failed. Check your connection.');
         setSearchResults([]);
@@ -92,29 +146,23 @@ const LocationPickerModal = memo(({ isOpen, onClose, onSelectLocation }) => {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        const { latitude: lat, longitude: lng } = position.coords;
         try {
-          const { latitude: lat, longitude: lng } = position.coords;
-          const data = await reverseGeocode(lat, lng);
-          const addr = data.address || {};
-          const cityName = addr.city || addr.town || addr.village || addr.county || 'Current Location';
-          const country  = addr.country || '';
-
-          const location = {
-            name:        cityName,
-            country,
-            displayName: [cityName, addr.state, country].filter(Boolean).join(', '),
+          const cityName = await reverseGeocodeToName(lat, lng);
+          handleLocationSelect({
+            name:        cityName || 'Near me',
+            country:     '',
+            displayName: cityName || 'Near current location',
             lat,
             lng,
-          };
-          handleLocationSelect(location);
+          });
         } catch {
-          // Fallback — use raw coords with generic name
           handleLocationSelect({
-            name: 'Current Location',
-            country: '',
-            displayName: 'Current Location',
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
+            name:        'Near me',
+            country:     '',
+            displayName: 'Near current location',
+            lat,
+            lng,
           });
         } finally {
           setIsGettingLocation(false);

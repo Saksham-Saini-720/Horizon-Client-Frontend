@@ -1,14 +1,14 @@
 
-import { memo, useState, useCallback, useEffect, useRef } from 'react';
+import { memo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateUser } from '../store/slices/authSlice';
 import useLogout from '../hooks/auth/useLogout';
 import { useProfile } from '../hooks/profile/useProfile';
 import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
 import { useSavedProperties } from '../hooks/properties/useSavedProperties';
 import { useUpdatePreferences, useUpdateNotifications } from '../hooks/profile/useUpdateProfile';
-import { useDebounce } from '../hooks/utils/useDebounce';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import QuickAccessGrid from '../components/profile/QuickAccessCard';
 import EditProfileModal from '../components/profile/EditProfileModal';
@@ -168,43 +168,24 @@ const ProfilePage = memo(() => {
   const { conversations = [], total: convTotal = 0 } = useConversations();
 
   // Preferences / notifications mutations
-  const updateNotifications = useUpdateNotifications();
-  const updatePreferences = useUpdatePreferences();
+  const dispatch             = useDispatch();
+  const updateNotifications  = useUpdateNotifications();
+  const updatePreferences    = useUpdatePreferences();
 
-  const [contactPrefs, setContactPrefs] = useState({
-    inApp: true,
-    email: true,
-    push: false,
-  });
+  const [seenProfileId, setSeenProfileId] = useState(null);
+  const [contactPrefs, setContactPrefs] = useState({ inApp: true, email: true, push: false });
   const [interestedIn, setInterestedIn] = useState([]);
 
-  // Sync local state when profile loads
-  useEffect(() => {
-    if (!profile) return;
+  // Sync local state when a new profile loads — render-time reset avoids setState-in-effect
+  if (profile?._id && profile._id !== seenProfileId) {
+    setSeenProfileId(profile._id);
     setContactPrefs({
       inApp: profile.notifications?.inApp ?? true,
       email: profile.notifications?.email ?? true,
-      push: profile.notifications?.push ?? false,
+      push:  profile.notifications?.push  ?? false,
     });
-    if (profile.preferences?.interestedIn) setInterestedIn(profile.preferences.interestedIn);
-  }, [profile?._id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Debounced auto-save for property type interests
-  const debouncedInterests = useDebounce(interestedIn, 1500);
-  const userChangedInterests = useRef(false);
-
-  useEffect(() => {
-    if (!userChangedInterests.current) return;
-    if (!profile) return;
-    updatePreferences.mutate({
-      propertyTypes: debouncedInterests,
-      locations: profile.preferences?.locations || [],
-      budget: profile.preferences?.budget,
-      amenities: profile.preferences?.amenities || [],
-      purpose: profile.preferences?.purpose || 'both',
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedInterests]);
+    setInterestedIn(profile.preferences?.interestedIn ?? []);
+  }
 
   const toggleContactPref = useCallback((key) => {
     const updated = { ...contactPrefs, [key]: !contactPrefs[key] };
@@ -213,11 +194,21 @@ const ProfilePage = memo(() => {
   }, [updateNotifications, contactPrefs]);
 
   const toggleInterest = useCallback((type) => {
-    userChangedInterests.current = true;
-    setInterestedIn(prev =>
-      prev.includes(type) ? prev.filter(i => i !== type) : [...prev, type]
-    );
-  }, []);
+    const updated = interestedIn.includes(type)
+      ? interestedIn.filter(i => i !== type)
+      : [...interestedIn, type];
+    setInterestedIn(updated);
+    // Optimistically push to Redux so ExplorePage/SearchPage see it instantly
+    dispatch(updateUser({ preferences: { ...profile?.preferences, interestedIn: updated } }));
+    // Persist to backend
+    updatePreferences.mutate({
+      propertyTypes: updated,
+      locations: profile?.preferences?.locations || [],
+      budget:    profile?.preferences?.budget,
+      amenities: profile?.preferences?.amenities || [],
+      purpose:   profile?.preferences?.purpose   || 'both',
+    });
+  }, [interestedIn, profile, updatePreferences, dispatch]);
 
   // Derived counts
   const savedCount = savedProperties.length;
@@ -279,7 +270,7 @@ const ProfilePage = memo(() => {
         <div className="-mt-10 mb-6 relative z-10">
           <QuickAccessGrid
             savedCount={savedCount}
-            toursCount={tours.length}
+            toursCount={tours.filter(t => t.status !== 'cancelled').length}
             inboxCount={messagesCount}
             onNavigate={navigate}
           />

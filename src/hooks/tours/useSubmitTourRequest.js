@@ -1,5 +1,5 @@
 
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { submitTourRequest } from '../../api/tourApi';
 import { addTourRequest } from '../../store/slices/activitySlice';
@@ -28,8 +28,7 @@ import toast from 'react-hot-toast';
  */
 export const useSubmitTourRequest = () => {
   const dispatch = useDispatch();
-  
-  // Get user profile data from Redux auth state
+  const queryClient = useQueryClient();
   const user = useSelector(state => state.auth.user);
 
   return useMutation({
@@ -55,6 +54,7 @@ export const useSubmitTourRequest = () => {
         preferredTime: data.preferredTime, // HH:mm format (single time)
         numberOfPeople: data.numberOfPeople || 1,
         message: data.message || '',
+        visitType: data.visitType || 'in-person',
       };
 
       // Call API - PUBLIC endpoint
@@ -63,6 +63,8 @@ export const useSubmitTourRequest = () => {
     },
 
     onSuccess: (response, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['tours'] });
+
       // Extract data from response
       const tourData = response.data?.tour || response.data || response;
       
