@@ -53,6 +53,7 @@ function transformPropertyDetail(apiProperty) {
     details,
     images,
     amenities,
+    agent: apiAgent,
     owner,
     status,
     createdAt,
@@ -79,14 +80,15 @@ function transformPropertyDetail(apiProperty) {
   // Format amenities
   const formattedAmenities = amenities || [];
 
-  // Format agent/owner
-  const agent = owner ? {
-    name: `${owner.firstName || ''} ${owner.lastName || ''}`.trim() || 'Property Agent',
-    title: owner.role === 'agent' ? 'Property Agent' : 'Property Owner',
-    avatar: owner.avatar || null,
-    phone: owner.phone || null,
-    email: owner.email || null,
-    id: owner._id
+  // Prefer agent over owner for contact display
+  const contactPerson = apiAgent || owner;
+  const agent = contactPerson ? {
+    name: `${contactPerson.firstName || ''} ${contactPerson.lastName || ''}`.trim() || 'Property Agent',
+    title: apiAgent ? 'Property Agent' : (owner?.role === 'agent' ? 'Property Agent' : 'Property Owner'),
+    avatar: contactPerson.avatar || null,
+    phone: contactPerson.phone || null,
+    email: contactPerson.email || null,
+    id: contactPerson._id
   } : {
     name: 'Property Agent',
     title: 'Agent',
