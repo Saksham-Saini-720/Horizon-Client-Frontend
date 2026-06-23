@@ -17,11 +17,12 @@ export function transformProperty(apiProperty) {
     location,
     details,
     images,
+    agent: apiAgent,
     owner,
     type,
     amenities,
     status,
-    stats,          
+    stats,
     createdAt,
     updatedAt
   } = apiProperty;
@@ -57,12 +58,12 @@ export function transformProperty(apiProperty) {
     // lat/lng for map markers
     latitude:  lat,
     longitude: lng,
-    owner: owner ? {
-      id:     owner._id,
-      name:   `${owner.firstName || ''} ${owner.lastName || ''}`.trim() || 'Agent',
-      avatar: owner.avatar,
-      phone:  owner.phone,
-      email:  owner.email,
+    owner: (apiAgent || owner) ? {
+      id:     (apiAgent || owner)._id,
+      name:   `${(apiAgent || owner).firstName || ''} ${(apiAgent || owner).lastName || ''}`.trim() || 'Agent',
+      avatar: (apiAgent || owner).avatar,
+      phone:  (apiAgent || owner).phone,
+      email:  (apiAgent || owner).email,
     } : null,
     createdAt,
     updatedAt,
