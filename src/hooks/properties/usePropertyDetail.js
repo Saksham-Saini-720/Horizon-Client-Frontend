@@ -55,6 +55,8 @@ function transformPropertyDetail(apiProperty) {
     amenities,
     agent: apiAgent,
     owner,
+    contact,
+    source,
     status,
     createdAt,
     updatedAt
@@ -80,23 +82,20 @@ function transformPropertyDetail(apiProperty) {
   // Format amenities
   const formattedAmenities = amenities || [];
 
-  // Prefer agent over owner for contact display
-  const contactPerson = apiAgent || owner;
-  const agent = contactPerson ? {
-    name: `${contactPerson.firstName || ''} ${contactPerson.lastName || ''}`.trim() || 'Property Agent',
-    title: apiAgent ? 'Property Agent' : (owner?.role === 'agent' ? 'Property Agent' : 'Property Owner'),
-    avatar: contactPerson.avatar || null,
-    phone: contactPerson.phone || null,
-    email: contactPerson.email || null,
-    id: contactPerson._id
-  } : {
-    name: 'Property Agent',
-    title: 'Agent',
-    avatar: null,
-    phone: null,
-    email: null,
-    id: null
-  };
+  // Facebook-imported properties use a fixed brand name and the scraped contact phone
+  const agent = source === 'facebook'
+    ? { name: 'Horizon Properties', title: 'Property Agent', avatar: null, phone: contact?.phone || null, email: null, id: null }
+    : (() => {
+        const contactPerson = apiAgent || owner;
+        return contactPerson ? {
+          name: `${contactPerson.firstName || ''} ${contactPerson.lastName || ''}`.trim() || 'Property Agent',
+          title: apiAgent ? 'Property Agent' : (owner?.role === 'agent' ? 'Property Agent' : 'Property Owner'),
+          avatar: contactPerson.avatar || null,
+          phone: contactPerson.phone || null,
+          email: contactPerson.email || null,
+          id: contactPerson._id
+        } : { name: 'Property Agent', title: 'Agent', avatar: null, phone: null, email: null, id: null };
+      })();
 
   return {
     id: _id,

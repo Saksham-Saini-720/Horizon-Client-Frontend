@@ -19,6 +19,8 @@ export function transformProperty(apiProperty) {
     images,
     agent: apiAgent,
     owner,
+    contact,
+    source,
     type,
     amenities,
     status,
@@ -58,13 +60,15 @@ export function transformProperty(apiProperty) {
     // lat/lng for map markers
     latitude:  lat,
     longitude: lng,
-    owner: (apiAgent || owner) ? {
-      id:     (apiAgent || owner)._id,
-      name:   `${(apiAgent || owner).firstName || ''} ${(apiAgent || owner).lastName || ''}`.trim() || 'Agent',
-      avatar: (apiAgent || owner).avatar,
-      phone:  (apiAgent || owner).phone,
-      email:  (apiAgent || owner).email,
-    } : null,
+    owner: source === 'facebook'
+      ? { id: null, name: 'Horizon Properties', avatar: null, phone: contact?.phone || null, email: null }
+      : (apiAgent || owner) ? {
+          id:     (apiAgent || owner)._id,
+          name:   `${(apiAgent || owner).firstName || ''} ${(apiAgent || owner).lastName || ''}`.trim() || 'Agent',
+          avatar: (apiAgent || owner).avatar,
+          phone:  (apiAgent || owner).phone,
+          email:  (apiAgent || owner).email,
+        } : null,
     createdAt,
     updatedAt,
   };
