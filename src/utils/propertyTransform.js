@@ -31,7 +31,7 @@ export function transformProperty(apiProperty) {
 
   const formattedPrice    = formatPrice(price, currency, purpose);
   const formattedLocation = formatLocation(location);
-  const formattedArea     = formatArea(details?.squareFeet);
+  const formattedArea     = formatArea(details?.squareFeet, details?.areaUnit);
   const imageUrl          = getPropertyImage(images);
   const allImages         = getAllPropertyImages(images);
   const tag               = formatPurpose(purpose);
@@ -141,23 +141,20 @@ export function formatLocation(location) {
   return parts.length > 0 ? parts.join(', ') : 'Location not available';
 }
 
-export function formatArea(squareFeet) {
+export function formatArea(squareFeet, areaUnit) {
   if (!squareFeet) return null;
-  return `${new Intl.NumberFormat('en-US').format(squareFeet)} sq ft`;
+  const unit = areaUnit === 'acres' ? 'acres' : 'sq ft';
+  return `${new Intl.NumberFormat('en-US').format(squareFeet)} ${unit}`;
 }
 
+const PLACEHOLDER_IMAGE =
+  'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800';
+
 export function getPropertyImage(images) {
-  if (!images?.featured) {
-    return 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800';
-  }
-  const f = images.featured;
-  return (
-    f.medium?.url ||
-    f.large?.url  ||
-    f.thumbnail?.url ||
-    f.original?.url  ||
-    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800'
-  );
+  const f = images?.featured;
+  if (!f) return PLACEHOLDER_IMAGE;
+  // S3 stores only the original; older docs may still carry nested variants.
+  return f.url || f.original?.url || PLACEHOLDER_IMAGE;
 }
 
 export function getAllPropertyImages(images) {
@@ -165,13 +162,11 @@ export function getAllPropertyImages(images) {
   if (images?.featured) urls.push(getPropertyImage(images));
   if (Array.isArray(images?.gallery)) {
     images.gallery.forEach(img => {
-      const url = img.medium?.url || img.large?.url || img.thumbnail?.url || img.original?.url;
+      const url = img.url || img.original?.url;
       if (url) urls.push(url);
     });
   }
-  return urls.length > 0
-    ? urls
-    : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800'];
+  return urls.length > 0 ? urls : [PLACEHOLDER_IMAGE];
 }
 
 export function formatPurpose(purpose) {

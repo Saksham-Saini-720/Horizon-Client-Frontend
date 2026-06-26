@@ -109,7 +109,7 @@ function transformPropertyDetail(apiProperty) {
     bedrooms: details?.bedrooms || 0,
     bathrooms: details?.bathrooms || 0,
     area: details?.squareFeet?.toString() || '0',
-    areaUnit: 'sq ft',
+    areaUnit: details?.areaUnit === 'acres' ? 'acres' : 'sq ft',
     description: description || 'No description available',
     amenities: formattedAmenities,
     images: allImages,
@@ -174,20 +174,20 @@ function getAllMediaItems(apiProperty) {
     });
   }
 
-  // Featured image
+  // Featured image (S3 stores only the original; older docs keep nested variants)
   const featured = apiProperty.images?.featured;
   if (featured) {
-    const url = featured.large?.url || featured.medium?.url || featured.original?.url;
-    if (url) items.push({ type: 'image', url, thumbnail: featured.thumbnail?.url || url, caption: '' });
+    const url = featured.url || featured.original?.url;
+    if (url) items.push({ type: 'image', url, thumbnail: url, caption: '' });
   }
 
   // Gallery images (deduped by url)
   const seen = new Set(items.map(i => i.url));
   (apiProperty.images?.gallery || []).forEach(img => {
-    const url = img.large?.url || img.medium?.url || img.original?.url;
+    const url = img.url || img.original?.url;
     if (url && !seen.has(url)) {
       seen.add(url);
-      items.push({ type: 'image', url, thumbnail: img.thumbnail?.url || url, caption: '' });
+      items.push({ type: 'image', url, thumbnail: url, caption: '' });
     }
   });
 
@@ -207,16 +207,14 @@ function getAllImages(images) {
 
   // Add featured image first
   if (images?.featured) {
-    const url = images.featured.large?.url ||
-                images.featured.medium?.url ||
-                images.featured.original?.url;
+    const url = images.featured.url || images.featured.original?.url;
     if (url) imageUrls.push(url);
   }
 
   // Add gallery images
   if (images?.gallery && Array.isArray(images.gallery)) {
     images.gallery.forEach(img => {
-      const url = img.large?.url || img.medium?.url || img.original?.url;
+      const url = img.url || img.original?.url;
       if (url && !imageUrls.includes(url)) {
         imageUrls.push(url);
       }

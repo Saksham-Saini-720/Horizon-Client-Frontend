@@ -83,7 +83,8 @@ const normalizeConversation = (conv, rawMessages, currentUserId, thread) => {
         id:       prop._id || prop.id,
         title:    prop.title || 'Property',
         location: prop.location || '',
-        image:    prop.images?.featured?.thumbnail?.url ||
+        image:    prop.images?.featured?.url ||
+                  prop.images?.featured?.thumbnail?.url ||
                   prop.images?.featured?.original?.url ||
                   prop.images?.[0] || null,
         purpose:  prop.purpose || 'sale',
