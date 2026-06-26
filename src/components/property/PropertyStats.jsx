@@ -25,7 +25,8 @@ const StatCard = memo(({ icon, value, label }) => (
 
 StatCard.displayName = 'StatCard';
 
-const PropertyStats = memo(({ bedrooms, bathrooms, area }) => {
+const PropertyStats = memo(({ bedrooms, bathrooms, area, areaUnit }) => {
+  const isAcres = areaUnit === 'acres' || areaUnit === 'acre';
   return (
     <div className="px-5 pb-5">
       <div className="flex gap-3">
@@ -70,7 +71,7 @@ const PropertyStats = memo(({ bedrooms, bathrooms, area }) => {
             </svg>
           }
           value={formatArea(area)}
-          label="Sqft"
+          label={isAcres ? "Acres" : "Sqft"}
         />
 
       </div>

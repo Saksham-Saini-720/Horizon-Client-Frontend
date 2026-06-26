@@ -129,7 +129,8 @@ const normalizeItem = (conv, thread, currentUserId, currentUserRole) => {
         id:       prop._id || prop.id,
         title:    toTitleCase(prop.title || 'Property'),
         location: locationStr,
-        image:    prop.images?.featured?.thumbnail?.url ||
+        image:    prop.images?.featured?.url ||
+                  prop.images?.featured?.thumbnail?.url ||
                   prop.images?.featured?.original?.url || null,
       }
     : null;

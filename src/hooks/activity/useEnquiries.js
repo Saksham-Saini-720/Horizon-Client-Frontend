@@ -34,7 +34,7 @@ const transformEnquiry = (enquiry) => ({
   id:       enquiry._id || enquiry.id,
   property: {
     id:       enquiry.property?._id || enquiry.property?.id,
-    img:      enquiry.property?.images?.featured?.thumbnail?.url || enquiry.property?.image || '/placeholder.jpg',
+    img:      enquiry.property?.images?.featured?.url || enquiry.property?.images?.featured?.thumbnail?.url || enquiry.property?.image || '/placeholder.jpg',
     title:    toTitleCase(enquiry.property?.title || 'Property'),
     location: formatLocation(enquiry.property?.location),
     price:    enquiry.property?.price || 'Price',

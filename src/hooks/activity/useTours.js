@@ -51,7 +51,7 @@ const transformTour = (tour) => {
     id: tour._id || tour.id,
     property: {
       id: tour.property?._id || tour.property?.id,
-      img: tour.property?.images?.featured?.thumbnail?.url || tour.property?.image || '/placeholder.jpg',
+      img: tour.property?.images?.featured?.url || tour.property?.images?.featured?.thumbnail?.url || tour.property?.image || '/placeholder.jpg',
       title: toTitleCase(tour.property?.title || 'Property'),
       location: formatLocation(tour.property?.location),
     },
