@@ -92,26 +92,32 @@ export default function RegisterPage() {
   }, [registerMutation, phoneValue]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-canvas overflow-hidden">
 
       <AuthPageHeader />
 
-      {/* ── Card — constrained width, slides up on mount ── */}
-      <div className="flex justify-center px-5 -mt-7 pb-12 z-20 w-full">
+      {/*
+        Same sheet as Login: full bleed, rounded only at the top, running to the
+        bottom of the screen.
+
+        The old `minWidth: 390` is gone — it forced the card wider than the
+        viewport on any narrow device, so a 344px screen got a horizontally
+        scrolling form. A sheet has no need for a minimum; it is the page.
+      */}
+      <div className="flex-1 flex -mt-8 w-full z-20">
         <MotionCard
-          className="bg-white rounded-3xl shadow-2xl w-full px-8 pt-8 pb-8"
-          style={{ minWidth: 390 }}
+          className="bg-canvas rounded-t-[32px] shadow-2xl w-full px-4 xs:px-7 pt-9 pb-10"
           initial={{ y: 120, opacity: 0 }}
           animate={{ y: 0,   opacity: 1 }}
           transition={{ type: "spring", stiffness: 110, damping: 18, delay: 0.05 }}
         >
-          <h2 className="text-[28px] font-bold text-center text-primary mb-1">
+          <h2 className="text-[28px] font-display font-semibold text-center text-secondary mb-1">
             Create your{" "}
-            <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+            <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
               account
             </span>
           </h2>
-          <p className="text-sm text-gray-400 italic text-center mb-6">
+          <p className="text-sm font-display text-gray-400 italic text-center mb-6">
             Join Horizon Properties today.
           </p>
 
@@ -128,7 +134,7 @@ export default function RegisterPage() {
                 <ValidatedInput
                   inputRef={firstNameRef}
                   name="firstName"
-                  placeholder="John"
+                  placeholder="Your first name"
                   required
                   validator={VALIDATORS.firstName}
                 />
@@ -140,7 +146,7 @@ export default function RegisterPage() {
                 <ValidatedInput
                   inputRef={lastNameRef}
                   name="lastName"
-                  placeholder="Doe"
+                  placeholder="Your last name"
                   required
                   validator={VALIDATORS.lastName}
                 />
@@ -156,7 +162,7 @@ export default function RegisterPage() {
                 inputRef={emailRef}
                 name="email"
                 type="email"
-                placeholder="john@example.com"
+                placeholder="Enter your email"
                 required
                 validator={VALIDATORS.email}
                 leftIcon={<MailIcon />}
@@ -172,7 +178,7 @@ export default function RegisterPage() {
                 inputRef={passwordRef}
                 name="password"
                 type="password"
-                placeholder="Min 8 characters"
+                placeholder="At least 8 characters"
                 required
                 validator={VALIDATORS.password}
                 leftIcon={<LockIcon />}

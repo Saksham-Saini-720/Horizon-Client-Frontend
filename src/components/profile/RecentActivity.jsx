@@ -100,7 +100,7 @@ const RecentActivity = memo(() => {
         </button> */}
       </div>
 
-      <div className="px-1 py-2 bg-white border-t border-gray-100 rounded-2xl mb-6 shadow-xl">
+      <div className="px-1 py-2 bg-white rounded-2xl mb-6 shadow-card-sm">
         {activities.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10">
             <p className="text-[15px] text-gray-400 font-myriad">No activity yet</p>

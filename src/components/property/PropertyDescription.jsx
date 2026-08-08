@@ -3,7 +3,10 @@ import { memo } from "react";
 
 const PropertyDescription = memo(({ description }) => {
   return (
-    <div className="px-5 pt-5 pb-5 border-t border-gray-100">
+    // A card like the stat tiles above, rather than a full-bleed slab divided
+    // by a hairline. Elevation groups the section's content; a border-top only
+    // separates it from whatever happens to sit above.
+    <div className="mx-5 mb-4 rounded-2xl bg-white p-5 shadow-card-sm">
       {/* Heading with orange underline accent */}
       <div className="mb-4">
         <h2 className="text-[18px] font-bold text-secondary font-display">

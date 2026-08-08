@@ -361,7 +361,7 @@ const SavedPage = () => {
           <span className="text-[30px] font-bold text-white font-display">Your </span>
           <span
             className="text-[30px] font-normal italic"
-            style={{ color: '#C96C38', fontFamily: 'Georgia, serif' }}
+            style={{ color: '#C96C38', fontFamily: 'var(--font-display)' }}
           >
             shortlist
           </span>

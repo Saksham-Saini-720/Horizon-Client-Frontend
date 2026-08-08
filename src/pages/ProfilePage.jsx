@@ -126,7 +126,7 @@ const NotLoggedInState = () => {
 
 // ── Loading skeleton ──────────────────────────────────────────────────────────
 const ProfileSkeleton = () => (
-  <div className="min-h-screen bg-white pb-24 animate-pulse">
+  <div className="min-h-screen bg-canvas pb-24 animate-pulse">
     <div className="bg-gradient-to-br from-[#1a2550] to-secondary h-72" />
     <div className="px-4 -mt-10">
       <div className="bg-white h-20 rounded-2xl shadow-lg" />
@@ -268,7 +268,7 @@ const ProfilePage = memo(() => {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-white pb-28">
+    <div className="min-h-screen bg-canvas pb-28">
       {/* Dark gradient header */}
       <ProfileHeader user={displayUser} onEdit={() => setShowEditModal(true)} />
 
@@ -285,7 +285,7 @@ const ProfilePage = memo(() => {
         {/* ── ACCOUNT ── */}
         <div className="mb-5">
           <SectionLabel>Account</SectionLabel>
-          <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-card-sm">
             <SettingsRow
               onClick={() => setShowEditModal(true)}
               icon={
@@ -337,7 +337,7 @@ const ProfilePage = memo(() => {
         {/* ── PREFERENCES ── */}
         <div className="mb-5">
           <SectionLabel>Preferences</SectionLabel>
-          <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-card-sm">
             <SettingsRow
               onClick={() => navigate('/saved')}
               icon={
@@ -387,7 +387,7 @@ const ProfilePage = memo(() => {
         {/* ── ACCOUNT & SECURITY ── */}
         <div className="mb-8">
           <SectionLabel>Account &amp; Security</SectionLabel>
-          <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-card-sm">
             <SettingsRow
               onClick={() => setShowPasswordModal(true)}
               icon={

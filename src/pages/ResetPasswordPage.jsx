@@ -139,7 +139,7 @@ export default function ResetPasswordPage() {
 
               <h2 className="text-[28px] font-bold text-center text-primary mb-1">
                 Reset your{" "}
-                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
                   password
                 </span>
               </h2>
@@ -166,7 +166,7 @@ export default function ResetPasswordPage() {
                   <PasswordInput
                     inputRef={passwordRef}
                     name="password"
-                    placeholder="••••••••"
+                    placeholder="At least 8 characters"
                     required
                     validator={validatePassword}
                     onChange={(e) => setPasswordValue(e.target.value)}
@@ -200,7 +200,7 @@ export default function ResetPasswordPage() {
                   <PasswordInput
                     inputRef={confirmPasswordRef}
                     name="confirmPassword"
-                    placeholder="••••••••"
+                    placeholder="Re-enter your new password"
                     required
                     validator={(value) => validateConfirmPassword(passwordRef.current?.value ?? "", value)}
                   />

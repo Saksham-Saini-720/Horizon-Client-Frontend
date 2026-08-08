@@ -73,7 +73,7 @@ const EmailVerificationPage = memo(() => {
 
           <h2 className="text-[28px] font-bold text-center text-primary mb-1">
             Check your{" "}
-            <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+            <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
               email
             </span>
           </h2>

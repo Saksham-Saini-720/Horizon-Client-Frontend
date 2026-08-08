@@ -33,7 +33,7 @@ const LocationSearch = memo(({ locations, onAdd }) => {
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          placeholder="Search areas..."
+          placeholder="Search areas…"
           className="flex-1 bg-transparent text-[15px] text-primary placeholder-gray-400 outline-none font-myriad"
         />
         {query.length > 0 && (
@@ -180,7 +180,7 @@ const Preferences = memo(({ profile }) => {
       <div className="space-y-4">
 
         {/* ── Contact Preferences ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-5">
+        <div className="bg-white rounded-2xl shadow-card-sm px-5 py-5">
           <div className="flex items-center gap-2 mb-5">
             <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/>
@@ -211,7 +211,7 @@ const Preferences = memo(({ profile }) => {
         </div>
 
         {/* ── Interested In ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-5">
+        <div className="bg-white rounded-2xl shadow-card-sm px-5 py-5">
           <div className="flex items-center gap-2 mb-4">
             <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -243,7 +243,7 @@ const Preferences = memo(({ profile }) => {
         </div>
 
         {/* ── Locations ──
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-5 py-5">
+        <div className="bg-white rounded-2xl shadow-card-sm px-5 py-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

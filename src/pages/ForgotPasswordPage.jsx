@@ -131,7 +131,7 @@ export default function ForgotPasswordPage() {
 
               <h2 className="text-[28px] font-bold text-center text-primary mb-1">
                 Forgot{" "}
-                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
                   password?
                 </span>
               </h2>
@@ -158,7 +158,7 @@ export default function ForgotPasswordPage() {
                     inputRef={emailRef}
                     name="email"
                     type="email"
-                    placeholder="john@example.com"
+                    placeholder="Enter your email"
                     required
                     validator={validateEmail}
                     leftIcon={<MailIcon />}

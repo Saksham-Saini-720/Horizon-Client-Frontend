@@ -5,6 +5,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import OnboardingGate from "./components/ui/OnboardingGate";
+import SplashGate from "./components/ui/SplashGate";
 import { store, persistor } from "./store/index";
 import App from "./App";
 import "./index.css";
@@ -31,9 +32,11 @@ createRoot(document.getElementById("root")).render(
       {/* No artificial delay — just waits for store rehydration */}
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
-          <OnboardingGate>
-            <App />
-          </OnboardingGate>
+          <SplashGate>
+            <OnboardingGate>
+              <App />
+            </OnboardingGate>
+          </SplashGate>
 
           <Toaster
             position="top-right"
@@ -45,7 +48,7 @@ createRoot(document.getElementById("root")).render(
                 borderRadius: "12px",
                 padding: "16px",
                 fontSize: "14px",
-                fontFamily: "DM Sans, sans-serif",
+                fontFamily: "var(--font-ui)",
               },
             }}
           />

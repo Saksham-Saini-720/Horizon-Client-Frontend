@@ -191,7 +191,7 @@ const ChangePasswordModal = memo(({ isOpen, onClose }) => {
                 value={form.newPass}
                 onChange={handleChange('newPass')}
                 error={errors.newPass}
-                placeholder="Min 8 chars, upper & lowercase"
+                placeholder="At least 8 characters"
               />
               <PasswordChecklist password={form.newPass}/>
             </div>

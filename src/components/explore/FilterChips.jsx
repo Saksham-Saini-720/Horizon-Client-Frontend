@@ -39,7 +39,7 @@ const FilterChips = memo(({ activeFilters = [], onToggle, dimmed = false }) => {
     >
       <div
         ref={scrollRef}
-        className="flex gap-2.5 overflow-x-auto scrollbar-hide p-2"
+        className="flex gap-2.5 overflow-x-auto scrollbar-hide px-6 py-2"
       >
         {FILTERS.map(({ id, label }) => {
           const isActive = activeFilters.includes(id);
@@ -80,7 +80,12 @@ const FilterChips = memo(({ activeFilters = [], onToggle, dimmed = false }) => {
         }`}
         style={{
           width: "48px",
-          background: "linear-gradient(to right, transparent, rgba(0,0,0,0.45))",
+          // Both stops are the header's blue, and the first is that same blue at
+          // zero alpha rather than `transparent`. `transparent` is rgba(0,0,0,0),
+          // so fading to it interpolates through black and greys the whole strip
+          // — which is what put a dark band over the chips.
+          background:
+            "linear-gradient(to right, rgba(38,46,126,0), rgba(38,46,126,0.95))",
         }}
       >
         <svg

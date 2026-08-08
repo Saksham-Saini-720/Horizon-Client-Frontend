@@ -15,7 +15,7 @@ const AccountSecurity = memo(({ onLogout }) => {
         Account & Security
       </h2>
 
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-card-sm overflow-hidden">
 
         {/* This Device */}
         <div className="p-5 flex items-center gap-4">

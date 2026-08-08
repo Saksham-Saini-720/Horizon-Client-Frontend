@@ -7,9 +7,16 @@
       type="image/svg+xml"
       href="/favicon.ico"
     />
+    <!--
+      viewport-fit=cover lets the page paint into the display's rounded corners
+      and under the home indicator, instead of being letterboxed inside a safe
+      rectangle. It is also what makes env(safe-area-inset-*) report real
+      values — without it they are all 0px and any safe-area padding silently
+      does nothing. The bottom nav relies on both.
+    -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta
       http-equiv="Content-Security-Policy"
@@ -19,16 +26,19 @@
       http-equiv="X-Content-Type-Options"
       content="nosniff"
     />
+    <!--
+      The two brand faces, in one request:
+        Fraunces — display/headings. Loaded with italics, since the accent lines
+          ("perfect home", "like yours") depend on them, and across the full
+          300..900 range so a heavy accent renders at its real weight instead of
+          being capped and synthesised.
+        Manrope  — UI/body: labels, nav, chips, badges.
+      Preconnect first: these are render-blocking, and gstatic is a second host.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Rye&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300..800&display=swap"
       rel="stylesheet"
     />
     <title>Horizon Properties</title>

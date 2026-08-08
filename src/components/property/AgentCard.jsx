@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 // ─── Loading Skeleton ─────────────────────────────────────────────────────────
 
 const AgentCardSkeleton = () => (
-  <div className="mx-5 mt-2 mb-4 rounded-2xl bg-white border border-gray-100 shadow-sm px-4 py-4 animate-pulse">
+  <div className="mx-5 mt-2 mb-4 rounded-2xl bg-white shadow-card-sm px-4 py-4 animate-pulse">
     <div className="h-3 bg-gray-200 rounded w-24 mb-3" />
     <div className="flex items-center gap-3">
       <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0" />
@@ -20,7 +20,7 @@ const AgentCardSkeleton = () => (
 // ─── No Agent State ───────────────────────────────────────────────────────────
 
 const NoAgentAssigned = memo(() => (
-  <div className="mx-5 mt-2 mb-4 rounded-2xl bg-white border border-gray-100 shadow-sm px-4 py-4">
+  <div className="mx-5 mt-2 mb-4 rounded-2xl bg-white shadow-card-sm px-4 py-4">
     <p className="text-[10px] text-gray-400 font-myriad tracking-widest uppercase mb-3">
       Listing Agent
     </p>
@@ -100,19 +100,28 @@ const AgentCard = memo(({ agent, property, isLoading }) => {
   // const displayReviews = agent?.reviews || '212';
   const areaLabel = agent?.office?.name || 'Horizon Bay Area';
 
+  // `title` is derived upstream (Property Agent / Property Owner) but was never
+  // shown — it says more about who this person is than the office name alone.
+  const meta = [agent?.title, areaLabel].filter(Boolean).join(' · ');
+
   return (
-    <div className="mx-5 mt-2 mb-4 rounded-2xl bg-white border border-gray-100 shadow-sm px-4 py-4">
+    <div className="mx-5 mt-2 mb-4 rounded-2xl bg-white shadow-card-sm px-4 py-4">
 
       {/* "LISTING AGENT" label */}
-      <p className="text-[10px] text-gray-400 font-myriad tracking-widest uppercase mb-3">
+      <p className="text-[10px] text-gray-400 font-myriad font-semibold tracking-[0.16em] uppercase mb-3.5">
         Listing Agent
       </p>
 
       {/* Agent row: avatar · name/meta · phone button */}
       <div className="flex items-center gap-3">
 
-        {/* Avatar — orange circle with initials, or photo */}
-        <div className="w-12 h-12 rounded-full overflow-hidden bg-primary-light flex items-center justify-center flex-shrink-0">
+        {/* Avatar — orange circle with initials, or photo. The tinted glow is
+            the same treatment the header avatar uses, so the two read as one
+            component rather than two unrelated circles. */}
+        <div
+          className="w-[52px] h-[52px] rounded-full overflow-hidden bg-primary-light flex items-center justify-center flex-shrink-0"
+          style={{ boxShadow: "0 4px 14px rgba(201,108,56,0.32)" }}
+        >
           {agent.avatar ? (
             <img
               src={agent.avatar}
@@ -120,37 +129,38 @@ const AgentCard = memo(({ agent, property, isLoading }) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-white text-[17px] font-bold font-display leading-none">
+            <span className="text-white text-[18px] font-bold font-display leading-none">
               {initials}
             </span>
           )}
         </div>
 
-        {/* Name + area · rating */}
+        {/* Name + role · area */}
         <div className="flex-1 min-w-0">
-          <p className="text-[16px] font-bold text-secondary font-display truncate">
+          <p className="text-[17px] font-bold text-secondary font-display truncate leading-tight">
             {agent.name || 'Property Agent'}
           </p>
-          <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-            <span className="text-[12px] text-gray-400 font-myriad">
-              {areaLabel}
-            </span>
-            <span className="text-[12px] text-gray-300 font-myriad">·</span>
-            {/* <span className="text-[12px] text-gray-500 font-myriad font-semibold">
-              {displayRating} ★
-            </span> */}
-            {/* <span className="text-[12px] text-gray-400 font-myriad">
-              ({displayReviews})
-            </span> */}
-          </div>
+          {/* Joined from whatever is actually present, so a missing part can
+              never leave a stranded separator — the previous markup printed the
+              "·" unconditionally while the rating it divided was commented out,
+              which is why every card read "Horizon Bay Area ·". */}
+          {meta && (
+            <p className="text-[12px] text-gray-400 font-myriad truncate mt-0.5">
+              {meta}
+            </p>
+          )}
         </div>
 
-        {/* Phone button — dark navy circle */}
+        {/* Call — brand navy, not the near-black `primary`. Against an orange
+            avatar and a green WhatsApp button, a black circle read as a fourth,
+            unrelated colour; navy ties it back to the palette. */}
         <button
           onClick={handleCall}
           disabled={!agent.phone}
-          className="w-11 h-11 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-md active:scale-95 transition-all disabled:opacity-40"
+          className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 active:scale-95 transition-all disabled:opacity-40"
+          style={{ boxShadow: "0 4px 14px rgba(45,54,142,0.35)" }}
           title="Call agent"
+          aria-label="Call agent"
         >
           <svg
             className="w-5 h-5 text-white"
@@ -170,7 +180,7 @@ const AgentCard = memo(({ agent, property, isLoading }) => {
         <button
           onClick={handleWhatsApp}
           disabled={!agent.phone}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-green-50 text-green-700 text-[13px] font-semibold font-myriad transition-all active:scale-95 disabled:opacity-40"
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-green-50 border border-green-100 text-green-700 text-[13px] font-semibold font-myriad transition-all active:scale-95 hover:bg-green-100 disabled:opacity-40"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -181,7 +191,7 @@ const AgentCard = memo(({ agent, property, isLoading }) => {
         <button
           onClick={handleCopyPhone}
           disabled={!agent.phone}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-gray-50 text-gray-600 text-[13px] font-semibold font-myriad transition-all active:scale-95 disabled:opacity-40"
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-gray-600 text-[13px] font-semibold font-myriad transition-all active:scale-95 hover:bg-gray-100 disabled:opacity-40"
         >
           {copied ? (
             <>

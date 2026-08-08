@@ -102,7 +102,7 @@ const CancelTourModal = memo(({ isOpen, onClose, tour }) => {
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="e.g., Found another property, Schedule conflict..."
+              placeholder="e.g., Found another property, Schedule conflict…"
               rows={4}
               disabled={cancelMutation.isPending}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-800 font-myriad resize-none focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"

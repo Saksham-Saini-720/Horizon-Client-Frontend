@@ -285,7 +285,10 @@ const ExplorePage = () => {
   const listingsError = showNearby ? nearbyQuery.isError : newListingsQuery.isError;
 
   return (
-    <div className="min-h-screen bg-white">
+    // overflow-x-hidden: decorative blurred orbs in the header are positioned
+    // past the viewport edge, and without this they open a sideways scroll that
+    // shifts every section off its gutter.
+    <div className="min-h-screen w-full overflow-x-hidden bg-white">
       <ExploreHeader
         onSubmitSearch={handleSearch}
         recentSearches={recent.searches}
@@ -300,7 +303,7 @@ const ExplorePage = () => {
       />
 
       {showNearby && (
-        <div className="px-4 py-3 bg-amber-50 border-b border-amber-100">
+        <div className="px-6 py-3 bg-amber-50 border-b border-amber-100">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-secondary flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -322,7 +325,7 @@ const ExplorePage = () => {
       )}
 
       {effectiveType && (
-        <div className="px-4 py-2.5 flex items-center gap-2 border-b border-gray-100">
+        <div className="px-6 py-2.5 flex items-center gap-2 border-b border-gray-100">
           <span className="text-[13px] text-gray-400 font-myriad">Type:</span>
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-semibold font-myriad bg-amber-50 border border-amber-200 text-amber-800">
             {effectiveType.charAt(0).toUpperCase() + effectiveType.slice(1)}
@@ -342,44 +345,34 @@ const ExplorePage = () => {
       <div className="pb-28">
         {/* Most Viewed Carousel — overlaps the header bottom edge */}
         {!showNearby && (
-          <div className="relative z-1000 -mt-20 ">
+          // -mt-56 exactly matches the header's pb-56, so this block fills the
+          // blue band below the gold rule: the heading takes its top slice and
+          // the card overlaps the rest. z-10 replaces z-1000, which Tailwind
+          // never generated as a class, so this stacked at auto.
+          <div className="relative z-10 -mt-56">
+            {/* Above the carousel, like every other section. tone="light"
+                because it sits on the blue rather than the white body. */}
+            <SectionHeader
+              title="Most Viewed"
+              tone="light"
+              onSeeAll={() => navigate("/search?sort=views")}
+            />
             <MostViewedCarousel
               properties={mostViewedQuery.data || []}
               isLoading={mostViewedQuery.isLoading}
               isError={mostViewedQuery.isError}
               onRetry={() => mostViewedQuery.refetch()}
             />
-            {/* Premium heading below carousel */}
-            {!mostViewedQuery.isLoading && !mostViewedQuery.isError && (mostViewedQuery.data?.length ?? 0) > 0 && (
-              <div className="px-5 pt-3 pb-2 flex items-center justify-between ml-4">
-                <div className="flex items-center gap-3">
-                  <div>
-                    <h2 className="text-[21px] font-bold text-primary font-display tracking-tight leading-none">
-                      Most Viewed
-                    </h2>
-                    <p className="text-[10px] font-semibold text-gray-400 font-myriad tracking-[0.14em] uppercase mt-0.5">
-                      Trending Properties
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => navigate("/search?sort=views")}
-                  className="text-primary-light text-[12px] font-semibold tracking-[0.2em] font-myriad uppercase flex items-center gap-1 hover:opacity-75 transition-opacity"
-                >
-                  See All →
-                </button>
-              </div>
-            )}
           </div>
         )}
 
         {/* Our World Section */}
         <div className="mt-4 mb-2 py-2">
-          <div className="flex items-center justify-between px-5 mb-5">
+          <div className="flex items-center justify-between px-6 mb-5">
             <div className="relative inline-block pb-[6px]">
               <h2 className="text-[23px] leading-none" style={{ color: "#1A1A1A" }}>
                 <span className="font-bold font-display text-secondary">Our </span>
-                <span className="text-primary-light" style={{ fontFamily: "'Georgia', serif", fontStyle: "italic", fontWeight: 600 }}>
+                <span className="text-primary-light" style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 600 }}>
                   world
                 </span>
               </h2>
@@ -398,7 +391,7 @@ const ExplorePage = () => {
             </button>
           </div>
 
-          <div className="flex gap-7 px-5 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex gap-7 px-6 overflow-x-auto scrollbar-hide pb-2">
             {PROMO_SLIDES.map((slide) => (
               <div
                 key={slide.id}
@@ -436,7 +429,7 @@ const ExplorePage = () => {
               title="Featured"
               onSeeAll={() => navigate('/search?featured=true')}
             />
-            <div className="flex gap-3 px-4 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-3 px-6 overflow-x-auto scrollbar-hide">
               {isFeaturedLoading ? (
                 Array(4).fill(0).map((_, i) => <FeaturedCardSkeleton key={i} />)
               ) : featuredError ? (
@@ -448,7 +441,7 @@ const ExplorePage = () => {
                 </div>
               ) : featuredData?.length > 0 ? (
                 featuredData.map((p) => (
-                  <FeaturedCard key={p.id} {...p} onClick={() => navigate(`/property/${p.id}`)} />
+                  <FeaturedCard key={p.id} {...p} viewCount={p.viewCount || 0} />
                 ))
               ) : (
                 <EmptyState
@@ -468,7 +461,7 @@ const ExplorePage = () => {
               title="Nearby Properties"
               onSeeAll={() => navigate('/map', { state: { location: selectedLocation } })}
             />
-            <div className="px-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="px-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {isFeaturedLoading ? (
                 Array(10).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
               ) : featuredError ? (
@@ -497,7 +490,7 @@ const ExplorePage = () => {
         {!showNearby && (
           <div id="new-listings-section">
             <SectionHeader title="New Listings" onSeeAll={() => navigate('/search?new=true')} />
-            <div className="px-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="px-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {isListingsLoading ? (
                 Array(10).fill(0).map((_, i) => <NewListingCardSkeleton key={i} />)
               ) : listingsError ? (

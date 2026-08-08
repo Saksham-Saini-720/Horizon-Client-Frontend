@@ -23,12 +23,34 @@ const SpeakerIcon = ({ isMuted, volume }) => {
   );
 };
 
-const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
+// Minimum horizontal travel, in px, before a touch counts as a swipe.
+const SWIPE_THRESHOLD = 40;
+
+/**
+ * `fill` makes the media fill its container instead of taking a square of the
+ * page — used on the detail page, where the image sits behind a draggable sheet
+ * and has to be full-screen for the sheet to reveal it.
+ *
+ * `dotsStyle` positions the indicators, because in fill mode "the bottom of the
+ * image" is behind the sheet; the caller knows where the sheet's edge is. It is
+ * an inline style rather than a class because the caller computes it from the
+ * sheet geometry, and Tailwind cannot generate a class from a runtime value.
+ */
+const PropertyImageCarousel = memo(({
+  mediaItems = [],
+  fill = false,
+  dotsStyle = { bottom: 48 },
+  // "contain" shows the whole frame, letterboxed against the dark backdrop —
+  // right for a hero, where cropping a landscape photo into a tall box zooms
+  // hard into its middle. "cover" stays the default for fixed-ratio thumbnails.
+  objectFit = "cover",
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(0.7);
   const videoRefs = useRef([]);
+  const touchStartX = useRef(null);
 
   // Auto-play video when slide becomes active; pause + reset others
   useEffect(() => {
@@ -55,13 +77,17 @@ const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
 
   if (!mediaItems.length) {
     return (
-      <div className="relative w-full h-[400px] bg-gray-200 flex items-center justify-center">
+      <div className={`relative w-full bg-gray-200 flex items-center justify-center ${fill ? "h-full" : "h-[400px]"}`}>
         <span className="text-gray-400">No media available</span>
       </div>
     );
   }
 
   const currentItem = mediaItems[currentIndex];
+
+  // Spelled out rather than built as `object-${objectFit}` — Tailwind scans
+  // source statically, so an interpolated class name is never generated.
+  const fitClass = objectFit === "contain" ? "object-contain" : "object-cover";
 
   const goToPrevious = () => {
     videoRefs.current[currentIndex]?.pause();
@@ -71,6 +97,28 @@ const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
   const goToNext = () => {
     videoRefs.current[currentIndex]?.pause();
     setCurrentIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1));
+  };
+
+  // Swipe. With the arrows gone the dots would otherwise be the only way to
+  // move, which is not how anyone uses a photo gallery on a phone — the design
+  // showing dots alone assumes the image itself is draggable.
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0]?.clientX ?? null;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = (e.changedTouches[0]?.clientX ?? 0) - touchStartX.current;
+    touchStartX.current = null;
+    // Below the threshold it was a tap, not a swipe — a video slide's
+    // play/pause target sits under the same finger.
+    if (Math.abs(delta) < SWIPE_THRESHOLD) return;
+    // Suppress the click the browser fires after a touch sequence, so swiping
+    // between photos does not also trigger the caller's tap handler (on the
+    // detail page, that would open the full-screen gallery on every swipe).
+    e.preventDefault();
+    if (delta < 0) goToNext();
+    else goToPrevious();
   };
 
   const togglePlayPause = () => {
@@ -96,10 +144,16 @@ const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
   };
 
   return (
-    <div className="relative w-full max-h-[650px] aspect-[16/16] bg-gray-900 overflow-hidden">
+    <div
+      className={`relative w-full bg-gray-900 overflow-hidden touch-pan-y ${
+        fill ? "h-full" : "max-h-[650px] aspect-square"
+      }`}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Slides */}
       <div
-        className="flex h-full transition-transform duration-300 ease-out"
+        className="relative z-[1] flex h-full transition-transform duration-300 ease-out"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {mediaItems.map((item, index) =>
@@ -111,7 +165,7 @@ const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
               muted
               playsInline
               loop
-              className="w-full h-full object-cover flex-shrink-0"
+              className={`w-full h-full flex-shrink-0 ${fitClass}`}
               onPlay={() => index === currentIndex && setIsPlaying(true)}
               onPause={() => index === currentIndex && setIsPlaying(false)}
             />
@@ -120,7 +174,7 @@ const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
               key={index}
               src={item.url}
               alt={`Property ${index + 1}`}
-              className="w-full h-full object-cover flex-shrink-0"
+              className={`w-full h-full flex-shrink-0 ${fitClass}`}
             />
           )
         )}
@@ -171,41 +225,19 @@ const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
         </div>
       )}
 
-      {/* Navigation Arrows */}
+      {/*
+        Dots are the only navigation, per the design — no arrows, no counter.
+
+        They are also no longer gated on a maximum count. The old `<= 5` limit
+        hid them on longer galleries, which was survivable only because the
+        arrows covered for it; with those gone it would have left a six-photo
+        listing with no way to move at all.
+      */}
       {mediaItems.length > 1 && (
-        <>
-          <button
-            onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white active:scale-95 transition-all z-10"
-          >
-            <svg className="w-6 h-6 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-
-          <button
-            onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white active:scale-95 transition-all z-10"
-          >
-            <svg className="w-6 h-6 text-gray-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        </>
-      )}
-
-      {/* Counter */}
-      {mediaItems.length > 1 && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-bold/60 backdrop-blur-sm pointer-events-none">
-          <span className="text-white text-[15px] font-semibold font-myriad">
-            {currentIndex + 1} / {mediaItems.length}
-          </span>
-        </div>
-      )}
-
-      {/* Dot Indicators */}
-      {mediaItems.length > 1 && mediaItems.length <= 5 && (
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div
+          style={dotsStyle}
+          className="absolute left-1/2 -translate-x-1/2 flex flex-wrap items-center justify-center gap-2 px-6 max-w-full z-10 transition-all duration-300 ease-out"
+        >
           {mediaItems.map((_, index) => (
             <button
               key={index}
@@ -213,10 +245,12 @@ const PropertyImageCarousel = memo(({ mediaItems = [] }) => {
                 videoRefs.current[currentIndex]?.pause();
                 setCurrentIndex(index);
               }}
-              className={`w-2 h-2 rounded-full transition-all ${
+              aria-label={`Go to image ${index + 1} of ${mediaItems.length}`}
+              aria-current={index === currentIndex}
+              className={`h-2 rounded-full transition-all flex-shrink-0 ${
                 index === currentIndex
                   ? "bg-white w-6"
-                  : "bg-white/50 hover:bg-white/75"
+                  : "bg-white/50 hover:bg-white/75 w-2"
               }`}
             />
           ))}

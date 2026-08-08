@@ -41,10 +41,13 @@ const ValidatedInput = memo(({
         </label>
       )}
 
+      {/* bg-white is explicit rather than inherited: auth pages put these on a
+          tinted canvas, and a transparent field would take that tint instead of
+          reading as an input. */}
       <div className={`relative flex items-center border rounded-xl transition-colors ${
         fieldError
           ? "border-red-300 bg-red-50 focus-within:border-red-400"
-          : "border-gray-200 focus-within:border-gray-800"
+          : "border-gray-200 bg-white focus-within:border-gray-800"
       }`}>
         {leftIcon && (
           <span className="absolute left-3.5 text-gray-400 flex items-center pointer-events-none">

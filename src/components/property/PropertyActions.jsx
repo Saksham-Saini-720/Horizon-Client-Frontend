@@ -41,8 +41,23 @@ const PropertyActions = memo(({ agent, property }) => {
 
   return (
     <>
-      {/* Fixed action bar — sits above the bottom nav (Footer ~72px tall) */}
-      <div className="fixed bottom-[80px] left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 flex items-center gap-3 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+      {/*
+        Fixed action bar — sits above the bottom nav (Footer ~72px tall).
+
+        Deliberately no background, border or shadow. As an opaque white panel
+        it read as a third stacked bar and its square bottom edge filled the
+        notches beside the nav's rounded top corners, flattening that shape. The
+        buttons carry their own elevation, so they float over the page instead.
+        pointer-events are re-enabled per button so the transparent strip does
+        not block the sheet behind it.
+      */}
+      <div
+        className="fixed left-0 right-0 px-4 py-3 flex items-center gap-3 z-50 pointer-events-none [&>*]:pointer-events-auto"
+        // Was bottom-[80px], a guess at the nav's height. On any device with a
+        // home-indicator inset the nav is taller than that, so this bar sank
+        // into it. Positioned against the nav's actual height now.
+        style={{ bottom: 'var(--nav-h)' }}
+      >
 
         {/* "Schedule a tour →" primary orange button */}
         <button

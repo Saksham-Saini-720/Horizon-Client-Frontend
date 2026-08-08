@@ -9,8 +9,11 @@ const formatArea = (val) => {
   return num.toString();
 };
 
+// Shadow only, no border. A 1px grey outline plus a shadow reads as two
+// competing edges and flattens the tile; the design separates them from the
+// page with elevation alone.
 const StatCard = memo(({ icon, value, label }) => (
-  <div className="flex-1 bg-white rounded-2xl py-4 px-2 flex flex-col items-center justify-center border border-gray-100 shadow-sm">
+  <div className="flex-1 bg-white rounded-2xl py-4 px-2 flex flex-col items-center justify-center shadow-card-sm">
     <div className="mb-2 text-primary-light">
       {icon}
     </div>
