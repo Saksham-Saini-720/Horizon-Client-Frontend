@@ -72,7 +72,7 @@ const PropertyNote = memo(({ propertyId }) => {
             ref={textareaRef}
             value={localNote}
             onChange={handleChange}
-            placeholder="Add a note about this property..."
+            placeholder="Add a note about this property…"
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-secondary bg-white text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none resize-none transition-colors"
             rows={5}
             maxLength={500}

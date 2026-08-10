@@ -1,12 +1,17 @@
-import { memo, useState, useEffect, useCallback, useRef } from "react";
-import MostViewedCard from "./MostViewedCard";
-import { MostViewedCardSkeleton } from "../ui/SkeletonCards";
+import { memo, useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
+// Most Viewed uses the Featured card so both rows read as one component; the
+// badges it needs (verified, purpose, view count) live in FeaturedCard.
+import FeaturedCard from "./FeaturedCard";
+import { FeaturedCardSkeleton } from "../ui/SkeletonCards";
 import EmptyState from "../states/EmptyState";
 import ErrorState from "../states/ErrorState";
 
-const CARD_WIDTH = 360;
+// Every section on Explore lines up on this inset, so the carousel pads to the
+// same value instead of keeping its own — that shared left edge is what makes
+// the page read as aligned.
+const GUTTER = 24;
+const CARD_MAX = 360;
 const CARD_GAP = 8;
-const PEEK = 17; // how much of prev/next card shows on sides
 
 const MostViewedCarousel = memo(({
   properties = [],
@@ -17,10 +22,17 @@ const MostViewedCarousel = memo(({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const containerRef = useRef(null);
-  const [containerWidth, setContainerWidth] = useState(0);
+  // Seeded from the viewport rather than 0. At 0 the width below falls back to
+  // CARD_MAX, and on a narrow device (a 344px Z Fold cover screen) a 360px card
+  // is wider than the whole screen — so the first paint overflowed. Anything
+  // 360px+ hid the bug because the fallback happened to fit.
+  const [containerWidth, setContainerWidth] = useState(
+    () => (typeof window === "undefined" ? 0 : window.innerWidth)
+  );
 
-  // Measure container width
-  useEffect(() => {
+  // useLayoutEffect, not useEffect: this must land before paint, or the first
+  // frame is drawn at the seeded guess instead of the real container width.
+  useLayoutEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver(() => {
       if (containerRef.current) {
@@ -51,19 +63,29 @@ const MostViewedCarousel = memo(({
 
   // const goToIndex = useCallback((index) => setCurrentIndex(index), []);
 
-  // Center the active card:
-  // offset = currentIndex * (CARD_WIDTH + CARD_GAP) - (containerWidth - CARD_WIDTH) / 2
-  const offset =
-    containerWidth > 0
-      ? currentIndex * (CARD_WIDTH + CARD_GAP) - (containerWidth - CARD_WIDTH) / 2 + PEEK
-      : currentIndex * (CARD_WIDTH + CARD_GAP);
+  // The card never exceeds the space between the gutters, so on a narrow phone
+  // it shrinks to fit instead of running off the right edge.
+  const innerWidth = Math.max(0, containerWidth - GUTTER * 2);
+  const cardWidth =
+    containerWidth > 0 ? Math.min(CARD_MAX, innerWidth) : CARD_MAX;
+
+  // One card per step, its left edge landing on the page gutter so the card
+  // lines up with the section heading above it. The previous version centred the
+  // active card, which left the neighbours bleeding in at both screen edges and
+  // put the active card's left edge somewhere between gutters.
+  // On screens wide enough that the card is narrower than the available space,
+  // the whole track is centred instead so it never hugs the left.
+  const leadIn = GUTTER + Math.max(0, (innerWidth - cardWidth) / 2);
+  const translateX = leadIn - currentIndex * (cardWidth + CARD_GAP);
 
   // ── Loading ──
   if (isLoading) {
     return (
       <div className="mb-2">
-        <div className="flex gap-4 px-4 overflow-x-hidden">
-          {Array(3).fill(0).map((_, i) => <MostViewedCardSkeleton key={i} />)}
+        {/* One card, matching what the loaded carousel shows — three fixed-width
+            skeletons overflowed the gutters and then jumped on load. */}
+        <div className="px-6 overflow-x-hidden">
+          <FeaturedCardSkeleton width={cardWidth} />
         </div>
       </div>
     );
@@ -72,7 +94,7 @@ const MostViewedCarousel = memo(({
   // ── Error ──
   if (isError) {
     return (
-      <div className="mt-6 mb-8 px-4">
+      <div className="mt-6 mb-8 px-6">
         <ErrorState title="Failed to load most viewed properties" onRetry={onRetry} />
       </div>
     );
@@ -81,7 +103,7 @@ const MostViewedCarousel = memo(({
   // ── Empty ──
   if (!properties || properties.length === 0) {
     return (
-      <div className="mt-6 mb-8 px-4">
+      <div className="mt-6 mb-8 px-6">
         <EmptyState
           icon="fire"
           title="No trending properties yet"
@@ -100,16 +122,18 @@ const MostViewedCarousel = memo(({
         onMouseLeave={() => setIsPaused(false)}
       >
         {/* Overflow window — PEEK px on each side stays visible */}
-        <div
-          ref={containerRef}
-          className="overflow-hidden"
-          style={{ paddingLeft: PEEK, paddingRight: PEEK, paddingTop: 12, marginTop: -12 }}
-        >
+        {/* Deliberately no overflow-hidden and no gutter padding here. Both were
+            clipping the card's shadow: overflow-hidden clips on every side, and
+            the gutter padding put that clip edge right where the shadow spreads.
+            ExplorePage's root already carries overflow-x-hidden, so the
+            off-screen cards are hidden for us with the shadow left intact. The
+            gutter is applied to the track below via translateX instead. */}
+        <div ref={containerRef} className="relative">
           <div
             className="flex transition-transform duration-700 ease-[cubic-bezier(.77,0,.18,1)]"
             style={{
               gap: CARD_GAP,
-              transform: `translateX(-${Math.max(0, offset)}px)`,
+              transform: `translateX(${translateX}px)`,
             }}
           >
             {properties.map((property, idx) => (
@@ -117,14 +141,19 @@ const MostViewedCarousel = memo(({
                 key={property.id}
                 className="flex-shrink-0 transition-all duration-500"
                 style={{
-                  // Non-active cards: slightly scaled down + dimmed for depth
-                  transform: idx === currentIndex ? "scale(1)" : "scale(0.94)",
+                  // Non-active cards: slightly scaled down + dimmed for depth.
+                  // The active card gets "none" rather than scale(1): an
+                  // identity transform still promotes the element to its own
+                  // compositing layer, and the resampling that follows is what
+                  // softened the badge text.
+                  transform: idx === currentIndex ? "none" : "scale(0.94)",
                   // opacity: idx === currentIndex ? 1 : 0.55,
                   filter: idx === currentIndex ? "none" : "blur(0.5px)",
                 }}
               >
-                <MostViewedCard
+                <FeaturedCard
                   {...property}
+                  width={cardWidth}
                   viewCount={property.viewCount || 0}
                 />
               </div>
@@ -138,7 +167,7 @@ const MostViewedCarousel = memo(({
             onClick={goToPrevious}
             aria-label="Previous property"
             className="absolute left-0 top-0 bottom-0 z-20"
-            style={{ width: PEEK + 16 }}
+            style={{ width: GUTTER + 16 }}
           />
         )}
 
@@ -148,7 +177,7 @@ const MostViewedCarousel = memo(({
             onClick={goToNext}
             aria-label="Next property"
             className="absolute right-0 top-0 bottom-0 z-20"
-            style={{ width: PEEK + 16 }}
+            style={{ width: GUTTER + 16 }}
           />
         )}
 

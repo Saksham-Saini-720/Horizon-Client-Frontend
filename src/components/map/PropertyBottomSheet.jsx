@@ -1,5 +1,6 @@
 
 import { memo } from 'react';
+import PropertyPrice from '../ui/PropertyPrice';
 
 const PropertyBottomSheet = memo(({ property, onClose, onViewDetails }) => {
   const img      = property.img      ?? property.image      ?? property.images?.[0]  ?? null;
@@ -51,9 +52,7 @@ const PropertyBottomSheet = memo(({ property, onClose, onViewDetails }) => {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[20px] font-semibold text-primary font-myriad mb-0.5">
-                  {price}
-                </p>
+                <PropertyPrice price={price} size="sm" className="mb-0.5" />
                 <h3 className="text-[16px] font-semibold text-primary font-myriad line-clamp-1 mb-1">
                   {title}
                 </h3>

@@ -2,6 +2,39 @@
 import { memo, useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HeartBtn from "../ui/HeartBtn";
+import PropertyPrice from "../ui/PropertyPrice";
+
+// ─── Spec row ─────────────────────────────────────────────────────────────────
+
+const BedIcon = (
+  <path d="M2 20v-7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v7M2 15h20M5 15v-3M19 15v-3" />
+);
+const BathIcon = (
+  <path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4zM6 12V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v6" />
+);
+const AreaIcon = (
+  <>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M3 9h18M9 21V9" />
+  </>
+);
+
+// The icon carries the accent colour and the value stays near-black, so the row
+// reads as data rather than as a row of buttons.
+const SpecItem = ({ icon, label, className = "" }) => (
+  <span className={`flex items-center gap-1.5 min-w-0 ${className}`}>
+    <svg
+      viewBox="0 0 24 24" fill="none" stroke="#C96C38" strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round"
+      style={{ width: 13, height: 13, flexShrink: 0 }}
+    >
+      {icon}
+    </svg>
+    <span className="font-myriad font-medium truncate" style={{ fontSize: 12, color: "#374151" }}>
+      {label}
+    </span>
+  </span>
+);
 
 // ─── Mini Carousel ────────────────────────────────────────────────────────────
 
@@ -103,7 +136,7 @@ MiniCarousel.displayName = "MiniCarousel";
 
 // ─── NewListingCard ───────────────────────────────────────────────────────────
 
-const NewListingCard = memo(({ id, price, title, location, beds, baths, area, tag, img, images, owner }) => {
+const NewListingCard = memo(({ id, price, title, location, beds, baths, area, tag, img, images }) => {
   const navigate = useNavigate();
 
   const handleClick = useCallback(() => navigate(`/property/${id}`), [navigate, id]);
@@ -111,30 +144,16 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
   const isForSale = !tag || tag?.toLowerCase().includes("sale");
   const imagesToShow = images && images.length > 0 ? images : img ? [img] : [];
 
-  const priceParts = price?.split(" ") || [];
-  const currency   = priceParts.length > 1 ? priceParts[0] : "ZMW";
-  const priceNum   = priceParts.length > 1 ? priceParts.slice(1).join(" ") : price;
-
   return (
+    // Shares the shadow-card token with FeaturedCard. The hover lift is CSS
+    // rather than the three inline mouse handlers it replaces, which wrote their
+    // own duplicate shadow values straight to element.style.
     <div
       onClick={handleClick}
-      className="relative bg-white rounded-[28px] cursor-pointer"
-      style={{
-        boxShadow: "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)",
-        border: "1px solid rgba(0,0,0,0.06)",
-        transition: "transform 0.35s cubic-bezier(.22,.68,0,1.2), box-shadow 0.35s ease",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-6px) scale(1.012)";
-        e.currentTarget.style.boxShadow = "0 20px 48px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.08)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "translateY(0) scale(1)";
-        e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06)";
-      }}
+      className="relative bg-white rounded-3xl cursor-pointer border border-black/5 shadow-card hover:shadow-card-hover hover:-translate-y-1.5 transition-all duration-300 ease-out"
     >
       {/* ── Image with white padding frame ── */}
-      <div className="px-3 pt-3 pb-0">
+      <div className="px-2 pt-2 pb-0">
         <div className="relative h-[220px] sm:h-[260px] rounded-[18px] overflow-hidden">
 
           {/* Carousel */}
@@ -188,7 +207,7 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
 
       {/* Orange accent line */}
       <div
-        className="mx-3 mt-3"
+        className="mx-2 mt-2"
         style={{
           height: 1.5,
           background: "linear-gradient(90deg, #C96C38 0%, rgba(201,108,56,0.3) 60%, transparent 100%)",
@@ -197,28 +216,15 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
       />
 
       {/* ── Content section ── */}
-      <div className="px-4 pt-3 pb-4">
+      <div className="px-3.5 pt-2.5 pb-3">
 
         {/* Price row */}
-        <div className="flex items-baseline gap-1.5 mb-2">
-          <span
-            className="font-myriad font-bold uppercase tracking-[0.12em] flex-shrink-0"
-            style={{ fontSize: 10.5, color: "#C96C38" }}
-          >
-            {currency}
-          </span>
-          <p
-            className="leading-none font-display text-[22px] sm:text-[27px]"
-            style={{ fontWeight: 700, color: "#111827", letterSpacing: "-0.3px" }}
-          >
-            {priceNum}
-          </p>
-        </div>
+        <PropertyPrice price={price} size="md" className="mb-1" />
 
         {/* Title */}
         {title && (
           <p
-            className="font-display text-secondary font-bold truncate mb-2"
+            className="font-display text-secondary font-bold truncate mb-1"
             style={{ fontSize: 15, letterSpacing: "-0.1px" }}
           >
             {title}
@@ -227,7 +233,7 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
 
         {/* Location */}
         {location && (
-          <div className="flex items-center gap-1.5 mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
             <div
               className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0"
               style={{ background: "linear-gradient(135deg, #2D368E, #C96C38)" }}
@@ -242,109 +248,33 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
           </div>
         )}
 
-        {/* Spec chips */}
+        {/*
+          Specs as plain text with icons, not pills.
+
+          A pill is an interactive affordance — this app already uses that exact
+          shape for the tappable filter row at the top of Explore (Buy / Rent /
+          Price / Bedrooms). Repeating it here for a read-only bed count invites
+          a tap that does nothing, so the two treatments are kept distinct:
+          pill = you can act on it, text = it is telling you something.
+
+          Beds and baths sit together and area is pushed right, since they are
+          the pair users compare against each other.
+        */}
         {(beds || baths || area) && (
-          <>
-            <div style={{ height: 1, background: "linear-gradient(90deg, #F3F4F6, transparent)", marginBottom: 10 }} />
-            <div className="flex items-center gap-2">
-              {beds && (
-                <div
-                  className="flex flex-1 items-center justify-center gap-1 px-2.5 py-1.5 rounded-full"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#C96C38" strokeWidth="2"
-                    strokeLinecap="round" style={{ width: 11, height: 11, flexShrink: 0 }}>
-                    <path d="M2 20v-7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v7M2 15h20M5 15v-3M19 15v-3" />
-                  </svg>
-                  <span className="font-myriad font-semibold" style={{ fontSize: 11, color: "#374151" }}>
-                    {beds}
-                  </span>
-                </div>
-              )}
-              {baths && (
-                <div
-                  className="flex flex-1 items-center justify-center gap-1 px-2.5 py-1.5 rounded-full"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#C96C38" strokeWidth="2"
-                    strokeLinecap="round" style={{ width: 11, height: 11, flexShrink: 0 }}>
-                    <path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4zM6 12V6a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v6" />
-                  </svg>
-                  <span className="font-myriad font-semibold" style={{ fontSize: 11, color: "#374151" }}>
-                    {baths}
-                  </span>
-                </div>
-              )}
-              {area && (
-                <div
-                  className="flex flex-1 items-center justify-center gap-1 px-2.5 py-1.5 rounded-full"
-                  style={{ background: "#F9FAFB", border: "1px solid #E5E7EB" }}
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#C96C38" strokeWidth="2"
-                    strokeLinecap="round" style={{ width: 11, height: 11, flexShrink: 0 }}>
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <path d="M3 9h18M9 21V9" />
-                  </svg>
-                  <span className="font-myriad font-semibold" style={{ fontSize: 11, color: "#374151" }}>
-                    {area}
-                  </span>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* View details CTA */}
-        <div
-          className="flex items-center justify-between mt-3 pt-3"
-          style={{ borderTop: "1px solid #F3F4F6" }}
-        >
-          <span className="font-myriad font-semibold" style={{ fontSize: 12, color: "#9CA3AF" }}>
-            Tap to view property
-          </span>
-          <div
-            className="flex items-center gap-1 px-3 py-1.5 rounded-full"
-            style={{
-              background: "rgba(30,50,140,0.9)",
-              backdropFilter: "blur(15px)",
-              WebkitBackdropFilter: "blur(15px)",
-              border: "1px solid rgba(100,130,255,0.5)",
-              boxShadow: "0 2px 10px rgba(20,40,120,0.9)",
-            }}
-          >
-            <span className="text-white font-myriad font-bold" style={{ fontSize: 10.5 }}>
-              Details
-            </span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
-              strokeLinecap="round" style={{ width: 10, height: 10 }}>
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Agent section */}
-        {owner?.name && (
-          <div
-            className="flex items-center gap-2.5 mt-3 pt-3"
-            style={{ borderTop: "1px solid #F3F4F6" }}
-          >
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: "linear-gradient(135deg, #2D368E, #C96C38)" }}
-            >
-              <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-myriad" style={{ fontSize: 10, color: "#9CA3AF" }}>Listed by</p>
-              <p className="font-myriad font-bold truncate" style={{ fontSize: 13, color: "#1F2937" }}>
-                {owner.name}
-              </p>
-            </div>
+          <div className="flex items-center gap-3">
+            {beds && <SpecItem icon={BedIcon} label={beds} />}
+            {baths && <SpecItem icon={BathIcon} label={baths} />}
+            {area && <SpecItem icon={AreaIcon} label={area} className="ml-auto" />}
           </div>
         )}
 
+        {/*
+          No "Listed by" row here by design. Attribution is a decision the user
+          makes after opening a listing, not while scanning a grid, and the
+          detail page already carries a full AgentCard with contact actions.
+          The VERIFIED badge covers the trust signal at browse stage, and the
+          other two card types never showed an agent — this was the odd one out.
+        */}
       </div>
     </div>
   );

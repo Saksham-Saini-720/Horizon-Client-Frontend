@@ -3,6 +3,7 @@ import { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSavePropertyMutation } from '../../hooks/properties/useSavedProperties';
 import PropertyImage from '../ui/PropertyImage';
+import PropertyPrice from '../ui/PropertyPrice';
 
 const SavedPropertyCard = memo(({ property }) => {
   const navigate = useNavigate();
@@ -24,21 +25,10 @@ const SavedPropertyCard = memo(({ property }) => {
 
   const isForSale = tag === 'For Sale';
 
-  // Currency symbol from formatted price string
-  const priceParts = price?.split(' ') || [];
-  const currencySymbol = priceParts.length > 1 ? priceParts[0] : '';
-
-  // Format raw price as K (e.g. 1250000 → 1,250k)
-  const priceK = rawPrice != null && rawPrice >= 1000
-    ? (rawPrice / 1000).toLocaleString('en-US') + 'k'
-    : rawPrice != null
-      ? rawPrice.toLocaleString('en-US')
-      : priceParts.slice(1).join(' ');
-
   return (
     <div
       onClick={handleClick}
-      className="bg-white rounded-2xl overflow-hidden shadow-slate-200 border-[1px] border-slate-200 shadow-md hover:shadow-md transition-shadow cursor-pointer flex items-center gap-3 p-3"
+      className="bg-white rounded-3xl overflow-hidden border border-black/5 shadow-card hover:shadow-card-hover transition-shadow cursor-pointer flex items-center gap-3 p-3"
     >
       {/* ── Left: Square Image ── */}
       <div className="w-[100px] h-[100px] flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
@@ -63,11 +53,15 @@ const SavedPropertyCard = memo(({ property }) => {
           </span>
         )}
 
-        {/* Price */}
-        <p className="text-[22px] font-semibold text-secondary font-display leading-tight mb-0.5">
-          <span className="text-[10px]  text-gray-500 font-semibold mr-0.5">{currencySymbol}</span>
-          {priceK}
-        </p>
+        {/* Price — abbreviated, since this card is narrow and the price shares
+            the row with an image and the unsave button. */}
+        <PropertyPrice
+          price={price}
+          rawPrice={rawPrice}
+          abbreviate
+          size="md"
+          className="mb-0.5"
+        />
 
         {/* Location · Title */}
         <p className="text-[12px] text-gray-500 font-medium font-display italic truncate mb-1">

@@ -122,7 +122,7 @@ const SearchHeader = memo(({
               onKeyDown={handleKeyDown}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="Search properties..."
+              placeholder="Search properties…"
               className="flex-1 bg-transparent outline-none border-none text-[15px] placeholder-gray-500 font-myriad"
               style={{ color: 'rgba(255,255,255,0.9)' }}
             />

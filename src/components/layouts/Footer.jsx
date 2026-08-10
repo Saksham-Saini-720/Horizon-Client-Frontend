@@ -88,57 +88,45 @@ export default function Footer() {
   const unreadCount = useSelector(selectUnreadCount);
 
   return (
-    <footer
-      className="fixed bottom-0 left-0 right-0 z-40 overflow-hidden"
-      style={{
-        background: 'linear-gradient(145deg, #141852 0%, #2D368E 100%)',
-        borderRadius: '24px 24px 0 0',
-        boxShadow: '0 -6px 32px rgba(45,54,142,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
-      }}
-    >
-      {/* Decorative arc rings – top-left */}
-      <svg
-        className="absolute top-0 left-0 pointer-events-none"
-        width="90" height="70" viewBox="0 0 90 70"
-        style={{ opacity: 0.09 }}
-      >
-        <circle cx="0" cy="0" r="55"  fill="none" stroke="white" strokeWidth="0.8" />
-        <circle cx="0" cy="0" r="78"  fill="none" stroke="white" strokeWidth="0.5" />
-        <circle cx="0" cy="0" r="100" fill="none" stroke="white" strokeWidth="0.3" />
-      </svg>
+    /*
+      How the bar follows the phone's curved corners:
 
-      {/* Decorative arc rings – top-right */}
-      <svg
-        className="absolute top-0 right-0 pointer-events-none"
-        width="90" height="70" viewBox="0 0 90 70"
-        style={{ opacity: 0.09 }}
-      >
-        <circle cx="90" cy="0" r="55"  fill="none" stroke="white" strokeWidth="0.8" />
-        <circle cx="90" cy="0" r="78"  fill="none" stroke="white" strokeWidth="0.5" />
-        <circle cx="90" cy="0" r="100" fill="none" stroke="white" strokeWidth="0.3" />
-      </svg>
+      Not by rounding its own bottom corners — no CSS can read the device's
+      radius, and a self-applied curve just nests a second, smaller arc inside
+      the screen's, leaving a sliver of page showing in the gap. Instead the bar
+      runs square and full bleed to the very edge, and the display clips it. The
+      curve you see is the hardware's.
 
-      {/* Glowing top-edge accent line */}
-      <div
-        className="absolute top-0 left-8 right-8 h-px rounded-full"
+      Two things make that work, and it needs both:
+        1. viewport-fit=cover in index.html, so the page is allowed to paint
+           into the corner region at all.
+        2. env(safe-area-inset-bottom) below, so the labels clear the home
+           indicator rather than sitting under it.
+
+      The env() fallback matters: on a device without insets, or with
+      viewport-fit missing, it resolves to 0px and the bar keeps its base
+      padding instead of collapsing.
+
+      The decoration is gone deliberately: two sets of arc rings, a glowing top
+      edge and a violet ambient blob were all fighting for attention behind five
+      small icons. Flat navy lets the active tab be the only thing that draws
+      the eye — which is the whole job of a nav bar.
+    */
+    <footer className="fixed bottom-0 left-0 right-0 z-40">
+      <nav
+        className="relative flex items-center justify-around rounded-t-[26px] overflow-hidden pt-1.5"
         style={{
-          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)',
+          background: '#1E2A6B',
+          boxShadow: '0 -6px 28px rgba(12,22,74,0.35), inset 0 1px 0 rgba(255,255,255,0.07)',
+          // Height comes from the shared variable so the bar's real footprint
+          // always matches what everything else positions against. box-sizing
+          // is border-box, so the inset padding eats into this height rather
+          // than adding to it — the icons ride above the home indicator and the
+          // total stays exactly --nav-h.
+          height: 'var(--nav-h)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
-      />
-
-      {/* Ambient centre glow */}
-      <div
-        className="absolute top-0 left-1/2 pointer-events-none"
-        style={{
-          transform: 'translateX(-50%)',
-          width: '160px',
-          height: '50px',
-          background: 'radial-gradient(ellipse, rgba(139,92,246,0.18) 0%, transparent 70%)',
-          filter: 'blur(10px)',
-        }}
-      />
-
-      <nav className="relative flex items-center justify-around pt-1">
+      >
         <NavItem to="/"          label="Home"     icon={<HiHome               className="w-6 h-6" />} />
         <NavItem to="/saved"     label="Saved"    icon={<HiHeart              className="w-6 h-6" />} />
         <NavItem to="/inquiries" label="Inquiries" icon={<HiChatBubbleLeft    className="w-6 h-6" />} />

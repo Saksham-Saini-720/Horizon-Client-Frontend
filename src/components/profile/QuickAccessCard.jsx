@@ -9,7 +9,7 @@ const QuickAccessGrid = memo(({ savedCount, toursCount, inboxCount, onNavigate }
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 flex items-stretch overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-card-sm flex items-stretch overflow-hidden">
       {stats.map((stat, index) => (
         <div key={stat.label} className="flex-1 flex items-stretch">
           {index > 0 && (

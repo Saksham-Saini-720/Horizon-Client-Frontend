@@ -86,7 +86,9 @@ const PropertyInfo = memo(({ property }) => {
       </p>
 
       {/* Dark navy price banner */}
-      <div className="bg-gradient-to-br from-[#1a2550] to-secondary rounded-2xl px-5 py-3 flex items-center justify-between">
+      {/* shadow-card is navy-tinted, which is what lets a navy banner cast a
+          shadow that reads as depth rather than as grey haze around it. */}
+      <div className="bg-gradient-to-br from-[#1a2550] to-secondary rounded-2xl px-5 py-3 flex items-center justify-between shadow-card">
         <div className="flex items-baseline gap-2">
           {rawCurrency && (
             <span className="text-[11px] text-primary-light font-semibold font-display uppercase tracking-wider">

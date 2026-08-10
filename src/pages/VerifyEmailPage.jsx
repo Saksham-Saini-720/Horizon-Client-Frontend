@@ -55,7 +55,7 @@ const VerifyEmailPage = memo(() => {
 
               <h2 className="text-[28px] font-bold text-center text-primary mb-1">
                 Verifying your{" "}
-                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
                   email
                 </span>
               </h2>
@@ -78,7 +78,7 @@ const VerifyEmailPage = memo(() => {
 
               <h2 className="text-[28px] font-bold text-center text-primary mb-1">
                 Email{" "}
-                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
                   Verified!
                 </span>
               </h2>
@@ -120,7 +120,7 @@ const VerifyEmailPage = memo(() => {
 
               <h2 className="text-[28px] font-bold text-center text-primary mb-1">
                 Verification{" "}
-                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}>
+                <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
                   Failed
                 </span>
               </h2>

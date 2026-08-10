@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "./config";
+import { BASE_URL, TUNNEL_HEADERS } from "./config";
 import { getRefreshToken, setTokens, clearTokens } from "../utils/token";
 
 /**
@@ -27,7 +27,7 @@ export function refreshAccessToken() {
     .post(
       `${BASE_URL}/auth/refresh`,
       { refreshToken },
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json", ...TUNNEL_HEADERS } }
     )
     .then((res) => {
       const accessToken = res.data?.data?.accessToken;

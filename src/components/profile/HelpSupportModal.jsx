@@ -140,7 +140,7 @@ const HelpSupportModal = memo(({ isOpen, onClose }) => {
             </label>
             <textarea
               ref={messageRef}
-              placeholder="Describe your issue or question..."
+              placeholder="Describe your issue or question…"
               rows={4}
               disabled={mutation.isPending}
               className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-[15px] text-primary placeholder-gray-400 font-myriad outline-none focus:border-secondary transition-colors resize-none disabled:opacity-60"

@@ -33,6 +33,11 @@ const SLIDES = [
   },
 ];
 
+// The two orange italic accents — the "Welcome home" badge and the headingAccent
+// line — use the display face (Fraunces). Reads the variable rather than naming
+// the family, so a font swap stays a one-line change in index.css.
+const ACCENT_FONT = "var(--font-display)";
+
 // alternating primary.light (#C96C38) and white rings
 const RINGS = [
   { r: 195, color: "rgba(255,255,255,0.06)"   },   // white — outermost
@@ -104,7 +109,7 @@ export default function LoadingScreen({ onComplete }) {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "var(--font-ui)",
       }}
     >
       {/* Ambient floating dots */}
@@ -206,7 +211,7 @@ export default function LoadingScreen({ onComplete }) {
           src={horizonLogo}
           alt="Horizon Properties"
           style={{
-            width: 180,
+            width: 225,
             objectFit: "contain",
             filter: "drop-shadow(0 4px 24px rgba(232,121,58,0.28))",
             position: "relative",
@@ -234,15 +239,18 @@ export default function LoadingScreen({ onComplete }) {
             exit="exit"
             transition={{ duration: 0.36, ease: [0.32, 0.72, 0, 1] }}
           >
-            {/* Badge */}
+            {/* Badge — a kicker above the heading, so it must stay visibly
+                smaller than the 26px heading it introduces. */}
             <p
               style={{
                 textAlign: "center",
                 color: "#E8793A",
-                fontSize: 28,
+                fontSize: 14,
+                fontWeight: 500,
                 fontStyle: "italic",
-                fontFamily: "'Georgia', serif",
-                marginBottom: 10,
+                fontFamily: ACCENT_FONT,
+                letterSpacing: "0.5px",
+                marginBottom: 14,
                 marginTop: 0,
               }}
             >
@@ -258,7 +266,7 @@ export default function LoadingScreen({ onComplete }) {
                 lineHeight: 1.22,
                 margin: "0 0 2px 0",
                 letterSpacing: "-0.3px",
-                fontFamily: "'Georgia', serif",
+                fontFamily: "var(--font-display)",
                 textAlign: "center",
               }}
             >
@@ -267,14 +275,17 @@ export default function LoadingScreen({ onComplete }) {
               {/* <span style={{ color: "#E8793A", marginLeft: 4, fontSize: 22 }}>•</span> */}
             </h1>
 
-            {/* Accent line */}
+            {/* Accent line — smaller than the 26px heading above it, not larger.
+                At 28 it outweighed the line it completes, and Fraunces italic
+                already sets wider per character, so it read bigger still than
+                the number suggested. */}
             <h1
               style={{
                 color: "#E8793A",
-                fontSize: 28,
-                fontWeight: 800,
+                fontSize: 23,
+                fontWeight: 500,
                 fontStyle: "italic",
-                fontFamily: "'Georgia', serif",
+                fontFamily: ACCENT_FONT,
                 lineHeight: 1.22,
                 margin: "0 0 16px 0",
                 letterSpacing: "-0.3px",
@@ -292,7 +303,7 @@ export default function LoadingScreen({ onComplete }) {
                 lineHeight: 1.65,
                 margin: 0,
                 fontStyle: "italic",
-                fontFamily: "'Georgia', serif",
+                fontFamily: "var(--font-display)",
                 textAlign: "center",
               }}
             >
@@ -319,12 +330,10 @@ export default function LoadingScreen({ onComplete }) {
               flex: 1,
               height: 3,
               borderRadius: 99,
+              // The ACTIVE step carries the accent colour; every other segment
+              // stays dim, completed or not.
               background:
-                i < index
-                  ? "#E8793A"
-                  : i === index
-                  ? "rgba(255,255,255,0.9)"
-                  : "rgba(255,255,255,0.2)",
+                i === index ? "#E8793A" : "rgba(255,255,255,0.2)",
               transition: "background 0.35s ease",
             }}
           />
@@ -385,7 +394,7 @@ export default function LoadingScreen({ onComplete }) {
             color: "white",
             fontSize: 16,
             fontWeight: 700,
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "var(--font-ui)",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",

@@ -3,27 +3,36 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'MyriadPro';
-  src: url('/fonts/MYRIADPRO-REGULAR.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-}
+/* ── Brand fonts — change these two variables to swap fonts everywhere ──
+   Both faces are loaded in index.html. Inline styles that need the display face
+   should use `fontFamily: "var(--font-display)"` rather than naming the family,
+   so a future swap stays a one-line change here.
 
-@font-face {
-  font-family: 'MyriadPro';
-  src: url('/fonts/MYRIADPRO-BOLD.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-}
-
-/* ── Display font — change the variable here to swap the font everywhere ── */
+   MyriadPro's @font-face blocks were removed with this switch; the .woff files
+   in public/fonts are now unreferenced and can be deleted. */
 :root {
-  --font-display: Georgia, 'Times New Roman', serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Manrope', system-ui, -apple-system, sans-serif;
+
+  /* ── Bottom chrome ──────────────────────────────────────────────────────
+     Total height of the fixed bottom nav, including the home-indicator inset.
+     Single source of truth: the Footer sizes itself from it, and anything that
+     has to sit clear of the nav positions against it.
+
+     This exists because those were three separate hardcoded numbers before —
+     the Footer's own padding, PropertyActions at bottom-[80px], and the detail
+     sheet's BOTTOM_CHROME. Adding safe-area padding grew the nav past 80px on
+     any device with a home indicator, so the "Schedule a tour" bar sank into
+     it. One variable means they can no longer disagree. */
+  --nav-h: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+
+  /* The action bar that sits directly above the nav on the property page. */
+  --action-bar-h: 4.75rem;
 }
 
 body, html, #root {
   background-color: #ffffff;
+  font-family: var(--font-ui);
 }
 
 @layer utilities {

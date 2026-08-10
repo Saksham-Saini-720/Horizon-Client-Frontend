@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "./config";
+import { BASE_URL, TUNNEL_HEADERS } from "./config";
 import { refreshAccessToken } from "./refreshClient";
 import { getAccessToken } from "../utils/token";
 
@@ -8,6 +8,7 @@ const axiosInstance = axios.create({
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
+    ...TUNNEL_HEADERS,
   },
 });
 

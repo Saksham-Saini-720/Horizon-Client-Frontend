@@ -197,7 +197,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
           {/* Name */}
           <div>
             <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Your Name <span className="text-red-500">*</span></label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Mwamba" required
+            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Your full name" required
               className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
             {errors.name && <p className="text-[11px] text-red-500 mt-1">{errors.name}</p>}
           </div>
@@ -214,7 +214,7 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
           {/* Email */}
           <div>
             <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">Email <span className="text-red-500">*</span></label>
-            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="john.mwamba@email.com" required
+            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" required
               className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
             {errors.email && <p className="text-[11px] text-red-500 mt-1">{errors.email}</p>}
           </div>

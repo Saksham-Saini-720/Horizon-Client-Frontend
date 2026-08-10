@@ -223,7 +223,7 @@ const LocationPickerModal = memo(({ isOpen, onClose, onSelectLocation }) => {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search any city worldwide..."
+              placeholder="Search any city worldwide…"
               className="flex-1 bg-transparent text-[15px] text-[#1C2A3A] placeholder-gray-400 outline-none font-['DM_Sans',sans-serif]"
               autoFocus
             />

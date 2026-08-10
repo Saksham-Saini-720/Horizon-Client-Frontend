@@ -75,15 +75,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface w-full overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-canvas w-full overflow-hidden">
 
       <AuthPageHeader />
 
-      {/* ── Card — slides up from below on mount ── */}
-      <div className="flex justify-center px-5 -mt-7 pb-12 mb-6 w-full z-20">
+      {/*
+        A sheet rising out of the header, not a card floating on a page: full
+        bleed, rounded only at the top, and running to the bottom of the screen.
+        The side margins and bottom rounding were what made it read as a widget
+        sitting on a background rather than as the page itself.
+
+        bg-canvas, so the white inputs inside have a tone to sit on — the same
+        reason the property sheet needed it.
+      */}
+      <div className="flex-1 flex -mt-8 w-full z-20">
         <MotionCard
-          className="bg-white rounded-3xl shadow-2xl w-full px-8 pt-8 pb-8"
-          style={{ minWidth: "320px" }}
+          className="bg-canvas rounded-t-[32px] shadow-2xl w-full px-7 pt-9 pb-10"
           initial={{ y: 120, opacity: 0 }}
           animate={{ y: 0,   opacity: 1 }}
           transition={{ type: "spring", stiffness: 110, damping: 18, delay: 0.05 }}
@@ -92,7 +99,7 @@ export default function LoginPage() {
             Welcome{" "}
             <span
               className="italic font-normal"
-              style={{ color: "#C96C38", fontFamily: "Georgia, serif" }}
+              style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}
             >
               back
             </span>
@@ -112,7 +119,7 @@ export default function LoginPage() {
                 inputRef={emailRef}
                 name="email"
                 type="email"
-                placeholder="enter your email"
+                placeholder="Enter your email"
                 required
                 validator={VALIDATORS.email}
                 leftIcon={<MailIcon />}
@@ -127,7 +134,7 @@ export default function LoginPage() {
                 inputRef={passwordRef}
                 name="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 required
                 validator={VALIDATORS.password}
                 leftIcon={<LockIcon />}
@@ -145,14 +152,44 @@ export default function LoginPage() {
               </button>
             </div>
 
+            {/*
+              The background is a class, not an inline style. It was
+              `style={{ backgroundColor }}` before, and an inline value beats any
+              class — so a hover/active colour could never have taken effect.
+            */}
             <button
               type="submit"
               disabled={emailLoginMutation.isPending}
-              className="w-full text-white font-semibold py-4 rounded-full disabled:opacity-60 transition-colors flex items-center justify-center gap-2 text-[15px]"
-              style={{ backgroundColor: "#C96C38" }}
+              className="group relative w-full overflow-hidden py-4 rounded-full text-white font-semibold text-[15px]
+                bg-primary-light hover:bg-[#B25E2D] active:bg-[#9C5126]
+                shadow-[0_6px_20px_rgba(201,108,56,0.35)] hover:shadow-[0_10px_26px_rgba(201,108,56,0.45)]
+                transition-all duration-300 disabled:opacity-60 disabled:pointer-events-none"
             >
-              {emailLoginMutation.isPending && <Spinner size="sm" />}
-              {emailLoginMutation.isPending ? "Signing in…" : "Sign in →"}
+              {/*
+                Shine sweep. A band of light parked off the left edge that
+                travels across on hover or press, clipped by the button's own
+                overflow-hidden so it stays inside the pill.
+
+                Driven by transform rather than `left`: transforms are composited
+                so the sweep stays smooth, where animating `left` relayouts every
+                frame. The band is wider than the button and angled slightly, so
+                it reads as a reflection passing over rather than a bar sliding.
+              */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -translate-x-full
+                  group-hover:translate-x-full group-active:translate-x-full
+                  transition-transform duration-700 ease-out"
+                style={{
+                  background:
+                    "linear-gradient(100deg, transparent 25%, rgba(255,255,255,0.38) 50%, transparent 75%)",
+                }}
+              />
+
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {emailLoginMutation.isPending && <Spinner size="sm" />}
+                {emailLoginMutation.isPending ? "Signing in…" : "Sign in →"}
+              </span>
             </button>
           </form>
 

@@ -400,7 +400,7 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
                     type="text"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder="Search country..."
+                    placeholder="Search country…"
                     className="flex-1 bg-transparent text-[13px] text-gray-700 outline-none"
                   />
                 </div>
@@ -435,7 +435,7 @@ const PhoneInput = memo(({ inputRef, label, required, className = "", onChange, 
           value={number}
           onChange={handleNumberChange}
           onBlur={handleBlur}
-          placeholder="97X XXX XXX"
+          placeholder="Enter your phone number"
           className="flex-1 px-4 py-3.5 text-[16px] text-gray-800 placeholder-gray-400 outline-none rounded-r-xl bg-white"
         />
       </div>

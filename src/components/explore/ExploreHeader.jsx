@@ -83,8 +83,15 @@ const ExploreHeader = memo(({
   return (
     <>
       {/* ── Sticky header shell ── */}
+      {/* pb-56 leaves a deep band of blue below the gold rule for the Most
+          Viewed block to occupy. With the old pb-9 the white page began almost
+          at the card's top edge, so a white card had nothing to stand against.
+          This must stay in step with the -mt-56 in ExplorePage: the two are
+          equal so that block lands exactly on the gold rule, with the section
+          heading on blue and the card overlapping the remaining blue below it.
+          Change one and you must change the other. */}
       <div
-        className="relative pb-9 "
+        className="relative pb-56"
         style={{
           background:
             "linear-gradient(165deg, #3641a8 0%, #2D368E 48%, #1d2670 100%)",
@@ -193,7 +200,7 @@ const ExploreHeader = memo(({
               />
               <span
                 style={{
-                  fontFamily: "'Myriad Pro', 'Myriad', sans-serif",
+                  fontFamily: "var(--font-ui)",
                   fontSize: 11,
                   fontWeight: 700,
                   letterSpacing: "0.18em",
@@ -234,7 +241,7 @@ const ExploreHeader = memo(({
               style={{
                 fontSize: 30,
                 fontStyle: "italic",
-                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontFamily: "var(--font-display)",
                 color: "#C96C38",
                 letterSpacing: "-0.3px",
               }}
@@ -285,7 +292,7 @@ const ExploreHeader = memo(({
                   onKeyDown={handleKeyDown}
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setTimeout(() => setSearchFocused(false), 160)}
-                  placeholder="Search neighbourhoods, lofts..."
+                  placeholder="Search neighbourhoods, lofts…"
                   className="flex-1 bg-transparent outline-none border-none text-[15px] text-white font-myriad placeholder:text-white/45 placeholder:italic placeholder:font-display"
                 />
 
@@ -409,7 +416,10 @@ const ExploreHeader = memo(({
           </div>
 
           {/* ── Filter chips ── */}
-          <div className="px-4 pb-1">
+          {/* Full-bleed: the gutter lives on the scroll container inside, so the
+              first chip lines up with the search bar while the row still scrolls
+              all the way to the screen edge. */}
+          <div className="pb-1">
             <FilterChips
               activeFilters={activeFilters}
               onToggle={onToggle}

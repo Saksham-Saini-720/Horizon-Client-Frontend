@@ -136,7 +136,7 @@ const ChatPage = () => {
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder="Search conversations..."
+              placeholder="Search conversations…"
               className="flex-1 bg-transparent text-[14px] text-white placeholder-white/40 outline-none font-myriad"
             />
             {searchQuery.length > 0 && (
