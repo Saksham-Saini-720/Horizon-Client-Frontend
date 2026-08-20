@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUserEnquiries } from '../../api/enquiryApi';
 import { toTitleCase } from '../../utils/propertyTransform';
+import { formatPersonName } from '../../utils/formatPersonName';
 
 const formatLocation = (location) => {
   if (typeof location === 'string') return location;
@@ -42,8 +43,8 @@ const transformEnquiry = (enquiry) => ({
   message:   enquiry.message || '',
   agent: {
     name:   enquiry.agent?.firstName && enquiry.agent?.lastName
-              ? `${enquiry.agent.firstName} ${enquiry.agent.lastName}`.trim()
-              : enquiry.agent?.name || 'Agent',
+              ? `${formatPersonName(enquiry.agent.firstName)} ${formatPersonName(enquiry.agent.lastName)}`.trim()
+              : formatPersonName(enquiry.agent?.name) || 'Agent',
     role:   enquiry.agent?.role || 'Property Agent',
     avatar: enquiry.agent?.avatar || enquiry.agent?.profileImage || null,
   },

@@ -14,10 +14,13 @@ export default function useForgotPassword() {
     },
 
     onError: (error) => {
-      const message = 
-        error.response?.data?.message || 
+      // See useResetPassword: apiHelper rejects with a normalized Error that
+      // has no `.response`, so reading that path always fell through.
+      const message =
+        error?.details?.[0]?.message ||
+        error?.message ||
         "Failed to send reset link. Please try again.";
-      
+
       toast.error(message);
     },
   });

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { getMyProfile } from '../../api/profileApi';
 import { updateUser } from '../../store/slices/authSlice';
+import { formatPersonName } from "../../utils/formatPersonName";
 
 /**
  * Transform backend profile to frontend format
@@ -16,8 +17,8 @@ const transformProfile = (data) => {
     // User fields (flat)
     _id: user._id,
     id: user._id,
-    firstName: user.firstName,
-    lastName: user.lastName,
+    firstName: formatPersonName(user.firstName),
+    lastName: formatPersonName(user.lastName),
     email: user.email,
     phone: user.phone,
     role: user.role,

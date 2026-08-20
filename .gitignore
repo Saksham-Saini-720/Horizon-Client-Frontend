@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 
 .env
+
+# graphify knowledge graph output (regenerate with .claude/skills/horizon-graph)
+graphify-out/
+
+# local Claude Code instructions (not shared with the team)
+CLAUDE.md

@@ -1,6 +1,7 @@
-export const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "http://localhost:5000/api/v1";
+// No fallback on purpose. The previous hardcoded default pointed at a port the
+// backend does not use, so a missing .env failed as confusing request errors
+// deep in the app instead of at startup.
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 /**
  * Free-tier ngrok answers browser-looking requests with an HTML interstitial

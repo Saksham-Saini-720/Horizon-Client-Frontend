@@ -32,7 +32,12 @@ export default function useRegisterMutation() {
     },
 
     onError: (error) => {
-      const message = error.response?.data?.message || "Registration failed. Please try again.";
+      // apiHelper rejects with a normalized Error (message/code/details/status),
+      // not an axios error — there is no `.response` to read.
+      const message =
+        error?.details?.[0]?.message ||
+        error?.message ||
+        "Registration failed. Please try again.";
       toast.error(message);
     },
   });

@@ -15,7 +15,9 @@ export default function useResendVerification() {
     },
     
     onError: (error) => {
-      const message = error.response?.data?.message || "Failed to resend email. Please try again.";
+      // Normalized Error from apiHelper — no `.response`.
+      const message =
+        error?.message || "Failed to resend email. Please try again.";
       toast.error(message);
     },
   });

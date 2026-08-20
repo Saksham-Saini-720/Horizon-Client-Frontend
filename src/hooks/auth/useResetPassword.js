@@ -15,10 +15,16 @@ export default function useResetPassword() {
     },
 
     onError: (error) => {
-      const message = 
-        error.response?.data?.message || 
+      // apiHelper normalizes failures into a plain Error carrying
+      // message/code/details/status — there is no `.response`, so the old
+      // `error.response?.data?.message` was always undefined and every real
+      // failure (a 400 from validation, a rate limit, a genuinely expired
+      // token) surfaced as the same "link may be expired" guess.
+      const message =
+        error?.details?.[0]?.message ||
+        error?.message ||
         "Failed to reset password. The link may be expired.";
-      
+
       toast.error(message);
     },
   });

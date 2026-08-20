@@ -44,7 +44,15 @@ const NO_REFRESH_ROUTES = [
   "/auth/change-password",
 ];
 
-const redirectToLogin = () => {
+// Stash why the session ended so the login page can explain it. The redirect
+// below is a full page load, so component state would not survive it.
+const redirectToLogin = (reason = "expired") => {
+  try {
+    sessionStorage.setItem("auth:endedReason", reason);
+  } catch {
+    // Private mode / storage disabled — the redirect still happens.
+  }
+
   if (window.location.pathname !== "/login") {
     window.location.href = "/login";
   }
@@ -79,7 +87,9 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (err) {
         // refreshAccessToken already cleared storage on failure.
-        redirectToLogin();
+        // The backend distinguishes an idle session from an ordinary expiry.
+        const refreshMsg = err?.response?.data?.error?.message || err?.message || "";
+        redirectToLogin(/inactivity/i.test(refreshMsg) ? "inactivity" : "expired");
         return Promise.reject(err);
       }
     }

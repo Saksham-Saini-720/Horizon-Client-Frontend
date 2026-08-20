@@ -4,6 +4,11 @@ import { useSelector } from 'react-redux';
 import { useTokenRefresh } from '../../hooks/auth/useTokenRefresh';
 import { isRefreshInFlight } from '../../api/refreshClient';
 import { getTokens } from '../../utils/token';
+import {
+  ACTIVITY_EVENTS,
+  isIdleExpired,
+  markActivity,
+} from '../../utils/activity';
 
 /**
  * Check if JWT token is expired or about to expire
@@ -45,6 +50,13 @@ export default function TokenRefreshManager() {
   const checkAndRefreshToken = useCallback(async () => {
     if (!isAuthenticated) return;
 
+    // Do not renew a session nobody is using. This proactive refresh ran purely
+    // off token expiry, so an abandoned tab kept itself alive forever and no
+    // inactivity timeout could ever take effect. Letting the token lapse hands
+    // the decision to the backend, which rejects the refresh once the session
+    // has been idle past IDLE_SESSION_TIMEOUT.
+    if (isIdleExpired()) return;
+
     // A request-driven refresh is already running — don't start a second one.
     if (isRefreshInFlight()) return;
 
@@ -74,6 +86,27 @@ export default function TokenRefreshManager() {
       }
     }
   }, [isAuthenticated, refreshTokens]);
+
+  // ─── Track User Activity ─────────────────────────────────────────────────────
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Seed on mount so a fresh login is not immediately considered idle.
+    markActivity();
+
+    const handleActivity = () => markActivity();
+
+    ACTIVITY_EVENTS.forEach((event) =>
+      window.addEventListener(event, handleActivity, { passive: true }),
+    );
+
+    return () => {
+      ACTIVITY_EVENTS.forEach((event) =>
+        window.removeEventListener(event, handleActivity),
+      );
+    };
+  }, [isAuthenticated]);
 
   // ─── Check Token Every Minute ────────────────────────────────────────────────
 

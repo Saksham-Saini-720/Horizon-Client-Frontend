@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUserTours } from '../../api/tourApi';
 import { toTitleCase } from '../../utils/propertyTransform';
+import { formatPersonName } from '../../utils/formatPersonName';
 
 /**
  * Format location from object or string
@@ -65,8 +66,8 @@ const transformTour = (tour) => {
       : tour.preferredTime || null,
     agent: tour.agent ? {
       name: tour.agent.firstName && tour.agent.lastName
-        ? `${tour.agent.firstName} ${tour.agent.lastName}`.trim()
-        : tour.agent.name || 'Property Agent',
+        ? `${formatPersonName(tour.agent.firstName)} ${formatPersonName(tour.agent.lastName)}`.trim()
+        : formatPersonName(tour.agent.name) || 'Property Agent',
       avatar: tour.agent.avatar || tour.agent.profileImage || null,
       phone: tour.agent.phone || null,
     } : null,

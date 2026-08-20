@@ -188,10 +188,11 @@ const PropertyDetailPage = () => {
     );
   }
 
-  // Determine which agent data to use
-  const displayAgent = isAuthenticated
-    ? agentDetails
-    : property.agent;
+  // Signed-in users get the richer AgentProfile (bio, agency, rating), but that
+  // lookup returns null whenever the assigned agent has no AgentProfile row —
+  // and without the fallback, signing in showed LESS than browsing anonymously.
+  // property.agent is always derivable from the listing itself.
+  const displayAgent = (isAuthenticated ? agentDetails : null) ?? property.agent;
 
   // Success state
   return (

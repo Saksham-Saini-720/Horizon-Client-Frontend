@@ -41,8 +41,9 @@ export default function useVerifyEmail() {
     },
 
     onError: (error) => {
-      const message = 
-        error.response?.data?.message || 
+      // Normalized Error from apiHelper — no `.response`.
+      const message =
+        error?.message ||
         "Verification failed. The link may be expired or invalid.";
       
       toast.error(message);

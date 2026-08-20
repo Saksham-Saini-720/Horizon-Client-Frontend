@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { getConversations, getThreads } from '../../api/conversationApi';
 import { selectIsAuthenticated } from '../../store/slices/authSlice';
 import { toTitleCase } from '../../utils/propertyTransform';
+import { formatPersonName } from "../../utils/formatPersonName";
 
 export const useConversations = (filters = {}) => {
   const { status, search, page = 1, limit = 100 } = filters;
@@ -114,7 +115,8 @@ const normalizeItem = (conv, thread, currentUserId) => {
       }
     : {
         id:     clientId,
-        name:   [client.firstName, client.lastName].filter(Boolean).join(' ') || 'Client',
+        name:   [formatPersonName(client.firstName), formatPersonName(client.lastName)]
+                  .filter(Boolean).join(' ') || 'Client',
         avatar: client.avatar || null,
         isOnline: false,
       };
