@@ -56,7 +56,15 @@ export default function ResetPasswordPage() {
   const handleRequestNewLink = useCallback(() => navigate("/forgot-password"), [navigate]);
 
   const isSuccess      = resetPasswordMutation.isSuccess && !resetPasswordMutation.isError;
-  const isInvalidToken = resetPasswordMutation.isError && resetPasswordMutation.error?.response?.status === 401;
+  // apiHelper normalizes failures onto the Error itself (`.status`), so the old
+  // `error.response.status` read undefined and this branch never fired — an
+  // expired link fell through to the generic error banner instead of the
+  // "request a new link" screen. The backend answers an expired or already-used
+  // reset token with 400, not 401.
+  const resetErrorStatus = resetPasswordMutation.error?.status;
+  const isInvalidToken =
+    resetPasswordMutation.isError &&
+    (resetErrorStatus === 400 || resetErrorStatus === 401);
 
   return (
     <div className="min-h-screen flex flex-col bg-surface overflow-hidden">
@@ -153,7 +161,7 @@ export default function ResetPasswordPage() {
                   <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
                   </svg>
-                  {resetPasswordMutation.error.response?.data?.message || "Failed to reset password"}
+                  {resetPasswordMutation.error.message || "Failed to reset password"}
                 </div>
               )}
 

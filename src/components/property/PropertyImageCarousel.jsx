@@ -23,8 +23,21 @@ const SpeakerIcon = ({ isMuted, volume }) => {
   );
 };
 
-// Minimum horizontal travel, in px, before a touch counts as a swipe.
+// Minimum horizontal travel, in px, before a release counts as a slide change
+// rather than a tap that wandered.
 const SWIPE_THRESHOLD = 40;
+
+// Movement, in px, after which the gesture is a drag and the click that follows
+// it must be swallowed. Deliberately far below SWIPE_THRESHOLD: a 20px drag
+// that snaps back is still not a tap, and letting it through opened the
+// full-screen gallery every time someone changed their mind mid-swipe.
+const DRAG_SLOP = 6;
+
+// How much of the finger's travel to honour when dragging past the first or
+// last slide. The strip wraps on release, so there is nothing rendered out
+// there to show — damping makes the edge feel like resistance instead of like a
+// broken slide that pulls in blank space.
+const EDGE_RESISTANCE = 3;
 
 /**
  * `fill` makes the media fill its container instead of taking a square of the
@@ -50,7 +63,16 @@ const PropertyImageCarousel = memo(({
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(0.7);
   const videoRefs = useRef([]);
-  const touchStartX = useRef(null);
+  // Live drag offset in px. State rather than a ref because the strip's
+  // transform has to re-render as the finger moves — that following-the-finger
+  // response is the whole difference between a drag and a swipe.
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef(null);
+  // Set the moment a gesture passes DRAG_SLOP, read by the capture-phase click
+  // handler below. A ref, not state: it is written and read inside the same
+  // event sequence and must never wait for a render.
+  const didDragRef = useRef(false);
 
   // Auto-play video when slide becomes active; pause + reset others
   useEffect(() => {
@@ -99,26 +121,79 @@ const PropertyImageCarousel = memo(({
     setCurrentIndex((prev) => (prev === mediaItems.length - 1 ? 0 : prev + 1));
   };
 
-  // Swipe. With the arrows gone the dots would otherwise be the only way to
-  // move, which is not how anyone uses a photo gallery on a phone — the design
-  // showing dots alone assumes the image itself is draggable.
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0]?.clientX ?? null;
+  // Dragging. With the arrows gone the dots were otherwise the only way to
+  // move, which is not how anyone uses a photo gallery — the design showing
+  // dots alone assumes the image itself is draggable.
+  //
+  // Pointer events, not touch events. The previous handlers were touch-only, so
+  // the gallery could not be dragged with a mouse at all: on desktop the dots
+  // were the entire navigation. Pointer events cover mouse, touch and pen in
+  // one path, and pointer capture keeps a drag alive when the cursor leaves the
+  // element mid-gesture — which, with the image filling the viewport behind a
+  // sheet, it constantly does.
+  const canDrag = mediaItems.length > 1;
+
+  const handlePointerDown = (e) => {
+    if (!canDrag) return;
+    // The volume slider owns its own horizontal gesture; capturing it here
+    // would make the video's audio unadjustable. Every other control (play,
+    // mute, dots) is a click target, and clicks are handled by suppression
+    // below rather than by refusing to drag from them — otherwise a video
+    // slide, whose play/pause button covers the entire frame, could not be
+    // dragged anywhere.
+    if (e.target.closest?.('input[type="range"]')) return;
+
+    didDragRef.current = false;
+    dragStart.current = { x: e.clientX, y: e.clientY };
+    setIsDragging(true);
   };
 
-  const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const delta = (e.changedTouches[0]?.clientX ?? 0) - touchStartX.current;
-    touchStartX.current = null;
-    // Below the threshold it was a tap, not a swipe — a video slide's
-    // play/pause target sits under the same finger.
-    if (Math.abs(delta) < SWIPE_THRESHOLD) return;
-    // Suppress the click the browser fires after a touch sequence, so swiping
-    // between photos does not also trigger the caller's tap handler (on the
-    // detail page, that would open the full-screen gallery on every swipe).
-    e.preventDefault();
-    if (delta < 0) goToNext();
+  const handlePointerMove = (e) => {
+    if (!dragStart.current) return;
+
+    const dx = e.clientX - dragStart.current.x;
+
+    if (!didDragRef.current && Math.abs(dx) > DRAG_SLOP) {
+      didDragRef.current = true;
+      // Claimed only once the gesture is definitely horizontal. Capturing on
+      // pointerdown would steal taps from the play button and the dots.
+      e.currentTarget.setPointerCapture?.(e.pointerId);
+    }
+
+    if (!didDragRef.current) return;
+
+    // Nothing is rendered beyond either end of the strip, so pulling past it
+    // gets damped rather than tracked one-to-one.
+    const atStart = currentIndex === 0 && dx > 0;
+    const atEnd = currentIndex === mediaItems.length - 1 && dx < 0;
+    setDragX(atStart || atEnd ? dx / EDGE_RESISTANCE : dx);
+  };
+
+  const endDrag = (e, { cancelled = false } = {}) => {
+    if (!dragStart.current) return;
+
+    const dx = cancelled ? 0 : e.clientX - dragStart.current.x;
+    dragStart.current = null;
+    setIsDragging(false);
+    setDragX(0);
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+
+    // Below the threshold the strip springs back to where it was — the drag
+    // happened, it just did not travel far enough to mean anything.
+    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+    if (dx < 0) goToNext();
     else goToPrevious();
+  };
+
+  // A drag that ends on the image would otherwise fire a click, and on the
+  // detail page the carousel sits inside a click-to-open-full-screen wrapper —
+  // so every swipe between photos also opened the gallery. Capture phase,
+  // because the wrapper's handler is an ancestor and would run first otherwise.
+  const handleClickCapture = (e) => {
+    if (!didDragRef.current) return;
+    didDragRef.current = false;
+    e.stopPropagation();
+    e.preventDefault();
   };
 
   const togglePlayPause = () => {
@@ -146,15 +221,27 @@ const PropertyImageCarousel = memo(({
   return (
     <div
       className={`relative w-full bg-gray-900 overflow-hidden touch-pan-y ${
-        fill ? "h-full" : "max-h-[650px] aspect-square"
-      }`}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+        canDrag ? "cursor-grab active:cursor-grabbing" : ""
+      } ${fill ? "h-full" : "max-h-[650px] aspect-square"}`}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={endDrag}
+      // A cancel is the browser taking the gesture back — most often because
+      // `touch-pan-y` resolved it as a vertical page scroll. Treated as a
+      // release that travelled nowhere, so the strip springs back.
+      onPointerCancel={(e) => endDrag(e, { cancelled: true })}
+      onClickCapture={handleClickCapture}
     >
       {/* Slides */}
       <div
-        className="relative z-[1] flex h-full transition-transform duration-300 ease-out"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        className={`relative z-[1] flex h-full ${
+          // No transition while the finger is down: the strip has to track the
+          // pointer exactly. Re-enabled on release so the settle animates.
+          isDragging ? "" : "transition-transform duration-300 ease-out"
+        }`}
+        style={{
+          transform: `translateX(calc(-${currentIndex * 100}% + ${dragX}px))`,
+        }}
       >
         {mediaItems.map((item, index) =>
           item.type === "video" ? (
@@ -165,7 +252,8 @@ const PropertyImageCarousel = memo(({
               muted
               playsInline
               loop
-              className={`w-full h-full flex-shrink-0 ${fitClass}`}
+              draggable={false}
+              className={`w-full h-full flex-shrink-0 select-none ${fitClass}`}
               onPlay={() => index === currentIndex && setIsPlaying(true)}
               onPause={() => index === currentIndex && setIsPlaying(false)}
             />
@@ -174,7 +262,13 @@ const PropertyImageCarousel = memo(({
               key={index}
               src={item.url}
               alt={`Property ${index + 1}`}
-              className={`w-full h-full flex-shrink-0 ${fitClass}`}
+              // Without this the browser starts its own image drag on
+              // mousedown — you get the translucent ghost and the drop cursor,
+              // the pointer stream stops, and the carousel appears frozen. This
+              // is what made it feel undraggable on desktop even once the
+              // handlers existed.
+              draggable={false}
+              className={`w-full h-full flex-shrink-0 select-none ${fitClass}`}
             />
           )
         )}

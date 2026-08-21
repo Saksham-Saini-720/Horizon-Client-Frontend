@@ -82,10 +82,19 @@ function transformPropertyDetail(apiProperty) {
   // Format amenities
   const formattedAmenities = amenities || [];
 
-  // Facebook-imported properties use a fixed brand name and the scraped contact phone
-  const agent = source === 'facebook'
+  // An assigned agent always wins, whatever the source. Facebook imports are
+  // assigned an agent on approval (and by the phone backfill), and that person
+  // is who works the lead — showing the brand card instead of them is what made
+  // every imported listing look unassigned in the app.
+  //
+  // The brand card stays as the fallback for imports with no agent yet: their
+  // `owner` is the admin who ran the import, not a contact worth surfacing, so
+  // the scraped contact.phone is the only useful thing to show.
+  const agent = source === 'facebook' && !apiAgent
     ? { name: 'Horizon Properties', title: 'Property Agent', avatar: null, phone: contact?.phone || null, email: null, id: null }
     : (() => {
+        // Reachable for an import only when apiAgent exists, so the owner
+        // fallback here never surfaces the importing admin.
         const contactPerson = apiAgent || owner;
         return contactPerson ? {
           name: `${contactPerson.firstName || ''} ${contactPerson.lastName || ''}`.trim() || 'Property Agent',

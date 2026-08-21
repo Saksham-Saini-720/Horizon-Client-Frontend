@@ -26,4 +26,14 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    // Build/tooling files run in Node, not the browser. Without this they are
+    // linted against browser globals only, so `process` and `__dirname` read as
+    // undefined variables — and vite.config.js legitimately needs `process` to
+    // pick up TUNNEL_HOST from the environment.
+    files: ['vite.config.js', 'eslint.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])

@@ -1,5 +1,6 @@
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
@@ -30,6 +31,13 @@ const MailIcon = () => (
   </svg>
 );
 
+// Written by axiosInstance just before it redirects here, so the user is told
+// why they were signed out instead of arriving at a bare login form.
+const SESSION_ENDED_MESSAGES = {
+  inactivity: "You were signed out after a period of inactivity. Please log in again.",
+  expired: "Your session has expired. Please log in again.",
+};
+
 const LockIcon = () => (
   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
@@ -46,6 +54,20 @@ export default function LoginPage() {
   const user            = useSelector((state) => state.auth.user);
 
   const emailLoginMutation = useEmailLoginMutation();
+
+  useEffect(() => {
+    try {
+      const reason = sessionStorage.getItem("auth:endedReason");
+      if (!reason) return;
+      // Read once — it must not reappear on a later manual visit.
+      sessionStorage.removeItem("auth:endedReason");
+      toast(SESSION_ENDED_MESSAGES[reason] ?? SESSION_ENDED_MESSAGES.expired, {
+        icon: "⏱️",
+      });
+    } catch {
+      // Storage unavailable; the form still works without the notice.
+    }
+  }, []);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();

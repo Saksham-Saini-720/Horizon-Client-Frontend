@@ -27,9 +27,11 @@ export const useChangePassword = ({ onSuccess } = {}) => {
       onSuccess?.();
     },
     onError: (error) => {
-      const msg = error?.response?.data?.error?.message ||
-                  error?.response?.data?.message ||
-                  'Failed to change password.';
+      // Normalized Error from apiHelper — no `.response`.
+      const msg =
+        error?.details?.[0]?.message ||
+        error?.message ||
+        'Failed to change password.';
       toast.error(msg);
     },
     retry: false,
