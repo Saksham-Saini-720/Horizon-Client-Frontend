@@ -314,11 +314,11 @@ const PropertyDetailPage = () => {
         {/* Property Info: tags, title, location, price */}
         <PropertyInfo property={property} />
 
-        {/* Bed / Bath / Sqft stats */}
+        {/* Bed / Bath / area stats — the raw number, labelled by its own unit */}
         <PropertyStats
           bedrooms={property.bedrooms}
           bathrooms={property.bathrooms}
-          area={property.area}
+          area={property.rawArea}
           areaUnit={property.areaUnit}
         />
 

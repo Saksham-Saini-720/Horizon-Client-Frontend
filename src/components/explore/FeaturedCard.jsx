@@ -13,6 +13,7 @@ const formatViewCount = (count) => {
 const FeaturedCard = memo(({
   id, price, title, location, img, beds, baths, area, rating,
   tag,
+  postedLabel, postedExact,
   viewCount = 0,
   // Set by the Most Viewed carousel, which caps it to the space between the page
   // gutters. Left off, the card keeps its natural width for the Featured row.
@@ -97,6 +98,25 @@ const FeaturedCard = memo(({
         <div className="absolute top-2.5 right-2.5 z-10" onClick={(e) => e.stopPropagation()}>
           <HeartBtn size="sm" propertyId={id} />
         </div>
+
+        {/* Bottom-left: posted date. Paired with the view count opposite it, so
+            a reader sees how much attention a listing has had and over how long
+            — the two only mean something together. */}
+        {postedLabel && (
+          <div
+            className="absolute bottom-2.5 left-2.5 z-10 inline-flex items-center px-2.5 py-1 rounded-full"
+            style={{
+              background: "rgba(23,28,38,0.72)",
+              backdropFilter: "blur(15px)",
+              WebkitBackdropFilter: "blur(15px)",
+            }}
+            title={postedExact ? `Posted ${postedExact}` : undefined}
+          >
+            <span className="text-white font-myriad font-semibold" style={{ fontSize: 10 }}>
+              {postedLabel}
+            </span>
+          </div>
+        )}
 
         {/* Bottom-right: view count */}
         <div

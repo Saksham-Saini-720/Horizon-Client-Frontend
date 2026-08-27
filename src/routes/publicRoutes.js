@@ -16,6 +16,8 @@ const ForgotPasswordPage = lazy(() => import("../pages/ForgotPasswordPage"));
 const ResetPasswordPage = lazy(() => import("../pages/ResetPasswordPage"));
 const TermsPage = lazy(() => import("../pages/TermsPage"));
 const PrivacyPage = lazy(() => import("../pages/PrivacyPage"));
+const UpdatesPage = lazy(() => import("../pages/UpdatesPage"));
+const UpdateDetailPage = lazy(() => import("../pages/UpdateDetailPage"));
 
 // ─── Public Routes ─────────────────────────────────────────────────────────────
 
@@ -80,6 +82,18 @@ const publicRoutes = [
     path: "property/:id",
     element: PropertyDetailPage,
     title: "Property Details",
+  },
+  {
+    path: "updates",
+    element: UpdatesPage,
+    title: "News & Updates",
+  },
+  {
+    // Public, and deliberately so — an article link should open for anyone it
+    // is shared with, not only for signed-in users.
+    path: "updates/:slug",
+    element: UpdateDetailPage,
+    title: "Update",
   },
 ];
 

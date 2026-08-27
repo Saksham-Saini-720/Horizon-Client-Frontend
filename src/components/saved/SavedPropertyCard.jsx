@@ -9,7 +9,7 @@ const SavedPropertyCard = memo(({ property }) => {
   const navigate = useNavigate();
   const { unsaveProperty } = useSavePropertyMutation();
 
-  const { id, price, rawPrice, title, location, beds, baths, area, tag, img } = property;
+  const { id, price, rawPrice, title, location, beds, baths, area, tag, img, postedLabel, postedExact } = property;
 
   const handleClick = useCallback(() => {
     navigate(`/property/${id}`);
@@ -68,10 +68,22 @@ const SavedPropertyCard = memo(({ property }) => {
           {location}{title ? ` · ${title}` : ''}
         </p>
 
-        {/* Bed · Bath · Sqft */}
+        {/* Beds · baths · area — the unit comes from the listing, so this line
+            is no longer "Bed · Bath · Sqft" regardless of what was measured. */}
         {specsText ? (
           <p className="text-[12px] text-gray-400 tracking-wider font-myriad whitespace-pre">
             {specsText}
+          </p>
+        ) : null}
+
+        {/* Posted date. On a saved list it answers "is this still current?",
+            which is the question a saved listing raises. */}
+        {postedLabel ? (
+          <p
+            className="text-[11px] text-gray-400 font-myriad mt-0.5"
+            title={postedExact ? `Posted ${postedExact}` : undefined}
+          >
+            Posted {postedLabel}
           </p>
         ) : null}
       </div>

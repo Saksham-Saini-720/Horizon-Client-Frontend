@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getPropertyById, viewPropertyTracked } from "../../api/propertyApi";
 import { useAuth } from "../utils/useRedux";
 import { toTitleCase } from "../../utils/propertyTransform";
+import { formatArea } from "../../config/areaUnits";
+import { formatPostedLabel, formatPostedDateFull } from "../../utils/postedDate";
 
 /**
  * Hook to fetch property details from API
@@ -58,6 +60,7 @@ function transformPropertyDetail(apiProperty) {
     contact,
     source,
     status,
+    sourcePostedAt,
     createdAt,
     updatedAt
   } = apiProperty;
@@ -117,14 +120,24 @@ function transformPropertyDetail(apiProperty) {
     purpose: purpose,
     bedrooms: details?.bedrooms || 0,
     bathrooms: details?.bathrooms || 0,
-    area: details?.squareFeet?.toString() || '0',
-    areaUnit: details?.areaUnit === 'acres' ? 'acres' : 'sq ft',
+    // `areaUnit` is the API token ("acres", "sqm"), never a display string.
+    // It used to emit 'sq ft' here — a third vocabulary for the same field,
+    // alongside the tokens the API uses and the labels the UI shows — so any
+    // consumer comparing against 'sqft' silently failed.
+    area: formatArea(details?.squareFeet, details?.areaUnit) || '—',
+    rawArea: details?.squareFeet ?? null,
+    areaUnit: details?.areaUnit ?? null,
+    areaSqm: details?.areaSqm ?? null,
     description: description || 'No description available',
     amenities: formattedAmenities,
     images: allImages,
     mediaItems: mediaItems,
     agent: agent,
     status: status,
+    // The real posting date, not the import timestamp. See utils/postedDate.js.
+    postedAt: sourcePostedAt ?? createdAt ?? null,
+    postedLabel: formatPostedLabel(sourcePostedAt ?? createdAt),
+    postedExact: formatPostedDateFull(sourcePostedAt ?? createdAt),
     createdAt: createdAt,
     updatedAt: updatedAt,
     // Additional useful fields

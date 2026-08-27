@@ -12,7 +12,7 @@ export const useStartConversation = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async ({ property, message, name, email, phone }) => {
+    mutationFn: async ({ property, message, name, email, phone, preferredContact, customerRole }) => {
       // Backend no longer needs recipientId — it's determined by property owner
       const conversationResponse = await startConversation({
         propertyId:     property?.id || property?._id,
@@ -23,6 +23,10 @@ export const useStartConversation = () => {
       // Submit enquiry (non-blocking)
       await submitPropertyEnquiry(property?.id || property?._id, {
         name, email, phone, message,
+        // Spread conditionally: the enum rejects an empty string, and an
+        // unanswered optional question must not be sent as one.
+        ...(preferredContact && { preferredContact }),
+        ...(customerRole && { customerRole }),
       }).catch((e) => console.warn('⚠️ Enquiry API failed:', e.message));
 
       // Backend now returns { conversation, thread }

@@ -1,3 +1,5 @@
+import { formatArea } from '../config/areaUnits.js';
+import { formatPostedLabel, formatPostedDateFull } from './postedDate.js';
 
 export function toTitleCase(str) {
   if (!str) return str;
@@ -25,6 +27,7 @@ export function transformProperty(apiProperty) {
     amenities,
     status,
     stats,
+    sourcePostedAt,
     createdAt,
     updatedAt
   } = apiProperty;
@@ -48,7 +51,13 @@ export function transformProperty(apiProperty) {
     location: formattedLocation,
     beds:     details?.bedrooms  ? `${details.bedrooms} Bed${details.bedrooms > 1 ? 's' : ''}`   : null,
     baths:    details?.bathrooms ? `${details.bathrooms} Bath${details.bathrooms > 1 ? 's' : ''}` : null,
+    // `area` is the display string; the raw value and unit ride alongside it so
+    // components that need to compute (price per unit, a size filter) do not
+    // have to parse the string back apart.
     area:     formattedArea,
+    rawArea:  details?.squareFeet ?? null,
+    areaUnit: details?.areaUnit ?? null,
+    areaSqm:  details?.areaSqm ?? null,
     img:      imageUrl,
     images:   allImages,
     tag:      tag,
@@ -69,6 +78,12 @@ export function transformProperty(apiProperty) {
           phone:  (apiAgent || owner).phone,
           email:  (apiAgent || owner).email,
         } : null,
+    // When the listing was posted. `sourcePostedAt` is the real post date;
+    // createdAt is only a fallback for the handful of manual listings that
+    // predate the field, and is the import timestamp for everything else.
+    postedAt:    sourcePostedAt ?? createdAt ?? null,
+    postedLabel: formatPostedLabel(sourcePostedAt ?? createdAt),
+    postedExact: formatPostedDateFull(sourcePostedAt ?? createdAt),
     createdAt,
     updatedAt,
   };
@@ -141,11 +156,11 @@ export function formatLocation(location) {
   return parts.length > 0 ? parts.join(', ') : 'Location not available';
 }
 
-export function formatArea(squareFeet, areaUnit) {
-  if (!squareFeet) return null;
-  const unit = areaUnit === 'acres' ? 'acres' : 'sq ft';
-  return `${new Intl.NumberFormat('en-US').format(squareFeet)} ${unit}`;
-}
+// Re-exported from the unit registry so call sites keep importing formatArea
+// from here. It used to hardcode `areaUnit === 'acres' ? 'acres' : 'sq ft'`,
+// which meant any unit it did not recognise — including a missing one — was
+// labelled square feet.
+export { formatArea } from '../config/areaUnits.js';
 
 const PLACEHOLDER_IMAGE =
   'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800';
