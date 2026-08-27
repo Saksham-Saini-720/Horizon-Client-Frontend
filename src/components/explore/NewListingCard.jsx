@@ -136,7 +136,7 @@ MiniCarousel.displayName = "MiniCarousel";
 
 // ─── NewListingCard ───────────────────────────────────────────────────────────
 
-const NewListingCard = memo(({ id, price, title, location, beds, baths, area, tag, img, images }) => {
+const NewListingCard = memo(({ id, price, title, location, beds, baths, area, tag, img, images, postedLabel, postedExact }) => {
   const navigate = useNavigate();
 
   const handleClick = useCallback(() => navigate(`/property/${id}`), [navigate, id]);
@@ -191,6 +191,24 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
               </span>
             </div>
           </div>
+
+          {/* Posted date, over the image. A listing's age is part of judging it
+              — a plot posted six years ago is a different proposition from one
+              posted yesterday — and the catalogue spans 2019 to now. */}
+          {postedLabel && (
+            <div
+              className="absolute bottom-3 left-3 z-20 inline-flex items-center px-2.5 py-[3px] rounded-full"
+              style={{ background: "rgba(23,28,38,0.72)", backdropFilter: "blur(4px)" }}
+              title={postedExact ? `Posted ${postedExact}` : undefined}
+            >
+              <span
+                className="font-myriad font-semibold tracking-[0.06em] text-white"
+                style={{ fontSize: 9.5 }}
+              >
+                {postedLabel}
+              </span>
+            </div>
+          )}
 
           {/* Top-right: Heart */}
           <div className="absolute top-3 right-3 z-20" onClick={(e) => e.stopPropagation()}>

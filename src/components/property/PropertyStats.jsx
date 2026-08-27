@@ -1,12 +1,19 @@
 
 import { memo } from "react";
+import { areaUnitLabel } from "../../config/areaUnits";
 
-// Abbreviate large numbers for area display (e.g. 1900 → 1.9k)
-const formatArea = (val) => {
-  const num = typeof val === 'string' ? parseInt(val, 10) : val;
-  if (isNaN(num) || num === 0) return val || '—';
+// Abbreviate large numbers for area display (e.g. 1900 → 1.9k).
+//
+// Only the number is abbreviated; the unit is the StatCard's label, and it
+// comes from the registry rather than a local guess. This used to be a second
+// `formatArea` that shadowed the shared one and read units differently from it.
+const abbreviateArea = (val) => {
+  const num = Number(val);
+  if (!Number.isFinite(num) || num === 0) return '—';
   if (num >= 1000) return `${(num / 1000).toFixed(1)}k`;
-  return num.toString();
+  // Acre and hectare figures are small and often fractional — 4.6 acres must
+  // not round to 5.
+  return Number.isInteger(num) ? num.toString() : num.toFixed(1);
 };
 
 // Shadow only, no border. A 1px grey outline plus a shadow reads as two
@@ -29,7 +36,7 @@ const StatCard = memo(({ icon, value, label }) => (
 StatCard.displayName = 'StatCard';
 
 const PropertyStats = memo(({ bedrooms, bathrooms, area, areaUnit }) => {
-  const isAcres = areaUnit === 'acres' || areaUnit === 'acre';
+  const unitLabel = areaUnitLabel(areaUnit, 2) ?? 'Area';
   return (
     <div className="px-5 pb-5">
       <div className="flex gap-3">
@@ -73,8 +80,8 @@ const PropertyStats = memo(({ bedrooms, bathrooms, area, areaUnit }) => {
               <rect x="13" y="13" width="8" height="8" rx="1" />
             </svg>
           }
-          value={formatArea(area)}
-          label={isAcres ? "Acres" : "Sqft"}
+          value={abbreviateArea(area)}
+          label={unitLabel}
         />
 
       </div>

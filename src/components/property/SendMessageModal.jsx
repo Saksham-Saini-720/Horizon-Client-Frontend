@@ -28,6 +28,11 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
     phone:   user?.phone || '',
     email:   user?.email || '',
     message: '',
+    // Both optional and unset by default. A pre-selected answer would be
+    // indistinguishable from one the visitor actually chose, and the report
+    // would fill up with a default nobody meant.
+    preferredContact: '',
+    customerRole:     '',
   });
   const [errors, setErrors]     = useState({});
   const [showSuccess, setShowSuccess]         = useState(false);
@@ -75,6 +80,10 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
         name:    sanitized.name,
         email:   sanitized.email,
         phone:   sanitized.phone,
+        // Omitted entirely when unanswered — the API rejects an empty string
+        // against its enum, and "not asked" is not a value.
+        ...(formData.preferredContact && { preferredContact: formData.preferredContact }),
+        ...(formData.customerRole && { customerRole: formData.customerRole }),
       });
 
       // conversationId comes directly from mutationFn
@@ -217,6 +226,37 @@ const SendMessageModal = memo(({ isOpen, onClose, agent, property }) => {
             <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" required
               className={`w-full px-4 py-3 rounded-xl border ${errors.email ? 'border-red-500' : 'border-gray-200'} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary transition-colors`} />
             {errors.email && <p className="text-[11px] text-red-500 mt-1">{errors.email}</p>}
+          </div>
+
+          {/* Optional, and labelled as such: these help the agent reach you the
+              right way, but neither should stand between a visitor and sending
+              their enquiry. */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">
+                I am a <span className="text-gray-400">(optional)</span>
+              </label>
+              <select name="customerRole" value={formData.customerRole} onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-myriad focus:outline-none focus:border-secondary transition-colors bg-white">
+                <option value="">Select</option>
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+                <option value="renter">Renter</option>
+                <option value="landlord">Landlord</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">
+                Contact me by <span className="text-gray-400">(optional)</span>
+              </label>
+              <select name="preferredContact" value={formData.preferredContact} onChange={handleChange}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-[15px] text-gray-700 font-myriad focus:outline-none focus:border-secondary transition-colors bg-white">
+                <option value="">Select</option>
+                <option value="phone">Phone</option>
+                <option value="email">Email</option>
+              </select>
+            </div>
           </div>
 
           {/* Message */}

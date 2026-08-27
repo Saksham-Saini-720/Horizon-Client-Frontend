@@ -1,6 +1,7 @@
 
 import { memo } from "react";
 import { getCurrencySymbol } from "../../utils/propertyTransform";
+import { areaUnitLabel } from "../../config/areaUnits";
 
 const PropertyInfo = memo(({ property }) => {
   // Split title so the last word gets italic orange styling
@@ -19,15 +20,12 @@ const PropertyInfo = memo(({ property }) => {
   const currencySymbol = getCurrencySymbol(rawCurrency);
   const isRent = property.purpose === 'rent';
 
-  // Price per unit of area.
-  // `area` is a bare number on the detail page ("1000") but a formatted string
-  // on list cards ("1,000 sq ft"), so parse defensively and sniff the unit from
-  // either `areaUnit` or the string itself. Acres must NOT be labelled sqft —
-  // an acre is 43,560 sqft, so mislabelling is off by that factor.
-  const areaNum = parseFloat(String(property.area || '').replace(/,/g, ''));
-  const isAcres = property.areaUnit === 'acres'
-    || /acre/i.test(String(property.area || ''));
-  const areaLabel = isAcres ? 'acre' : 'sqft';
+  // Price per unit of area. `rawArea` and `areaUnit` come straight off the
+  // transform now, so there is no string to parse and no unit to guess — the
+  // previous version sniffed `/acre/i` against the formatted string because the
+  // unit was not carried through the API projection at all.
+  const areaNum = Number(property.rawArea);
+  const areaLabel = areaUnitLabel(property.areaUnit, 1) ?? '';
 
   const pricePerUnit = rawPrice && areaNum > 0 ? rawPrice / areaNum : null;
 
@@ -80,10 +78,19 @@ const PropertyInfo = memo(({ property }) => {
       </h1>
 
       {/* Location */}
-      <p className="text-[13px] text-gray-500 italic font-display mb-4">
+      <p className="text-[13px] text-gray-500 italic font-display mb-2">
         <span className="text-gray-400 mr-1">—</span>
         {property.location}
       </p>
+
+      {/* Posted date. Spelled out in full here rather than relatively: on the
+          detail page the reader is deciding, and "Posted 4 December 2019" is
+          the fact that matters. */}
+      {property.postedExact && (
+        <p className="text-[12px] text-gray-400 font-myriad mb-4">
+          Posted {property.postedExact}
+        </p>
+      )}
 
       {/* Dark navy price banner */}
       {/* shadow-card is navy-tinted, which is what lets a navy banner cast a

@@ -3,6 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllProperties, getFeaturedProperties } from "../../api/propertyApi";
 import { transformPropertyResponse } from "../../utils/propertyTransform";
 
+// Store vocabulary -> API vocabulary. The API's accepted values are
+// createdAt/-createdAt (real post date), price/-price, views/-views, and
+// squareFeet/-squareFeet; anything else falls back to newest-first.
+const SORT_PARAM = {
+  newest: '-createdAt',
+  oldest: 'createdAt',
+  'price-low': 'price',
+  'price-high': '-price',
+  popular: '-views',
+};
+
 // Query keys with filters
 export const propertyKeys = {
   all: ["properties"],
@@ -127,6 +138,24 @@ function buildQueryParams(filters) {
     }
   }
 
+  // Size range. The unit is only worth sending with a bound beside it, and it
+  // must always accompany one — the API defaults an omitted unit to square
+  // metres, which would silently reinterpret an acre figure.
+  const hasMinArea = filters.minArea !== '' && filters.minArea != null;
+  const hasMaxArea = filters.maxArea !== '' && filters.maxArea != null;
+  if (hasMinArea || hasMaxArea) {
+    if (hasMinArea) params.minArea = Number(filters.minArea);
+    if (hasMaxArea) params.maxArea = Number(filters.maxArea);
+    params.areaUnit = filters.areaUnit || 'sqm';
+  }
+
+  // Posted-date window. Sent as a day count so the server anchors it to its own
+  // clock — a client-computed timestamp drifts with device time and, worse, made
+  // every request a unique cache key.
+  if (filters.postedWithinDays) {
+    params.postedWithinDays = Number(filters.postedWithinDays);
+  }
+
   // Property type
   if (filters.type) {
     params.type = filters.type;
@@ -145,9 +174,19 @@ function buildQueryParams(filters) {
     params.amenities = filters.amenities.join(',');
   }
 
-  // Sort
+  // Sort.
+  //
+  // The store speaks 'newest' | 'price-low' | 'price-high' | 'popular'; the API
+  // speaks '-createdAt' | 'price' | '-price' | '-views'. These were passed
+  // straight through, so the API received 'newest', failed to match it, and fell
+  // back to its default — which is newest-first, so the bug was invisible. It
+  // would have surfaced the moment a sort control was wired up: picking
+  // "price: low to high" would have returned newest-first instead.
+  //
+  // Note '-createdAt' orders by the real post date, not the import date; the
+  // parameter keeps its historical name.
   if (filters.sort) {
-    params.sort = filters.sort;
+    params.sort = SORT_PARAM[filters.sort] ?? filters.sort;
   }
 
   params.page = filters.page || 1;

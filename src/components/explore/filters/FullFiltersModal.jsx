@@ -1,12 +1,28 @@
 import { memo, useState, useEffect } from 'react';
 import Footer from '../../layouts/Footer';
+import { AREA_UNITS, AREA_UNIT_KEYS } from '../../../config/areaUnits';
 
 const MAX_PRICE = 10_000_000;
 
-const PROPERTY_TYPES   = ['Any', 'House', 'Apartment', 'Villa', 'Commercial', 'Land', 'Condo', 'Townhouse'];
+// Farmland and Plot are separate categories, not shades of "Land" — they are
+// bought by different people, and 6,000 of the listings filed under Land turned
+// out to be one or the other.
+const PROPERTY_TYPES   = ['Any', 'House', 'Apartment', 'Villa', 'Commercial', 'Land', 'Farmland', 'Plot', 'Condo', 'Townhouse'];
 const LISTING_TYPES    = ['For sale', 'For rent'];
 const BEDROOM_OPTIONS  = ['1', '2', '3', '4', '5+'];
 const BATHROOM_OPTIONS = ['1', '2', '3', '4+'];
+
+// Sent to the API as a day count, not a computed cut-off date — the server
+// anchors the window to its own clock. Spans chosen to match the catalogue:
+// ~56 listings were posted in the last week, ~200 in the last month, ~1,180 in
+// the last year, and the oldest goes back to 2019.
+const POSTED_WITHIN_OPTIONS = [
+  { days: 1,   label: 'Last 24 hours' },
+  { days: 7,   label: 'Last 7 days' },
+  { days: 30,  label: 'Last 30 days' },
+  { days: 90,  label: 'Last 3 months' },
+  { days: 365, label: 'Last year' },
+];
 
 const LISTING_TO_PURPOSE = {
   'For sale': 'sale',
@@ -50,6 +66,12 @@ const buildState = (cf) => ({
   maxPrice:  cf.maxPrice  ? Number(cf.maxPrice) : MAX_PRICE,
   bedrooms:  cf.bedrooms  || null,
   bathrooms: cf.bathrooms || null,
+  // Free text rather than a slider: land here spans a tenth of an acre to
+  // several hundred hectares, a range no single slider scale reads well at.
+  minArea:   cf.minArea ?? '',
+  maxArea:   cf.maxArea ?? '',
+  areaUnit:  cf.areaUnit || 'acres',
+  postedWithinDays: cf.postedWithinDays ?? null,
   amenities: Array.isArray(cf.amenities) ? [...cf.amenities] : [],
 });
 
@@ -112,6 +134,12 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
       maxPrice:  filters.maxPrice  < MAX_PRICE ? filters.maxPrice  : undefined,
       bedrooms:  filters.bedrooms              || undefined,
       bathrooms: filters.bathrooms             || undefined,
+      // '' means the field was left blank. `|| undefined` would also swallow a
+      // deliberate 0, so test the empty string explicitly.
+      minArea:   filters.minArea !== '' ? Number(filters.minArea) : undefined,
+      maxArea:   filters.maxArea !== '' ? Number(filters.maxArea) : undefined,
+      areaUnit:  (filters.minArea !== '' || filters.maxArea !== '') ? filters.areaUnit : undefined,
+      postedWithinDays: filters.postedWithinDays ?? undefined,
       amenities: filters.amenities.length > 0 ? filters.amenities : undefined,
     });
     onClose();
@@ -120,7 +148,10 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
   const handleClear = () => setFilters({
     type: null, purpose: null,
     minPrice: 0, maxPrice: MAX_PRICE,
-    bedrooms: null, bathrooms: null, amenities: [],
+    bedrooms: null, bathrooms: null,
+    minArea: '', maxArea: '', areaUnit: 'acres',
+    postedWithinDays: null,
+    amenities: [],
   });
 
   const toggleAmenity = (key) =>
@@ -322,6 +353,81 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* DATE POSTED */}
+              <div className="py-5 border-b border-gray-100">
+                <SectionLabel>DATE POSTED</SectionLabel>
+                <div className="flex flex-wrap gap-2">
+                  <Pill
+                    label="Any time"
+                    active={filters.postedWithinDays === null}
+                    onClick={() => set({ postedWithinDays: null })}
+                  />
+                  {POSTED_WITHIN_OPTIONS.map(({ days, label }) => (
+                    <Pill
+                      key={days}
+                      label={label}
+                      active={filters.postedWithinDays === days}
+                      onClick={() =>
+                        set({ postedWithinDays: filters.postedWithinDays === days ? null : days })
+                      }
+                    />
+                  ))}
+                </div>
+                <p className="mt-2 text-[12px] font-myriad" style={{ color: '#9ca3af' }}>
+                  Matched on when the listing was originally posted, not when it
+                  reached Horizon.
+                </p>
+              </div>
+
+              {/* SIZE */}
+              <div className="py-5 border-b border-gray-100">
+                <SectionLabel>SIZE</SectionLabel>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    value={filters.minArea}
+                    onChange={(e) => set({ minArea: e.target.value })}
+                    placeholder="Enter minimum size"
+                    aria-label="Minimum size"
+                    className="flex-1 min-w-0 rounded-2xl px-4 py-3 text-[15px] font-myriad focus:outline-none focus:ring-2 focus:ring-[#C96C38]"
+                    style={{ background: '#f5f2eb', color: '#171C26' }}
+                  />
+                  <span className="text-[13px] font-myriad flex-shrink-0" style={{ color: '#9ca3af' }}>to</span>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    value={filters.maxArea}
+                    onChange={(e) => set({ maxArea: e.target.value })}
+                    placeholder="Enter maximum size"
+                    aria-label="Maximum size"
+                    className="flex-1 min-w-0 rounded-2xl px-4 py-3 text-[15px] font-myriad focus:outline-none focus:ring-2 focus:ring-[#C96C38]"
+                    style={{ background: '#f5f2eb', color: '#171C26' }}
+                  />
+                  <select
+                    value={filters.areaUnit}
+                    onChange={(e) => set({ areaUnit: e.target.value })}
+                    aria-label="Size unit"
+                    className="flex-shrink-0 rounded-2xl px-3 py-3 text-[15px] font-myriad focus:outline-none focus:ring-2 focus:ring-[#C96C38]"
+                    style={{ background: '#f5f2eb', color: '#171C26' }}
+                  >
+                    {AREA_UNIT_KEYS.map((unit) => (
+                      <option key={unit} value={unit}>
+                        {AREA_UNITS[unit].plural}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Guidance lives here, not in the placeholder, so it survives
+                    the moment the user starts typing. See CLAUDE.md. */}
+                <p className="mt-2 text-[12px] font-myriad" style={{ color: '#9ca3af' }}>
+                  Listings are matched across units — a search in acres also finds
+                  land measured in hectares or square metres.
+                </p>
               </div>
 
               {/* BEDROOMS */}
