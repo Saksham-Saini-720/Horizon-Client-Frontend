@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUpdates } from '../hooks/updates/useUpdates';
 import EmptyState from '../components/states/EmptyState';
@@ -66,6 +67,12 @@ function UpdateCard({ article, onClick }) {
 export default function UpdatesPage() {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useUpdates({ limit: 20 });
+
+  // See the note in UpdateDetailPage: no global scroll restoration, and SEE ALL
+  // is reached from partway down the Explore page.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const updates = data?.updates ?? [];
 

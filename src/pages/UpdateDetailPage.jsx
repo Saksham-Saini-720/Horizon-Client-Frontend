@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUpdateBySlug } from '../hooks/updates/useUpdates';
 import EmptyState from '../components/states/EmptyState';
@@ -13,6 +14,18 @@ export default function UpdateDetailPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { data: article, isLoading, isError } = useUpdateBySlug(slug);
+
+  // Start at the top of the article.
+  //
+  // There is no global scroll restoration in this app — SearchPage and
+  // PropertyDetailPage each do their own — and the router preserves window
+  // scroll across a navigation. The Latest Updates rail sits well down the
+  // Explore page, so without this you open an article already scrolled into the
+  // middle of its body. Keyed on slug so tapping through to a second article
+  // resets too.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
 
   return (
     <div className="min-h-screen bg-white">
