@@ -16,6 +16,7 @@ import FeaturedCard from "../components/explore/FeaturedCard";
 import NewListingCard from "../components/explore/NewListingCard";
 import SectionHeader from "../components/explore/SectionHeader";
 import MostViewedCarousel from "../components/explore/MostViewedCarousel";
+import UpdatesCarousel from "../components/explore/UpdatesCarousel";
 import { FeaturedCardSkeleton, NewListingCardSkeleton } from "../components/ui/SkeletonCards";
 import PriceFilterModal from "../components/explore/filters/PriceFilterModal";
 import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterModal";
@@ -485,6 +486,15 @@ const ExplorePage = () => {
             </div>
           </div>
         )}
+
+        {/* News & Updates — after the property rails, before the paginated tail.
+            New Listings is where someone settles in and starts scrolling, so
+            this is the last slot that reliably gets seen.
+
+            Behind the same !showNearby guard as the rest: when a location is
+            selected the page is answering "what is for sale around here", and
+            company news is not part of that answer. */}
+        {!showNearby && <UpdatesCarousel />}
 
         {/* New Listings */}
         {!showNearby && (
