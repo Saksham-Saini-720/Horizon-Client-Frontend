@@ -12,7 +12,9 @@ const ErrorState = memo(({
   showRetry = true
 }) => {
   return (
-    <div className="flex flex-col items-center py-12 text-center px-4">
+    // col-span-full for the same reason as EmptyState: this renders inside the
+    // results grid and would otherwise be stranded in the first column.
+    <div className="w-full col-span-full flex flex-col items-center py-12 text-center px-4">
       <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mb-3">
         <svg 
           className="w-7 h-7 text-red-400" 

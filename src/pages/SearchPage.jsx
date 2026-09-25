@@ -17,6 +17,16 @@ import BedroomsFilterModal from "../components/explore/filters/BedroomsFilterMod
 import FullFiltersModal from "../components/explore/filters/FullFiltersModal";
 import Pagination from "../components/ui/Pagination";
 
+// Mirrors POSTED_WITHIN_OPTIONS in FullFiltersModal — the chip has to name the
+// window in the same words the user picked, or removing it is guesswork.
+const POSTED_WITHIN_LABELS = {
+  1: 'Last 24 hours',
+  7: 'Last 7 days',
+  30: 'Last 30 days',
+  90: 'Last 3 months',
+  365: 'Last year',
+};
+
 /* Reusable glow filter chip */
 const GlowChip = ({ children, onRemove }) => (
   <span
@@ -78,6 +88,18 @@ const SearchPage = () => {
     if (effectiveType)             f.type      = effectiveType;
     if (filters.amenities?.length) f.amenities = filters.amenities;
     if (query)                     f.search    = query;
+    // The full-filters modal writes these into state and buildQueryParams knows
+    // how to send them, but this whitelist decides what ever reaches it — so
+    // omitting them here silently discarded the posted-within and area filters
+    // at the last step, with every other part of the chain working.
+    //
+    // The area bounds travel with their unit or not at all: buildQueryParams
+    // only attaches areaUnit when a bound is present, and the API defaults an
+    // absent unit to square metres, which would reinterpret an acre figure.
+    if (filters.postedWithinDays)  f.postedWithinDays = filters.postedWithinDays;
+    if (filters.minArea !== undefined && filters.minArea !== '') f.minArea = filters.minArea;
+    if (filters.maxArea !== undefined && filters.maxArea !== '') f.maxArea = filters.maxArea;
+    if (filters.areaUnit)          f.areaUnit  = filters.areaUnit;
     f.page  = filters.page;
     f.limit = filters.limit;
     return f;
@@ -109,6 +131,14 @@ const SearchPage = () => {
       bathrooms: undefined,
       type: undefined,
       amenities: undefined,
+      // Listed explicitly because this replaces the whole filter object rather
+      // than merging: any key omitted here is not reset to a default, it simply
+      // survives "Clear All" untouched. These four were omitted, so the one
+      // control offered for escaping a bad filter state could not clear them.
+      postedWithinDays: null,
+      minArea: undefined,
+      maxArea: undefined,
+      areaUnit: undefined,
       page: 1,
       limit: 12,
     });
@@ -157,6 +187,15 @@ const SearchPage = () => {
     if (filters.bathrooms) count++;
     if (effectiveType) count++;
     if (filters.amenities?.length) count++;
+    // These two were missing, which mattered more than a wrong badge number:
+    // the count also gates whether the chip row renders at all. A posted-within
+    // or area filter left over from an earlier search was therefore applied to
+    // every subsequent query while being completely invisible — no chip, no
+    // count, no way to clear it short of reloading. Combined with a catalogue
+    // whose newest listing is weeks old, "Last 7 days" silently emptied every
+    // result set that followed it.
+    if (filters.postedWithinDays) count++;
+    if (filters.minArea || filters.maxArea) count++;
     return count;
   }, [filters, effectiveType]);
 
@@ -390,6 +429,24 @@ const SearchPage = () => {
             {effectiveType && (
               <GlowChip onRemove={() => setFilters(p => ({ ...p, type: null, page: 1 }))}>
                 {effectiveType.charAt(0).toUpperCase() + effectiveType.slice(1)}
+              </GlowChip>
+            )}
+
+            {filters.postedWithinDays && (
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, postedWithinDays: null, page: 1 }))}>
+                {POSTED_WITHIN_LABELS[filters.postedWithinDays] ?? `Last ${filters.postedWithinDays} days`}
+              </GlowChip>
+            )}
+
+            {(filters.minArea || filters.maxArea) && (
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, minArea: undefined, maxArea: undefined, page: 1 }))}>
+                {filters.minArea || '0'} – {filters.maxArea || '∞'} {filters.areaUnit || 'sqm'}
+              </GlowChip>
+            )}
+
+            {filters.amenities?.length > 0 && (
+              <GlowChip onRemove={() => setFilters(p => ({ ...p, amenities: undefined, page: 1 }))}>
+                {filters.amenities.length} {filters.amenities.length === 1 ? 'amenity' : 'amenities'}
               </GlowChip>
             )}
 

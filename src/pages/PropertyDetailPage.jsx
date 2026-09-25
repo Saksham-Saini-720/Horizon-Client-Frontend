@@ -13,6 +13,8 @@ import PropertyStats from "../components/property/PropertyStats";
 import PropertyDescription from "../components/property/PropertyDescription";
 import PropertyAmenities from "../components/property/PropertyAmenities";
 import AgentCard from "../components/property/AgentCard";
+import ReferPropertyCard from "../components/property/ReferPropertyCard";
+import { REFERRALS_ENABLED } from "../config/features";
 import PropertyActions from "../components/property/PropertyActions";
 import PropertyDetailSkeleton from "../components/property/PropertyDetailSkeleton";
 
@@ -122,13 +124,17 @@ const PropertyDetailPage = () => {
   const didDrag = useRef(false);
 
   // Fetch property details
-  const { data: property, isLoading, isError, error, refetch } = usePropertyDetail(id);
+  const {
+    data: property,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = usePropertyDetail(id);
 
   // Fetch agent details (only if authenticated)
-  const {
-    data: agentDetails,
-    isLoading: isAgentLoading,
-  } = usePropertyAgent(id);
+  const { data: agentDetails, isLoading: isAgentLoading } =
+    usePropertyAgent(id);
 
   // Reopen the sheet when the route moves to a different property, so a listing
   // never opens with the sheet still dragged shut from the previous one.
@@ -179,20 +185,16 @@ const PropertyDetailPage = () => {
 
   // Error state
   if (isError || !property) {
-    console.error('Property fetch error:', error);
-    return (
-      <PropertyNotFound
-        onRetry={refetch}
-        onGoBack={() => navigate(-1)}
-      />
-    );
+    console.error("Property fetch error:", error);
+    return <PropertyNotFound onRetry={refetch} onGoBack={() => navigate(-1)} />;
   }
 
   // Signed-in users get the richer AgentProfile (bio, agency, rating), but that
   // lookup returns null whenever the assigned agent has no AgentProfile row —
   // and without the fallback, signing in showed LESS than browsing anonymously.
   // property.agent is always derivable from the listing itself.
-  const displayAgent = (isAuthenticated ? agentDetails : null) ?? property.agent;
+  const displayAgent =
+    (isAuthenticated ? agentDetails : null) ?? property.agent;
 
   // Success state
   return (
@@ -254,92 +256,120 @@ const PropertyDetailPage = () => {
         className="absolute inset-x-0 top-0 z-10 overflow-hidden pointer-events-none"
         style={{ bottom: BOTTOM_CHROME }}
       >
-      {/* Drags UP to fill the screen, with content scrolling inside it — the
+        {/* Drags UP to fill the screen, with content scrolling inside it — the
           direction Material's bottom sheet spec describes. Dragging down to
           uncover media is what forced the hero to distort. */}
-      <Motion.div
-        ref={sheetRef}
-        drag="y"
-        dragControls={dragControls}
-        dragListener={false}
-        dragConstraints={{ top: -expandedY, bottom: 0 }}
-        dragElastic={0.04}
-        animate={{ y: expanded ? -expandedY : 0 }}
-        transition={{ type: "spring", stiffness: 340, damping: 36 }}
-        onDragStart={() => { didDrag.current = true; }}
-        onDragEnd={(_, info) => {
-          // Commit on a flick or on enough travel; otherwise the animate prop
-          // springs it back to whichever state it was already in.
-          if (info.velocity.y < -FLICK_VELOCITY || info.offset.y < -PEEK) {
-            setExpanded(true);
-          } else if (info.velocity.y > FLICK_VELOCITY || info.offset.y > PEEK) {
-            setExpanded(false);
-          }
-          // Cleared after the click event that follows this drag has fired.
-          setTimeout(() => { didDrag.current = false; }, 0);
-        }}
-        className="absolute left-0 right-0 bottom-0 flex flex-col rounded-t-[28px] bg-canvas shadow-2xl pointer-events-auto"
-        style={{ top: SHEET_TOP }}
-      >
-        {/* Grab handle — the only drag surface, and a tap target for toggling.
-            touch-none keeps the browser from claiming the gesture as a scroll. */}
-        <div
-          onPointerDown={(e) => dragControls.start(e)}
-          onClick={() => { if (!didDrag.current) setExpanded((v) => !v); }}
-          role="button"
-          tabIndex={0}
-          aria-expanded={expanded}
-          aria-label={expanded ? "Shrink details to show the photo" : "Expand property details"}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setExpanded((v) => !v);
-            }
+        <Motion.div
+          ref={sheetRef}
+          drag="y"
+          dragControls={dragControls}
+          dragListener={false}
+          dragConstraints={{ top: -expandedY, bottom: 0 }}
+          dragElastic={0.04}
+          animate={{ y: expanded ? -expandedY : 0 }}
+          transition={{ type: "spring", stiffness: 340, damping: 36 }}
+          onDragStart={() => {
+            didDrag.current = true;
           }}
-          className="flex-shrink-0 flex justify-center pt-3 pb-2 touch-none cursor-grab active:cursor-grabbing"
+          onDragEnd={(_, info) => {
+            // Commit on a flick or on enough travel; otherwise the animate prop
+            // springs it back to whichever state it was already in.
+            if (info.velocity.y < -FLICK_VELOCITY || info.offset.y < -PEEK) {
+              setExpanded(true);
+            } else if (
+              info.velocity.y > FLICK_VELOCITY ||
+              info.offset.y > PEEK
+            ) {
+              setExpanded(false);
+            }
+            // Cleared after the click event that follows this drag has fired.
+            setTimeout(() => {
+              didDrag.current = false;
+            }, 0);
+          }}
+          className="absolute left-0 right-0 bottom-0 flex flex-col rounded-t-[28px] bg-canvas shadow-2xl pointer-events-auto"
+          style={{ top: SHEET_TOP }}
         >
-          <div className="w-10 h-1 rounded-full bg-gray-300" />
-        </div>
+          {/* Grab handle — the only drag surface, and a tap target for toggling.
+            touch-none keeps the browser from claiming the gesture as a scroll. */}
+          <div
+            onPointerDown={(e) => dragControls.start(e)}
+            onClick={() => {
+              if (!didDrag.current) setExpanded((v) => !v);
+            }}
+            role="button"
+            tabIndex={0}
+            aria-expanded={expanded}
+            aria-label={
+              expanded
+                ? "Shrink details to show the photo"
+                : "Expand property details"
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setExpanded((v) => !v);
+              }
+            }}
+            className="flex-shrink-0 flex justify-center pt-3 pb-2 touch-none cursor-grab active:cursor-grabbing"
+          >
+            <div className="w-10 h-1 rounded-full bg-gray-300" />
+          </div>
 
-        {/*
+          {/*
           min-h-0 is load-bearing: a flex child defaults to min-height:auto and
           refuses to shrink below its content, so without it this grows to fit
           and overflow-y-auto never gets anything to scroll. overscroll-contain
           stops a scroll hitting the end here from chaining to the page.
         */}
-        <div
-          ref={scrollRef}
-          className="flex-1 min-h-0 overflow-y-auto overscroll-contain pb-6"
-        >
-        {/* Property Info: tags, title, location, price */}
-        <PropertyInfo property={property} />
+          <div
+            ref={scrollRef}
+            className="flex-1 min-h-0 overflow-y-auto overscroll-contain pb-6"
+          >
+            {/* Property Info: tags, title, location, price */}
+            <PropertyInfo property={property} />
 
-        {/* Bed / Bath / area stats — the raw number, labelled by its own unit */}
-        <PropertyStats
-          bedrooms={property.bedrooms}
-          bathrooms={property.bathrooms}
-          area={property.rawArea}
-          areaUnit={property.areaUnit}
-        />
+            {/* Bed / Bath / area stats — the raw number, labelled by its own unit */}
+            <PropertyStats
+              bedrooms={property.bedrooms}
+              bathrooms={property.bathrooms}
+              area={property.rawArea}
+              areaUnit={property.areaUnit}
+            />
 
-        {/* Description */}
-        {property.description && (
-          <PropertyDescription description={property.description} />
-        )}
+            {/* Description */}
+            {property.description && (
+              <PropertyDescription description={property.description} />
+            )}
 
-        {/* Amenities */}
-        {property.amenities && property.amenities.length > 0 && (
-          <PropertyAmenities amenities={property.amenities} />
-        )}
+            {/* Amenities */}
+            {property.amenities && property.amenities.length > 0 && (
+              <PropertyAmenities amenities={property.amenities} />
+            )}
 
-        {/* Agent Card */}
-        <AgentCard
-          agent={displayAgent}
-          property={property}
-          isLoading={isAuthenticated && isAgentLoading}
-        />
-        </div>
-      </Motion.div>
+            {/* Agent Card */}
+            <AgentCard
+              agent={displayAgent}
+              property={property}
+              isLoading={isAuthenticated && isAgentLoading}
+            />
+
+            {/* Refer a friend. Last, deliberately: the details and the agent are
+            what someone came for, and the prompt to share lands better once
+            they have decided they like it.
+
+            Hidden with the programme — the card always renders *something*
+            (a sign-in promo when signed out, the code when signed in), so
+            leaving it mounted would advertise a feature that no longer
+            exists. */}
+            {REFERRALS_ENABLED && (
+              <ReferPropertyCard
+                propertyId={id}
+                isAuthenticated={isAuthenticated}
+              />
+            )}
+          </div>
+        </Motion.div>
       </div>
 
       {/* Fixed action bar (Schedule a tour + Enquiry) */}

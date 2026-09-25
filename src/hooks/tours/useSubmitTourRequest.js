@@ -55,9 +55,18 @@ export const useSubmitTourRequest = () => {
         numberOfPeople: data.numberOfPeople || 1,
         message: data.message || '',
         visitType: data.visitType || 'in-person',
+        // Spread-conditional, not `promoCode: data.promoCode || ''` — the
+        // server schema tolerates an empty string but there is no reason to
+        // send one on every booking that has no code.
+        //
+        // Note this object is an explicit whitelist: anything not named here
+        // is dropped silently, with no error anywhere. `preferredTimes` already
+        // disappears at this line.
+        ...(data.promoCode ? { promoCode: data.promoCode } : {}),
       };
 
-      // Call API - PUBLIC endpoint
+      // Call API — authenticated and email-verified (the comment that used to
+      // say PUBLIC was wrong; see tour.routes.js).
       const response = await submitTourRequest(data.propertyId, apiData);
       return response;
     },

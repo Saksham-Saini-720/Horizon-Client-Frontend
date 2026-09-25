@@ -118,24 +118,33 @@ function buildQueryParams(filters) {
     params.maxPrice = filters.maxPrice;
   }
 
-  // Bedrooms
-  if (filters.bedrooms) {
-    if (filters.bedrooms === '4+') {
-      params.minBedrooms = 4;
-    } else {
-      params.minBedrooms = parseInt(filters.bedrooms);
-      params.maxBedrooms = parseInt(filters.bedrooms);
-    }
+  // Bedrooms / bathrooms.
+  //
+  // A trailing "+" means "this many or more" and sends only a lower bound;
+  // anything else is an exact count and pins both bounds.
+  //
+  // This used to test for the literal string '4+'. The standalone bedrooms modal
+  // does offer exactly that, so it worked there — but the full-filters modal
+  // offers '5+' for bedrooms, which fell through to the exact-match branch and
+  // became "exactly 5", hiding every 6-bedroom listing behind a pill labelled
+  // "5+". Reading the suffix instead of naming one value keeps the two modals
+  // from having to agree on which option happens to be the open-ended one.
+  const roomBounds = (value) => {
+    const n = parseInt(value, 10);
+    if (Number.isNaN(n)) return null;
+    return String(value).trim().endsWith('+') ? { min: n } : { min: n, max: n };
+  };
+
+  const beds = filters.bedrooms ? roomBounds(filters.bedrooms) : null;
+  if (beds) {
+    params.minBedrooms = beds.min;
+    if (beds.max !== undefined) params.maxBedrooms = beds.max;
   }
 
-  // Bathrooms
-  if (filters.bathrooms) {
-    if (filters.bathrooms === '4+') {
-      params.minBathrooms = 4;
-    } else {
-      params.minBathrooms = parseInt(filters.bathrooms);
-      params.maxBathrooms = parseInt(filters.bathrooms);
-    }
+  const baths = filters.bathrooms ? roomBounds(filters.bathrooms) : null;
+  if (baths) {
+    params.minBathrooms = baths.min;
+    if (baths.max !== undefined) params.maxBathrooms = baths.max;
   }
 
   // Size range. The unit is only worth sending with a bound beside it, and it

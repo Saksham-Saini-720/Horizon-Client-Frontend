@@ -141,6 +141,13 @@ const ExplorePage = () => {
     if (filters.bathrooms)           f.bathrooms = filters.bathrooms;
     if (effectiveType)               f.type      = effectiveType;
     if (filters.amenities?.length)   f.amenities = filters.amenities;
+    // See the matching block in SearchPage: these are set by the full-filters
+    // modal and understood by buildQueryParams, but were missing from this
+    // whitelist, so they never left the page.
+    if (filters.postedWithinDays)    f.postedWithinDays = filters.postedWithinDays;
+    if (filters.minArea !== undefined && filters.minArea !== '') f.minArea = filters.minArea;
+    if (filters.maxArea !== undefined && filters.maxArea !== '') f.maxArea = filters.maxArea;
+    if (filters.areaUnit)            f.areaUnit  = filters.areaUnit;
     f.page  = filters.page;
     f.limit = filters.limit;
     return f;
@@ -203,6 +210,15 @@ const ExplorePage = () => {
         return filters.amenities.every(a => propertyAmenities.includes(a.toLowerCase()));
       });
     }
+    // Nearby results come from the map endpoint and are narrowed here rather
+    // than by the API, so every filter has to be repeated in this block. The
+    // posted-within window was missing, which meant picking "Last 7 days" did
+    // nothing at all whenever a location was selected — a different code path
+    // to the one the server-side filters take, but the same symptom.
+    if (filters.postedWithinDays) {
+      const cutoff = Date.now() - filters.postedWithinDays * 24 * 60 * 60 * 1000;
+      filtered = filtered.filter(p => p.postedAt && new Date(p.postedAt).getTime() >= cutoff);
+    }
     
     return filtered;
   }, [nearbyQuery.data, filters, showNearby, effectiveType]);
@@ -243,7 +259,17 @@ const ExplorePage = () => {
     if (filters.purpose === 'rent') active.push('rent');
     if (filters.minPrice || filters.maxPrice) active.push('price');
     if (filters.bedrooms) active.push('bedrooms');
-    if (filters.bathrooms || effectiveType || filters.amenities?.length) active.push('filters');
+    // postedWithinDays and the area bounds live behind the same "Filters" chip,
+    // so they have to light it up too — otherwise they are applied with nothing
+    // on screen indicating any filter is set.
+    if (
+      filters.bathrooms ||
+      effectiveType ||
+      filters.amenities?.length ||
+      filters.postedWithinDays ||
+      filters.minArea ||
+      filters.maxArea
+    ) active.push('filters');
     return active;
   }, [filters, effectiveType]);
 

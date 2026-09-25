@@ -438,7 +438,10 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   {BEDROOM_OPTIONS.map((bed) => (
                     <Pill
                       key={bed}
-                      label={bed === '5+' ? '5+' : `${bed}+`}
+                      // The label is the value. Appending "+" to '1'…'4' told the
+                      // user these were minimums when they match an exact count —
+                      // only the option that carries its own "+" is open-ended.
+                      label={bed}
                       active={filters.bedrooms === bed}
                       onClick={() => set({ bedrooms: filters.bedrooms === bed ? null : bed })}
                       circle
@@ -455,7 +458,7 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
                   {BATHROOM_OPTIONS.map((bath) => (
                     <Pill
                       key={bath}
-                      label={bath.includes('+') ? bath : `${bath}+`}
+                      label={bath}
                       active={filters.bathrooms === bath}
                       onClick={() => set({ bathrooms: filters.bathrooms === bath ? null : bath })}
                       circle
@@ -468,7 +471,13 @@ const FullFiltersModal = memo(({ isOpen, onClose, onApply, currentFilters = {} }
               <div className="py-5 pb-6">
                 <SectionLabel>AMENITIES</SectionLabel>
                 {AMENITIES.map((amenity, idx) => {
-                  const key    = amenity.toLowerCase();
+                  // camelCase, not lowercase: the API's amenities enum is
+                  // "petFriendly", "airConditioning", "hardwoodFloors",
+                  // "cableTV". Lowercasing the whole key agreed with it by
+                  // accident for every single-word amenity and disagreed for
+                  // those four, so selecting one of them sent a value the
+                  // validator rejects and the search returned nothing at all.
+                  const key    = amenity.charAt(0).toLowerCase() + amenity.slice(1);
                   const isOn   = filters.amenities.includes(key);
                   const isLast = idx === AMENITIES.length - 1;
                   return (

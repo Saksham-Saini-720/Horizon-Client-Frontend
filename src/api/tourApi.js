@@ -4,7 +4,10 @@ import axiosInstance from './axiosInstance';
 /**
  * Submit Tour Request
  * POST /api/v1/tours/property/:id
- * PUBLIC (rate-limited)
+ * AUTHENTICATED, email-verified, rate-limited.
+ *
+ * (This used to say PUBLIC. The route has required a signed-in, verified user
+ * for some time — see tour.routes.js.)
  */
 export const submitTourRequest = async (propertyId, data) => {
   try {
@@ -15,6 +18,39 @@ export const submitTourRequest = async (propertyId, data) => {
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.error?.message || error.response?.data?.message || 'Failed to submit tour request');
+  }
+};
+
+/**
+ * Check a promo code before booking with it.
+ * POST /api/v1/promo-codes/check
+ * AUTHENTICATED, email-verified, rate-limited.
+ *
+ * Always resolves — an unusable code comes back as `{ valid: false, reason,
+ * message }` rather than as a thrown error, because a typo is an ordinary state
+ * of a field someone is still typing into, not a failed request. The booking
+ * endpoint is the authority and will still refuse a code that ran out between
+ * this check and the submit; this exists so that refusal is rare and the
+ * ordinary case gets an inline tick instead of a toast three taps later.
+ *
+ * `visitType` is required: applicability depends on it, and answering without
+ * it would be a promise the booking then breaks.
+ */
+export const checkPromoCode = async ({ code, visitType }) => {
+  try {
+    const response = await axiosInstance.post('/promo-codes/check', {
+      code,
+      visitType,
+    });
+    return response.data?.data ?? { valid: false, reason: 'not_found', message: null };
+  } catch (error) {
+    // A network or auth failure is not the customer's typo. Surface it as its
+    // own state so the field does not accuse them of a bad code.
+    throw new Error(
+      error.response?.data?.error?.message ||
+        error.response?.data?.message ||
+        'Could not check that code right now'
+    );
   }
 };
 

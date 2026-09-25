@@ -150,6 +150,12 @@ const NewListingCard = memo(({ id, price, title, location, beds, baths, area, ta
     // own duplicate shadow values straight to element.style.
     <div
       onClick={handleClick}
+      data-testid="property-card"
+      // The title is mirrored onto the root so an e2e spec can read result
+      // ORDER in one pass. The visible title sits several nodes deeper and is
+      // `truncate`d, so matching on rendered text is both fragile and, for a
+      // long title, wrong.
+      data-title={title}
       className="relative bg-white rounded-3xl cursor-pointer border border-black/5 shadow-card hover:shadow-card-hover hover:-translate-y-1.5 transition-all duration-300 ease-out"
     >
       {/* ── Image with white padding frame ── */}

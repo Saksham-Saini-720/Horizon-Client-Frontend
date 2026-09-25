@@ -15,7 +15,16 @@ export default defineConfig([
     ],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        // Injected by vite.config.js `define` at build time. They exist in the
+        // bundle but nowhere ESLint can see, so they have to be declared or
+        // every read of them is a no-undef error. readonly, because assigning
+        // to one would be writing to a literal.
+        __APP_VERSION__: 'readonly',
+        __APP_COMMIT__: 'readonly',
+        __BUILD_TIME__: 'readonly',
+      },
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },

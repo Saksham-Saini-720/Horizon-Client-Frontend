@@ -1,6 +1,7 @@
 
 import { memo, useState, useCallback } from 'react';
 import ConfirmTourModal from './ConfirmTourModal';
+import useCheckPromoCode from '../../hooks/tours/useCheckPromoCode';
 
 
 const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
@@ -8,8 +9,13 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [note, setNote] = useState('');
+  const [promoCode, setPromoCode] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
+
+  // Re-runs when the visit type changes as well as on typing — a code can be
+  // in-person only, and that answer has to follow the toggle above.
+  const promoState = useCheckPromoCode(promoCode, visitType);
 
   // Generate next 6 days starting from tomorrow
   const generateDates = () => {
@@ -60,8 +66,20 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
   // Handle review - Just move to confirm modal
   const handleReview = useCallback(() => {
     if (!selectedDate || selectedTimes.length === 0) return;
+    // A bad code cannot reach step 2. The API refuses one with a 400, and this
+    // modal is replaced rather than stacked on the confirm step — so without
+    // this guard the error would land on a screen that no longer has the field
+    // that caused it.
+    if (promoState.status === 'checking' || promoState.status === 'invalid') return;
     setShowConfirm(true);
-  }, [selectedDate, selectedTimes]);
+  }, [selectedDate, selectedTimes, promoState.status]);
+
+  const promoBorder =
+    promoState.status === 'valid'
+      ? 'border-green-400'
+      : promoState.status === 'invalid'
+        ? 'border-red-300'
+        : 'border-gray-200';
 
   if (!isOpen) return null;
 
@@ -77,6 +95,8 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
         selectedDate={selectedDate}
         selectedTimes={selectedTimes}
         note={note}
+        promoCode={promoCode}
+        promoPerk={promoState.status === 'valid' ? promoState.perkLabel : null}
       />
     );
   }
@@ -251,6 +271,49 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
             </p>
           </div>
 
+          {/* Promo code.
+              Placed after the note and before the info box, so it is the last
+              thing filled in — but still in step 1, where the visit type it is
+              validated against is on the same screen. */}
+          <div>
+            <label className="block text-[15px] font-semibold text-gray-700 font-myriad mb-2">
+              Promo Code (optional)
+            </label>
+            <input
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+              placeholder="Enter promo code"
+              maxLength={24}
+              className={`w-full px-4 py-3 rounded-xl border ${promoBorder} text-[15px] text-gray-700 font-myriad placeholder-gray-400 focus:outline-none focus:border-secondary uppercase tracking-wide`}
+            />
+
+            {promoState.status === 'checking' && (
+              <p className="text-[12px] text-gray-400 font-myriad mt-1">
+                Checking…
+              </p>
+            )}
+
+            {promoState.status === 'valid' && (
+              <p className="text-[12px] text-green-600 font-myriad mt-1">
+                ✓ Applied — {promoState.perkLabel}
+              </p>
+            )}
+
+            {promoState.status === 'invalid' && (
+              <p role="alert" className="text-[12px] text-red-600 font-myriad mt-1">
+                {promoState.message}
+              </p>
+            )}
+
+            {/* A failed check is not a bad code — say so, and do not block the
+                Review button on it. The booking endpoint validates again. */}
+            {promoState.status === 'error' && (
+              <p className="text-[12px] text-gray-500 font-myriad mt-1">
+                {promoState.message}
+              </p>
+            )}
+          </div>
+
           {/* Info */}
           <div className="flex gap-3 p-4 rounded-xl bg-blue-50">
             <svg className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -266,7 +329,12 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
           {/* Review Button */}
           <button
             onClick={handleReview}
-            disabled={!selectedDate || selectedTimes.length === 0}
+            disabled={
+              !selectedDate ||
+              selectedTimes.length === 0 ||
+              promoState.status === 'checking' ||
+              promoState.status === 'invalid'
+            }
             className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-400 text-white text-[16px] font-semibold font-myriad hover:bg-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed enabled:bg-secondary enabled:hover:bg-primary-light shadow-lg"
           >
             Review & Request Tour

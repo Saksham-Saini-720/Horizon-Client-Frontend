@@ -27,7 +27,13 @@ const EmptyState = memo(({
   };
 
   return (
-    <div className="flex flex-col items-center py-12 text-center px-4">
+    // col-span-full because every caller renders this inside the results grid
+    // (`grid-cols-1 sm:grid-cols-2 xl:grid-cols-3`). Without it the empty state
+    // is a single grid item and sits in the first column — it centres its own
+    // contents, but within a third of the page, which reads as broken layout
+    // rather than as an empty result. It is inert outside a grid, so callers
+    // that render it in a flex or block container are unaffected.
+    <div className="w-full col-span-full flex flex-col items-center py-12 text-center px-4">
       <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center mb-3">
         <svg 
           className="w-7 h-7 text-secondary" 

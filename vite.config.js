@@ -1,6 +1,33 @@
+import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import eslint from 'vite-plugin-eslint';
+
+/**
+ * Build identity, baked into the bundle.
+ *
+ * It has to be baked rather than read at runtime: a built bundle is a static
+ * file that can be cached long after the deploy that produced it, so the only
+ * moment it can learn what it is, is now.
+ *
+ * GITHUB_SHA is set by GitHub Actions; the git fallback covers local builds.
+ * "unknown" rather than a throw — a missing label is not a reason to fail a
+ * build.
+ */
+const commit = () => {
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA.slice(0, 12);
+  try {
+    return execSync('git rev-parse --short=12 HEAD', {
+      stdio: ['ignore', 'pipe', 'ignore'],
+      encoding: 'utf8',
+    }).trim();
+  } catch {
+    return 'unknown';
+  }
+};
+
+const appVersion = JSON.parse(readFileSync('./package.json', 'utf8')).version;
 
 // Hosts the app talks to in EVERY environment: the API plus geocoding and IP
 // country lookup. Keep this in sync with the connect-src list in index.html —
@@ -75,19 +102,19 @@ const devCsp = (tunnelHost) => {
     : '';
 
   return (
-  [
-    "default-src 'self'",
-    // 'unsafe-eval' is needed by the dev-only tooling; the production policy in
-    // index.html deliberately omits it.
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: blob: https:",
-    `connect-src 'self' ${DEV_CONNECT} ${SHARED_CONNECT}${tunnelConnect}`,
-    "frame-src 'none'",
-    "object-src 'none'",
-    "base-uri 'self'",
-  ].join('; ') + ';'
+    [
+      "default-src 'self'",
+      // 'unsafe-eval' is needed by the dev-only tooling; the production policy in
+      // index.html deliberately omits it.
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: blob: https:",
+      `connect-src 'self' ${DEV_CONNECT} ${SHARED_CONNECT}${tunnelConnect}`,
+      "frame-src 'none'",
+      "object-src 'none'",
+      "base-uri 'self'",
+    ].join('; ') + ';'
   );
 };
 
@@ -137,6 +164,13 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    // JSON.stringify because `define` is a raw text substitution — a bare string
+    // would be spliced in as an identifier and fail to parse.
+    define: {
+      __APP_VERSION__: JSON.stringify(appVersion),
+      __APP_COMMIT__: JSON.stringify(commit()),
+      __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+    },
     plugins: [
       react(),
       eslint({

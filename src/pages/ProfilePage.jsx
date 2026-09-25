@@ -9,6 +9,7 @@ import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
 import { useSavedProperties } from '../hooks/properties/useSavedProperties';
 import { useUpdatePreferences, useUpdateNotifications } from '../hooks/profile/useUpdateProfile';
+import { REFERRALS_ENABLED } from '../config/features';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import QuickAccessGrid from '../components/profile/QuickAccessCard';
 import EditProfileModal from '../components/profile/EditProfileModal';
@@ -16,6 +17,7 @@ import LogoutModal from '../components/profile/LogoutModal';
 import ChangePasswordModal from '../components/profile/ChangePasswordModal';
 import HelpSupportModal from '../components/profile/HelpSupportModal';
 import useConversations from '../hooks/conversations/useConversations';
+import { BUILD, buildLabel } from '../buildInfo';
 
 // ── Toggle switch ─────────────────────────────────────────────────────────────
 const Toggle = ({ value, onChange, disabled }) => (
@@ -334,6 +336,50 @@ const ProfilePage = memo(() => {
           </div>
         </div>
 
+        {/* ── MONEY ── */}
+        {/* Referrals and refunds are their own section rather than rows under
+            Account: they are the only places in the app where a customer sees
+            money owed to them, and burying that under "personal details" makes
+            it hard to find when someone is looking for it specifically. */}
+        <div className="mb-5">
+          <SectionLabel>Money</SectionLabel>
+          <div className="bg-white rounded-2xl overflow-hidden shadow-card-sm">
+            {/* The row AND the divider below it, or a stray hairline is left
+                sitting above Refunds. The Money card itself stays — Refunds
+                still lives in it. */}
+            {REFERRALS_ENABLED && (
+              <>
+                <SettingsRow
+                  onClick={() => navigate('/referrals')}
+                  icon={
+                    <svg className="w-4 h-4 text-primary-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="20 12 20 22 4 22 4 12" />
+                      <rect x="2" y="7" width="20" height="5" />
+                      <line x1="12" y1="22" x2="12" y2="7" />
+                      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
+                      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
+                    </svg>
+                  }
+                  title="Refer a friend"
+                  subtitle="Share your code and earn"
+                />
+                <Divider />
+              </>
+            )}
+            <SettingsRow
+              onClick={() => navigate('/refunds')}
+              icon={
+                <svg className="w-4 h-4 text-primary-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+                  <polyline points="3 3 3 8 8 8" />
+                </svg>
+              }
+              title="Refunds &amp; receipts"
+              subtitle="Request money back, track requests"
+            />
+          </div>
+        </div>
+
         {/* ── PREFERENCES ── */}
         <div className="mb-5">
           <SectionLabel>Preferences</SectionLabel>
@@ -464,8 +510,17 @@ const ProfilePage = memo(() => {
             Sign out
           </button>
 
-          <p className="text-center text-[11px] text-gray-400 font-myriad mt-5">
-            Horizon Properties
+          {/* The build label sits with the wordmark rather than behind an
+              "About" screen: the moment it is wanted is when someone is
+              describing a problem and cannot be walked through a menu. The
+              title attribute carries the build time, for "is this today's
+              deploy?" — a question a cached bundle can otherwise answer
+              wrongly just by looking current. */}
+          <p
+            className="text-center text-[11px] text-gray-400 font-myriad mt-5"
+            title={`Built ${BUILD.builtAt}`}
+          >
+            Horizon Properties · {buildLabel()}
           </p>
         </div>
       </div>

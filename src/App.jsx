@@ -1,4 +1,3 @@
-
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -6,8 +5,10 @@ import AuthSync from "./components/auth/AuthSync";
 import TokenRefreshManager from "./components/auth/TokenRefreshManager";
 
 // Route configs
+import ReferralCapture from "./components/ReferralCapture";
 import publicRoutes from "./routes/publicRoutes";
 import protectedRoutes from "./routes/protectedRoutes";
+import { REFERRALS_ENABLED } from "./config/features";
 
 // HomePage is the base layout (from pages/ folder)
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -18,9 +19,7 @@ const PageLoader = () => (
   <div className="min-h-screen bg-white flex items-center justify-center">
     <div className="flex flex-col items-center">
       <div className="w-16 h-16 border-4 border-gray-200 border-t-secondary rounded-full animate-spin" />
-      <p className="mt-4 text-[15px] text-gray-500 font-myriad">
-        Loading...
-      </p>
+      <p className="mt-4 text-[15px] text-gray-500 font-myriad">Loading...</p>
     </div>
   </div>
 );
@@ -32,42 +31,46 @@ export default function App() {
     <BrowserRouter>
       {/* Global Auth Management */}
       <AuthSync />
+      {/* Picks up ?ref= from a shared link and keeps it until signup.
+          Unmounted while the programme is hidden, so nothing writes to the
+          stored code and RegisterPage — which only ever reads it silently —
+          sends no referralCode. A stale value left in someone's browser is
+          harmless: the API ignores it. */}
+      {REFERRALS_ENABLED && <ReferralCapture />}
       <TokenRefreshManager />
-      
+
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          
           {/* Base layout - HomePage wraps everything */}
           <Route path="/" element={<HomePage />}>
-            
             {/* ── Public Routes (auto-generated from config) ── */}
             {publicRoutes.map(({ path, element: Component }) => {
               const PageComponent = Component;
 
-              return (<Route 
-                key={path || "index"} 
-                index={path === ""}
-                path={path || undefined}
-                element={<PageComponent />} 
-              />)
-              })}
+              return (
+                <Route
+                  key={path || "index"}
+                  index={path === ""}
+                  path={path || undefined}
+                  element={<PageComponent />}
+                />
+              );
+            })}
 
             {/* ── Protected Routes (wrapped in auth HOC) ── */}
             <Route element={<ProtectedRoute />}>
               {protectedRoutes.map(({ path, element: Component }) => {
                 const PageComponent = Component;
 
-                return (<Route 
-                  key={path} 
-                  path={path} 
-                  element={<PageComponent />} 
-                />)
-                })}
+                return (
+                  <Route key={path} path={path} element={<PageComponent />} />
+                );
+              })}
             </Route>
 
             {/* ── 404 Not Found ── */}
-            <Route 
-              path="404" 
+            <Route
+              path="404"
               element={
                 <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 text-center pb-28">
                   <h1 className="text-[48px] font-semibold text-primary font-myriad mb-2">
@@ -76,20 +79,21 @@ export default function App() {
                   <p className="text-[18px] text-gray-500 font-myriad mb-6">
                     Page not found
                   </p>
-                  <a 
-                    href="/" 
+                  <a
+                    href="/"
                     className="px-6 py-3 rounded-xl text-[15px] font-semibold text-white shadow-lg hover:shadow-xl transition-all"
-                    style={{ background: "linear-gradient(135deg, #F5B731, #E8A020)" }}
+                    style={{
+                      background: "linear-gradient(135deg, #F5B731, #E8A020)",
+                    }}
                   >
                     Go Home
                   </a>
                 </div>
-              } 
+              }
             />
-            
+
             {/* Catch-all redirect */}
             <Route path="*" element={<Navigate to="/404" replace />} />
-
           </Route>
         </Routes>
       </Suspense>

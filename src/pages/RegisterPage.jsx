@@ -7,34 +7,54 @@ import PhoneInput from "../components/forms/PhoneInput";
 import ErrorBanner from "../components/forms/ErrorBanner";
 import Spinner from "../components/ui/Spinner";
 import AuthPageHeader from "../components/auth/AuthPageHeader";
+import { getStoredReferralCode } from "../utils/referral";
 
 // extracted so ESLint sees `motion` as used (dot-notation JSX isn't tracked)
 const MotionCard = motion.div;
 
 const PASSWORD_RULES = [
-  { label: "At least 8 characters",       test: (v) => v.length >= 8 },
-  { label: "One uppercase letter (A–Z)",  test: (v) => /[A-Z]/.test(v) },
-  { label: "One lowercase letter (a–z)",  test: (v) => /[a-z]/.test(v) },
-  { label: "One number (0–9)",            test: (v) => /[0-9]/.test(v) },
-  { label: "One special character",       test: (v) => /[^A-Za-z0-9]/.test(v) },
+  { label: "At least 8 characters", test: (v) => v.length >= 8 },
+  { label: "One uppercase letter (A–Z)", test: (v) => /[A-Z]/.test(v) },
+  { label: "One lowercase letter (a–z)", test: (v) => /[a-z]/.test(v) },
+  { label: "One number (0–9)", test: (v) => /[0-9]/.test(v) },
+  { label: "One special character", test: (v) => /[^A-Za-z0-9]/.test(v) },
 ];
 
 const VALIDATORS = {
-  firstName: (v) => !v.trim() ? "First name required" : null,
-  lastName:  (v) => !v.trim() ? "Last name required" : null,
-  email:     (v) => !/\S+@\S+\.\S+/.test(v) ? "Enter a valid email" : null,
-  password:  (v) => PASSWORD_RULES.some(r => !r.test(v)) ? "Password doesn't meet all requirements" : null,
+  firstName: (v) => (!v.trim() ? "First name required" : null),
+  lastName: (v) => (!v.trim() ? "Last name required" : null),
+  email: (v) => (!/\S+@\S+\.\S+/.test(v) ? "Enter a valid email" : null),
+  password: (v) =>
+    PASSWORD_RULES.some((r) => !r.test(v))
+      ? "Password doesn't meet all requirements"
+      : null,
 };
 
 const MailIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    className="w-4 h-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect x="2" y="4" width="20" height="16" rx="2" />
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
   </svg>
 );
 
 const LockIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    className="w-4 h-4"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
@@ -42,9 +62,9 @@ const LockIcon = () => (
 
 export default function RegisterPage() {
   const firstNameRef = useRef(null);
-  const lastNameRef  = useRef(null);
-  const emailRef     = useRef(null);
-  const passwordRef  = useRef(null);
+  const lastNameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
 
   const [phoneValue, setPhoneValue] = useState("");
   const [phoneError, setPhoneError] = useState("");
@@ -52,48 +72,60 @@ export default function RegisterPage() {
 
   const registerMutation = useRegisterMutation();
 
-  const handleSubmit = useCallback((e) => {
-    e.preventDefault();
+  // Read once on mount rather than on every render: the code is settled by the
+  // time this form is open, and re-reading storage mid-form could only change
+  // it under the user.
+  const [referralCode] = useState(() => getStoredReferralCode());
 
-    const values = {
-      firstName: firstNameRef.current?.value.trim() ?? "",
-      lastName:  lastNameRef.current?.value.trim()  ?? "",
-      email:     emailRef.current?.value.trim()     ?? "",
-      password:  passwordRef.current?.value         ?? "",
-    };
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
 
-    const errors = Object.entries(VALIDATORS)
-      .map(([key, validate]) => validate(values[key]))
-      .filter(Boolean);
+      const values = {
+        firstName: firstNameRef.current?.value.trim() ?? "",
+        lastName: lastNameRef.current?.value.trim() ?? "",
+        email: emailRef.current?.value.trim() ?? "",
+        password: passwordRef.current?.value ?? "",
+      };
 
-    const digits = phoneValue.replace(/\D/g, "");
-    if (!digits || digits.length < 7) {
-      setPhoneError("Enter a valid phone number");
-      errors.push("phone");
-    } else {
-      setPhoneError("");
-    }
+      const errors = Object.entries(VALIDATORS)
+        .map(([key, validate]) => validate(values[key]))
+        .filter(Boolean);
 
-    if (errors.length) {
-      [firstNameRef, lastNameRef, emailRef, passwordRef].forEach(ref => {
-        ref.current?.focus();
-        ref.current?.blur();
+      const digits = phoneValue.replace(/\D/g, "");
+      if (!digits || digits.length < 7) {
+        setPhoneError("Enter a valid phone number");
+        errors.push("phone");
+      } else {
+        setPhoneError("");
+      }
+
+      if (errors.length) {
+        [firstNameRef, lastNameRef, emailRef, passwordRef].forEach((ref) => {
+          ref.current?.focus();
+          ref.current?.blur();
+        });
+        return;
+      }
+
+      registerMutation.mutate({
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        password: values.password,
+        phone: phoneValue,
+        // Picked up from `?ref=` wherever this person first landed, which is
+        // usually a property rather than this page. Omitted entirely when there
+        // is none — the API rejects a code it does not recognise, and sending
+        // an empty string would fail a signup for no reason.
+        ...(referralCode ? { referralCode } : {}),
       });
-      return;
-    }
-
-    registerMutation.mutate({
-      firstName: values.firstName,
-      lastName:  values.lastName,
-      email:     values.email,
-      password:  values.password,
-      phone:     phoneValue,
-    });
-  }, [registerMutation, phoneValue]);
+    },
+    [registerMutation, phoneValue, referralCode],
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-canvas overflow-hidden">
-
       <AuthPageHeader />
 
       {/*
@@ -108,12 +140,20 @@ export default function RegisterPage() {
         <MotionCard
           className="bg-canvas rounded-t-[32px] shadow-2xl w-full px-4 xs:px-7 pt-9 pb-10"
           initial={{ y: 120, opacity: 0 }}
-          animate={{ y: 0,   opacity: 1 }}
-          transition={{ type: "spring", stiffness: 110, damping: 18, delay: 0.05 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 110,
+            damping: 18,
+            delay: 0.05,
+          }}
         >
           <h2 className="text-[28px] font-display font-semibold text-center text-secondary mb-1">
             Create your{" "}
-            <span className="italic font-normal" style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}>
+            <span
+              className="italic font-normal"
+              style={{ color: "#C96C38", fontFamily: "var(--font-display)" }}
+            >
               account
             </span>
           </h2>
@@ -124,7 +164,6 @@ export default function RegisterPage() {
           <ErrorBanner error={registerMutation.error} />
 
           <form onSubmit={handleSubmit} noValidate>
-
             {/* First + Last Name side by side */}
             <div className="flex gap-3 mb-4">
               <div className="flex-1 min-w-0">
@@ -189,11 +228,26 @@ export default function RegisterPage() {
                   {PASSWORD_RULES.map((rule) => {
                     const met = rule.test(passwordValue);
                     return (
-                      <li key={rule.label} className={`flex items-center gap-1.5 text-[12px] ${met ? "text-green-600" : "text-gray-400"}`}>
-                        <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${met ? "bg-green-600 border-green-600" : "border-gray-300"}`}>
+                      <li
+                        key={rule.label}
+                        className={`flex items-center gap-1.5 text-[12px] ${met ? "text-green-600" : "text-gray-400"}`}
+                      >
+                        <span
+                          className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${met ? "bg-green-600 border-green-600" : "border-gray-300"}`}
+                        >
                           {met && (
-                            <svg viewBox="0 0 10 8" className="w-2 h-2 fill-white">
-                              <path d="M1 4l3 3 5-6" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                            <svg
+                              viewBox="0 0 10 8"
+                              className="w-2 h-2 fill-white"
+                            >
+                              <path
+                                d="M1 4l3 3 5-6"
+                                stroke="white"
+                                strokeWidth="1.5"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
                             </svg>
                           )}
                         </span>
@@ -229,13 +283,19 @@ export default function RegisterPage() {
               style={{ backgroundColor: "#C96C38" }}
             >
               {registerMutation.isPending && <Spinner size="sm" />}
-              {registerMutation.isPending ? "Creating account…" : "Create Account →"}
+              {registerMutation.isPending
+                ? "Creating account…"
+                : "Create Account →"}
             </button>
           </form>
 
           <p className="text-sm text-center text-gray-400 mt-5">
             Already have an account?{" "}
-            <Link to="/login" className="font-semibold hover:underline" style={{ color: "#C96C38" }}>
+            <Link
+              to="/login"
+              className="font-semibold hover:underline"
+              style={{ color: "#C96C38" }}
+            >
               Sign in
             </Link>
           </p>

@@ -8,7 +8,7 @@ import TourSuccessModal from './TourSuccessModal';
  * Step 2: Review and confirm tour details
  * FIXED: Sends correct format to match backend API
  */
-const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, selectedDate, selectedTimes, note }) => {
+const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, selectedDate, selectedTimes, note, promoCode, promoPerk }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const submitMutation = useSubmitTourRequest();
 
@@ -37,6 +37,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
         numberOfPeople: 1, // Default to 1, can be made configurable later
         message: note || '',
         visitType: visitType,
+        promoCode: promoCode || '',
         property: {
           id: property.id,
           title: property.title,
@@ -54,7 +55,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
         // Error is handled by the hook (toast)
       }
     );
-  }, [selectedDate, selectedTimes, visitType, note, property, agent, submitMutation]);
+  }, [selectedDate, selectedTimes, visitType, note, promoCode, property, agent, submitMutation]);
 
   if (showSuccess) {
     return (
@@ -157,6 +158,29 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
                 </span>
               </div>
             </div>
+
+            {/* Promo code. Shown right under Visit Type, because the two
+                together are what decided the code applies at all — and the
+                perk is confirmed on the same screen as the booking, rather
+                than being something the customer has to remember was
+                promised. */}
+            {promoCode && (
+              <div className="flex items-start justify-between py-3 border-b border-gray-100">
+                <span className="text-[15px] text-gray-500 font-myriad">
+                  Promo Code
+                </span>
+                <div className="text-right">
+                  <span className="text-[15px] font-semibold text-primary font-myriad tracking-wide">
+                    {promoCode}
+                  </span>
+                  {promoPerk && (
+                    <p className="text-[12px] text-green-600 font-myriad mt-0.5">
+                      {promoPerk}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Date */}
             <div className="flex items-center justify-between py-3 border-b border-gray-100">

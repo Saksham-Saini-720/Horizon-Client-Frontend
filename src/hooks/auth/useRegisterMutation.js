@@ -1,10 +1,10 @@
-
 import { useMutation } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setAuth } from "../../store/slices/authSlice";
 import { registerUser } from "../../api/authApi";
 import toast from "react-hot-toast";
+import { clearReferralCode } from "../../utils/referral";
 
 export default function useRegisterMutation() {
   const dispatch = useDispatch();
@@ -17,12 +17,19 @@ export default function useRegisterMutation() {
     },
 
     onSuccess: (data) => {
+      // The code has done its job, whether or not a referral was actually
+      // recorded. Leaving it behind would attach it to the next person who
+      // signs up on a shared device.
+      clearReferralCode();
+
       // Set auth in Redux
-      dispatch(setAuth({
-        user: data.user,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      }));
+      dispatch(
+        setAuth({
+          user: data.user,
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+        }),
+      );
 
       // Show success message
       toast.success("Registration successful! Please verify your email.");
@@ -42,4 +49,3 @@ export default function useRegisterMutation() {
     },
   });
 }
-
