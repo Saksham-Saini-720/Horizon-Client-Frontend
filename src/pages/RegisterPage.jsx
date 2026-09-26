@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import useRegisterMutation from "../hooks/auth/useRegisterMutation";
@@ -7,7 +7,10 @@ import PhoneInput from "../components/forms/PhoneInput";
 import ErrorBanner from "../components/forms/ErrorBanner";
 import Spinner from "../components/ui/Spinner";
 import AuthPageHeader from "../components/auth/AuthPageHeader";
-import { getStoredReferralCode } from "../utils/referral";
+import { getStoredReferral } from "../utils/referral";
+import { checkReferralCode } from "../api/walletApi";
+import useReferralCampaign from "../hooks/referrals/useReferralCampaign";
+import useFeatures from "../hooks/useFeatures";
 
 // extracted so ESLint sees `motion` as used (dot-notation JSX isn't tracked)
 const MotionCard = motion.div;
@@ -72,10 +75,61 @@ export default function RegisterPage() {
 
   const registerMutation = useRegisterMutation();
 
-  // Read once on mount rather than on every render: the code is settled by the
-  // time this form is open, and re-reading storage mid-form could only change
-  // it under the user.
-  const [referralCode] = useState(() => getStoredReferralCode());
+  // Pre-filled once, on mount, from the link this person followed — usually to
+  // a property rather than to this page. Editable from then on: what is sent
+  // is always what the person can see in the field.
+  const { referrals: referralsOn } = useFeatures();
+  const [stored] = useState(() => getStoredReferral());
+  const [referralCode, setReferralCode] = useState(stored?.code ?? "");
+  // The channel only counts while the code is the one the link carried; a code
+  // typed or changed by hand was, by definition, typed.
+  const referralSource =
+    stored && referralCode.trim().toUpperCase() === stored.code ? stored.source : "manual";
+
+  const { data: referralCampaign } = useReferralCampaign();
+  // The field appears while a referral campaign runs — the framework's rule —
+  // or when a link already brought a code, so the person can see it.
+  const showReferralField = referralsOn && Boolean(referralCampaign || stored);
+
+  // The last answer from the server, keyed by the code it was about. The
+  // state shown is derived from it, so a stale answer can never be displayed
+  // against a code the person has since changed.
+  const [checked, setChecked] = useState({ code: null, result: null });
+  const normalizedCode = referralCode.trim().toUpperCase();
+  const wantsCheck = showReferralField && normalizedCode.length >= 3;
+
+  useEffect(() => {
+    if (!wantsCheck) return undefined;
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      checkReferralCode(normalizedCode)
+        .then((result) => {
+          if (!cancelled) setChecked({ code: normalizedCode, result });
+        })
+        .catch(() => {
+          // Rate-limited or offline. Not the person's fault, and the server
+          // checks again at signup, so say nothing rather than something wrong.
+          if (!cancelled) setChecked({ code: normalizedCode, result: null });
+        });
+    }, 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [normalizedCode, wantsCheck]);
+
+  const referralCheck = !wantsCheck
+    ? { state: "idle" }
+    : checked.code !== normalizedCode
+      ? { state: "checking" }
+      : !checked.result
+        ? { state: "idle" }
+        : checked.result.valid
+          ? { state: "valid", campaign: checked.result.campaign }
+          : {
+              state: "invalid",
+              message: checked.result.message ?? "This code cannot be used.",
+            };
 
   const handleSubmit = useCallback(
     (e) => {
@@ -114,14 +168,15 @@ export default function RegisterPage() {
         email: values.email,
         password: values.password,
         phone: phoneValue,
-        // Picked up from `?ref=` wherever this person first landed, which is
-        // usually a property rather than this page. Omitted entirely when there
-        // is none — the API rejects a code it does not recognise, and sending
-        // an empty string would fail a signup for no reason.
-        ...(referralCode ? { referralCode } : {}),
+        // Sent even when the live check said no: a refused code never blocks
+        // signup on the server, and the refusal is recorded there, which is
+        // how a mis-printed code shows up in the reports. Omitted when blank.
+        ...(showReferralField && referralCode.trim()
+          ? { referralCode: referralCode.trim().toUpperCase(), referralSource }
+          : {}),
       });
     },
-    [registerMutation, phoneValue, referralCode],
+    [registerMutation, phoneValue, referralCode, referralSource, showReferralField],
   );
 
   return (
@@ -173,7 +228,7 @@ export default function RegisterPage() {
                 <ValidatedInput
                   inputRef={firstNameRef}
                   name="firstName"
-                  placeholder="Your first name"
+                  placeholder="Enter first name"
                   required
                   validator={VALIDATORS.firstName}
                 />
@@ -185,7 +240,7 @@ export default function RegisterPage() {
                 <ValidatedInput
                   inputRef={lastNameRef}
                   name="lastName"
-                  placeholder="Your last name"
+                  placeholder="Enter last name"
                   required
                   validator={VALIDATORS.lastName}
                 />
@@ -201,7 +256,7 @@ export default function RegisterPage() {
                 inputRef={emailRef}
                 name="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Enter email address"
                 required
                 validator={VALIDATORS.email}
                 leftIcon={<MailIcon />}
@@ -217,7 +272,7 @@ export default function RegisterPage() {
                 inputRef={passwordRef}
                 name="password"
                 type="password"
-                placeholder="At least 8 characters"
+                placeholder="Enter password"
                 required
                 validator={VALIDATORS.password}
                 leftIcon={<LockIcon />}
@@ -275,6 +330,48 @@ export default function RegisterPage() {
                 <p className="text-[13px] text-red-500 mt-1.5">{phoneError}</p>
               )}
             </div>
+
+            {showReferralField && (
+              <div className="mb-6 -mt-2">
+                <p className="text-[10px] font-semibold tracking-[0.15em] text-gray-400 uppercase mb-1.5">
+                  Referral Code (optional)
+                </p>
+                <input
+                  name="referralCode"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                  placeholder="Enter referral code"
+                  maxLength={40}
+                  autoComplete="off"
+                  className={`w-full rounded-xl border bg-white px-4 py-3 font-mono text-[15px] tracking-wider outline-none transition-colors ${
+                    referralCheck.state === "valid"
+                      ? "border-green-400"
+                      : referralCheck.state === "invalid"
+                        ? "border-red-300"
+                        : "border-gray-200 focus:border-secondary"
+                  }`}
+                />
+                {referralCheck.state === "checking" && (
+                  <p className="text-[12px] text-gray-400 mt-1.5">Checking…</p>
+                )}
+                {referralCheck.state === "valid" && (
+                  <p className="text-[12px] text-green-600 mt-1.5">
+                    ✓ Code accepted
+                    {referralCheck.campaign?.name ? ` — ${referralCheck.campaign.name}` : ""}
+                  </p>
+                )}
+                {referralCheck.state === "invalid" && (
+                  <p role="alert" className="text-[12px] text-red-500 mt-1.5">
+                    {referralCheck.message} You can still create your account.
+                  </p>
+                )}
+                {referralCheck.state === "idle" && (
+                  <p className="text-[12px] text-gray-400 mt-1.5">
+                    From the friend who told you about us, if they gave you one.
+                  </p>
+                )}
+              </div>
+            )}
 
             <button
               type="submit"

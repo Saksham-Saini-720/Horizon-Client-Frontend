@@ -9,7 +9,8 @@ import { useEnquiries } from '../hooks/activity/useEnquiries';
 import { useTours } from '../hooks/activity/useTours';
 import { useSavedProperties } from '../hooks/properties/useSavedProperties';
 import { useUpdatePreferences, useUpdateNotifications } from '../hooks/profile/useUpdateProfile';
-import { REFERRALS_ENABLED } from '../config/features';
+import useFeaturedPromo from '../hooks/promo/useFeaturedPromo';
+import useReferralCampaign from '../hooks/referrals/useReferralCampaign';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import QuickAccessGrid from '../components/profile/QuickAccessCard';
 import EditProfileModal from '../components/profile/EditProfileModal';
@@ -145,6 +146,13 @@ const ProfileSkeleton = () => (
 const ProfilePage = memo(() => {
   const navigate = useNavigate();
   const logoutMutation = useLogout();
+
+  // Null when no campaign is running, which hides the row entirely — the
+  // framework asks for the feature to be absent rather than shown as empty.
+  const { data: featuredPromo } = useFeaturedPromo();
+  // The row appears only while a referral campaign runs. People with past
+  // referrals can still open /referrals directly; the route stays mounted.
+  const { data: referralCampaign } = useReferralCampaign();
 
   // Modal visibility
   const [showEditModal, setShowEditModal] = useState(false);
@@ -347,7 +355,7 @@ const ProfilePage = memo(() => {
             {/* The row AND the divider below it, or a stray hairline is left
                 sitting above Refunds. The Money card itself stays — Refunds
                 still lives in it. */}
-            {REFERRALS_ENABLED && (
+            {referralCampaign && (
               <>
                 <SettingsRow
                   onClick={() => navigate('/referrals')}
@@ -362,6 +370,22 @@ const ProfilePage = memo(() => {
                   }
                   title="Refer a friend"
                   subtitle="Share your code and earn"
+                />
+                <Divider />
+              </>
+            )}
+            {featuredPromo && (
+              <>
+                <SettingsRow
+                  onClick={() => navigate('/promo')}
+                  icon={
+                    <svg className="w-4 h-4 text-primary-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                      <line x1="7" y1="7" x2="7.01" y2="7" />
+                    </svg>
+                  }
+                  title={featuredPromo.perkLabel}
+                  subtitle={`Use code ${featuredPromo.code} when you book`}
                 />
                 <Divider />
               </>

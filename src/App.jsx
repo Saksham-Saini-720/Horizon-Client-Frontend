@@ -6,9 +6,10 @@ import TokenRefreshManager from "./components/auth/TokenRefreshManager";
 
 // Route configs
 import ReferralCapture from "./components/ReferralCapture";
+import PromoCapture from "./components/PromoCapture";
 import publicRoutes from "./routes/publicRoutes";
 import protectedRoutes from "./routes/protectedRoutes";
-import { REFERRALS_ENABLED } from "./config/features";
+import useFeatures from "./hooks/useFeatures";
 
 // HomePage is the base layout (from pages/ folder)
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -27,16 +28,21 @@ const PageLoader = () => (
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
+  const features = useFeatures();
+
   return (
     <BrowserRouter>
       {/* Global Auth Management */}
       <AuthSync />
       {/* Picks up ?ref= from a shared link and keeps it until signup.
-          Unmounted while the programme is hidden, so nothing writes to the
-          stored code and RegisterPage — which only ever reads it silently —
-          sends no referralCode. A stale value left in someone's browser is
-          harmless: the API ignores it. */}
-      {REFERRALS_ENABLED && <ReferralCapture />}
+          Unmounted while the programme is switched off (Settings → Business),
+          so nothing writes to the stored code. A stale value left in someone's
+          browser is harmless: the register form hides its field, and the API
+          ignores a code while the programme is off. */}
+      {features.referrals && <ReferralCapture />}
+      {/* Picks up ?promo= from a shared link or a scanned QR. Unconditional —
+          promo codes are not behind a feature flag. */}
+      <PromoCapture />
       <TokenRefreshManager />
 
       <Suspense fallback={<PageLoader />}>

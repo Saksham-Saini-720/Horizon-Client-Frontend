@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-import { captureReferralCode } from "../utils/referral";
+import { captureReferralCode, firstVisitOf, getVisitorKey } from "../utils/referral";
+import { recordReferralVisit } from "../api/walletApi";
 
 /**
  * Picks up `?ref=` from wherever the visitor lands.
@@ -22,7 +23,19 @@ export default function ReferralCapture() {
   const { search } = useLocation();
 
   useEffect(() => {
-    captureReferralCode(search);
+    // Only when this navigation actually carried a ?ref= — not on every page.
+    if (!new URLSearchParams(search).get("ref")) return;
+    const captured = captureReferralCode(search);
+    if (!captured?.code || !firstVisitOf(captured.code)) return;
+    const visitorKey = getVisitorKey();
+    if (!visitorKey) return;
+    // The top of the referral funnel: someone opened the link.
+    recordReferralVisit({
+      code: captured.code,
+      source: captured.source,
+      visitorKey,
+      path: window.location.pathname,
+    });
   }, [search]);
 
   return null;

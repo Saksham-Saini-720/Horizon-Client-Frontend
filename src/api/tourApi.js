@@ -120,3 +120,21 @@ export const rescheduleTourRequest = async (tourId, preferredDate, preferredTime
 
 
 
+
+/**
+ * GET /promo-codes/featured — the campaign currently on offer, or null.
+ *
+ * Public, so this works before sign-in: a promotion is advertised, and
+ * requiring a login to discover one exists would defeat putting it on a
+ * poster. Returns null when nothing is running, which is an ordinary state —
+ * the app hides the feature rather than showing an error.
+ */
+export const fetchFeaturedPromo = async () => {
+  try {
+    const response = await axiosInstance.get('/promo-codes/featured');
+    return response.data?.data?.promo ?? null;
+  } catch {
+    // A campaign banner is not worth failing a page over.
+    return null;
+  }
+};

@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { submitTourRequest } from '../../api/tourApi';
+import { clearPromoCode } from '../../utils/promo';
 import { addTourRequest } from '../../store/slices/activitySlice';
 import toast from 'react-hot-toast';
 
@@ -62,7 +63,12 @@ export const useSubmitTourRequest = () => {
         // Note this object is an explicit whitelist: anything not named here
         // is dropped silently, with no error anywhere. `preferredTimes` already
         // disappears at this line.
-        ...(data.promoCode ? { promoCode: data.promoCode } : {}),
+        ...(data.promoCode
+          ? {
+              promoCode: data.promoCode,
+              promoSource: data.promoSource || 'manual',
+            }
+          : {}),
       };
 
       // Call API — authenticated and email-verified (the comment that used to
@@ -72,6 +78,11 @@ export const useSubmitTourRequest = () => {
     },
 
     onSuccess: (response, variables) => {
+      // The code has been spent. Leaving it behind would attach a finished
+      // campaign to this person's next booking, and to whoever uses the device
+      // after them.
+      if (variables?.promoCode) clearPromoCode();
+
       queryClient.invalidateQueries({ queryKey: ['tours'] });
 
       // Extract data from response

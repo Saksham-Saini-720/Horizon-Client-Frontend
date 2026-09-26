@@ -1,17 +1,31 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import QRCode from "qrcode";
 import toast from "react-hot-toast";
-import { HiOutlineGift, HiOutlineShare, HiOutlineClipboard, HiArrowLeft } from "react-icons/hi2";
+import {
+  HiOutlineGift,
+  HiOutlineClipboard,
+  HiOutlineEnvelope,
+  HiOutlineLink,
+  HiArrowLeft,
+} from "react-icons/hi2";
 
 import { fetchMyReferrals } from "../api/walletApi";
+import useFeatures from "../hooks/useFeatures";
+import { buildReferralLink } from "../utils/referral";
 import { formatMoney } from "../utils/money";
 
 /**
  * My referrals — the code to share, and how each person you referred is doing.
  *
- * The code is the point of the page, so it is the first and largest thing on
- * it. Everything else is evidence that sharing it does something.
+ * The code belongs to the referral campaign running now: a new campaign means
+ * a new code. When nothing is running there is no code to share, but the
+ * people already referred — and what they earned — are still shown, because
+ * that is money the customer is owed.
+ *
+ * Sharing is by QR, email and copied link. Each carries `src` so the reports
+ * can say which one worked; the server treats it as a hint.
  */
 
 const STATUS_COPY = {
@@ -28,17 +42,22 @@ const STATUS_COPY = {
   approved: {
     label: "Approved",
     tone: "bg-blue-100 text-blue-700",
-    note: "Payment on its way",
+    note: "Reward on its way",
   },
   paid: {
-    label: "Paid",
+    label: "Rewarded",
     tone: "bg-green-100 text-green-700",
-    note: "Sent to you",
+    note: "Issued to you",
   },
   rejected: {
     label: "Not approved",
     tone: "bg-red-50 text-red-600",
     note: "",
+  },
+  expired: {
+    label: "Expired",
+    tone: "bg-slate-100 text-slate-500",
+    note: "Did not qualify before the campaign closed",
   },
   cancelled: {
     label: "Cancelled",
@@ -47,54 +66,105 @@ const STATUS_COPY = {
   },
 };
 
+/** "When someone you refer ___": the campaign's qualifying action, as a verb. */
+const ACTION_PHRASES = {
+  tour_completed: "completes a viewing",
+  reservation_paid: "pays a reservation",
+  first_payment: "makes their first payment",
+  agreement_signed: "signs an agreement",
+  agreement_completed: "completes an agreement",
+  commission_paid: "pays the brokerage fee in full",
+};
+
+/** A frozen reward as a person would say it. Points carry no currency. */
+const rewardText = (reward) => {
+  if (reward?.amountMinor == null) return null;
+  if (!reward.currency) return `${reward.amountMinor} points`;
+  return formatMoney(reward.amountMinor, reward.currency);
+};
+
+const fmtDate = (value) =>
+  new Date(value).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
 export default function ReferralsPage() {
   const navigate = useNavigate();
-  const [copied, setCopied] = useState(false);
+  const canvasRef = useRef(null);
+  const [copied, setCopied] = useState(null);
+
+  const features = useFeatures();
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-referrals"],
     queryFn: fetchMyReferrals,
+    enabled: features.referrals,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     retry: 1,
   });
 
-  const code = data?.code ?? "";
-  const shareLink = code
-    ? `${window.location.origin}/?ref=${encodeURIComponent(code)}`
-    : "";
+  const campaign = data?.campaign ?? null;
+  // A suspended code is still returned, so the person can be told why sharing
+  // is off — but it must not be offered for sharing.
+  const code = data?.code && !data?.codeSuspended ? data.code : null;
+  const qrLink = code ? buildReferralLink(code, "/", "qr") : "";
+  const emailLink = code ? buildReferralLink(code, "/", "email") : "";
+  const plainLink = code ? buildReferralLink(code, "/", "link") : "";
+
+  useEffect(() => {
+    if (!code || !canvasRef.current) return;
+    QRCode.toCanvas(canvasRef.current, qrLink, {
+      width: 200,
+      margin: 2,
+      errorCorrectionLevel: "M",
+      color: { dark: "#1a1a1a", light: "#ffffff" },
+    }).catch(() => {
+      /* A missing QR is not worth an error state; the code is still on screen. */
+    });
+  }, [code, qrLink]);
 
   const copy = async (value, what) => {
     try {
       await navigator.clipboard.writeText(value);
-      setCopied(true);
+      setCopied(what);
       toast.success(`${what} copied`);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(null), 2000);
     } catch {
       // Clipboard is blocked in insecure contexts and some in-app browsers.
       // Saying so beats a button that silently does nothing.
-      toast.error("Could not copy — select the code and copy it by hand");
+      toast.error("Could not copy — select it and copy it by hand");
     }
   };
 
-  const share = async () => {
-    // The native sheet is the natural thing on a phone, which is where this
-    // page will mostly be opened. Falls back to copying where it is absent.
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Horizon Properties",
-          text: `Use my referral code ${code} when you sign up.`,
-          url: shareLink,
-        });
-        return;
-      } catch {
-        // The user dismissed the sheet. Not an error worth reporting.
-        return;
-      }
-    }
-    copy(shareLink, "Link");
+  const shareByEmail = () => {
+    const subject = encodeURIComponent("Join me on Horizon Properties");
+    const message =
+      campaign?.shareMessage ||
+      "I've been using Horizon Properties to find a place — thought you might like it too.";
+    const body = encodeURIComponent(
+      `${message}\n\nSign up with my referral code ${code}:\n${emailLink}\n`,
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
+
+  const downloadQr = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `horizon-referral-${code}.png`;
+    a.click();
+  };
+
+  const earned = data?.earned ?? [];
+  const points = data?.points ?? 0;
+
+
+  // Switched off in Settings → Business: this page does not exist.
+  if (!features.isLoading && !features.referrals) return <Navigate to="/" replace />;
 
   return (
     <div className="min-h-screen bg-canvas pb-24">
@@ -107,14 +177,51 @@ export default function ReferralsPage() {
         </button>
         <h1 className="text-[22px] font-bold">Refer a friend</h1>
         <p className="mt-1 max-w-md text-[14px] text-white/80">
-          Share your code. When someone you refer qualifies, you earn a reward.
+          {campaign
+            ? `Share your code. When someone you refer signs up and ${ACTION_PHRASES[campaign.qualifyingAction] ?? "qualifies"}, you earn ${campaign.reward?.summary ?? "a reward"}.`
+            : "Share your code with friends when a referral campaign is running."}
         </p>
+        {campaign && (
+          <p data-testid="referral-campaign" className="mt-1 text-[12px] text-white/70">
+            {campaign.name}
+            {campaign.endsAt ? ` · ends ${fmtDate(campaign.endsAt)}` : ""}
+          </p>
+        )}
       </div>
 
       <div className="mx-auto -mt-6 max-w-2xl px-4">
         <div className="rounded-2xl bg-white p-5 shadow-card">
           {isLoading ? (
             <div className="h-24 animate-pulse rounded-xl bg-slate-100" />
+          ) : !campaign ? (
+            <div data-testid="referral-no-campaign" className="text-center py-2">
+              <HiOutlineGift size={28} className="mx-auto text-slate-300" />
+              <p className="mt-2 text-[14px] font-bold text-bold">
+                No referral campaign running right now
+              </p>
+              <p className="mx-auto mt-1 max-w-xs text-[13px] text-slate-500">
+                You will get a code to share here when the next one starts.
+              </p>
+            </div>
+          ) : data?.codeSuspended ? (
+            <div data-testid="referral-code-suspended" className="py-2">
+              <p className="text-[14px] font-bold text-bold">
+                Your referral code is paused
+              </p>
+              <p className="mt-1 text-[13px] text-slate-500">
+                New sign-ups can't use it at the moment. People you already
+                referred are unaffected. Contact us if you think this is a mistake.
+              </p>
+            </div>
+          ) : !code ? (
+            <div data-testid="referral-not-eligible" className="py-2">
+              <p className="text-[14px] font-bold text-bold">
+                This campaign is for customers
+              </p>
+              <p className="mt-1 text-[13px] text-slate-500">
+                Referral codes for {campaign.name} are given to Horizon customers.
+              </p>
+            </div>
           ) : (
             <>
               <p className="text-[11px] font-bold uppercase tracking-wide text-slate-400">
@@ -125,38 +232,82 @@ export default function ReferralsPage() {
                   data-testid="referral-code"
                   className="font-mono text-[26px] font-bold tracking-wider text-bold"
                 >
-                  {code || "—"}
+                  {code}
                 </span>
                 <button
                   onClick={() => copy(code, "Code")}
                   className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-[13px] text-slate-600 hover:bg-slate-50"
                 >
                   <HiOutlineClipboard size={15} />
-                  {copied ? "Copied" : "Copy"}
-                </button>
-                <button
-                  onClick={share}
-                  className="flex items-center gap-1.5 rounded-lg bg-primary-light px-3 py-1.5 text-[13px] font-bold text-white"
-                >
-                  <HiOutlineShare size={15} /> Share
+                  {copied === "Code" ? "Copied" : "Copy"}
                 </button>
               </div>
 
-              {(data?.earned ?? []).length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-3 border-t border-slate-100 pt-4">
-                  {data.earned.map((entry) => (
-                    <div key={entry.currency} data-testid="referral-earned">
-                      <p className="text-[11px] uppercase tracking-wide text-slate-400">
-                        Earned
-                      </p>
-                      <p className="text-[18px] font-bold text-bold">
-                        {formatMoney(entry.amountMinor, entry.currency)}
-                      </p>
-                    </div>
-                  ))}
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button
+                  onClick={shareByEmail}
+                  className="flex items-center justify-center gap-1.5 rounded-lg bg-primary-light px-3 py-2.5 text-[13px] font-bold text-white"
+                >
+                  <HiOutlineEnvelope size={15} /> Email a friend
+                </button>
+                <button
+                  onClick={() => copy(plainLink, "Link")}
+                  className="flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2.5 text-[13px] text-slate-600 hover:bg-slate-50"
+                >
+                  <HiOutlineLink size={15} />
+                  {copied === "Link" ? "Copied" : "Copy link"}
+                </button>
+              </div>
+
+              <div className="mt-5 border-t border-slate-100 pt-4 text-center">
+                <p className="text-[13px] font-bold text-bold">Let someone scan it</p>
+                <canvas
+                  ref={canvasRef}
+                  data-testid="referral-qr"
+                  className="mx-auto mt-3 rounded-xl"
+                  aria-label={`QR code for referral code ${code}`}
+                />
+                <button
+                  onClick={downloadQr}
+                  className="mt-2 text-[12px] text-slate-500 underline"
+                >
+                  Save QR image
+                </button>
+              </div>
+            </>
+          )}
+
+          {data?.visitors > 0 && (
+            <p
+              data-testid="referral-visitors"
+              className="mt-4 border-t border-slate-100 pt-3 text-[13px] text-slate-500"
+            >
+              <span className="font-bold text-bold">{data.visitors}</span>{" "}
+              {data.visitors === 1 ? "person has" : "people have"} opened your link
+            </p>
+          )}
+
+          {(earned.length > 0 || points > 0) && (
+            <div className="mt-5 flex flex-wrap gap-5 border-t border-slate-100 pt-4">
+              {earned.map((entry) => (
+                <div key={entry.currency} data-testid="referral-earned">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Earned
+                  </p>
+                  <p className="text-[18px] font-bold text-bold">
+                    {formatMoney(entry.amountMinor, entry.currency)}
+                  </p>
+                </div>
+              ))}
+              {points > 0 && (
+                <div data-testid="referral-points">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Points
+                  </p>
+                  <p className="text-[18px] font-bold text-bold">{points}</p>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
 
@@ -169,18 +320,17 @@ export default function ReferralsPage() {
         ) : (data?.referrals ?? []).length === 0 ? (
           <div className="rounded-2xl bg-white p-8 text-center shadow-card">
             <HiOutlineGift size={32} className="mx-auto text-slate-300" />
-            <p className="mt-3 text-[14px] font-bold text-bold">
-              Nobody yet
-            </p>
+            <p className="mt-3 text-[14px] font-bold text-bold">Nobody yet</p>
             <p className="mx-auto mt-1 max-w-xs text-[13px] text-slate-500">
-              Share your code with someone looking for a property. You will see
-              them here as soon as they sign up.
+              {code
+                ? "Share your code with someone looking for a property. You will see them here as soon as they sign up."
+                : "People who sign up with your code will appear here."}
             </p>
           </div>
         ) : (
           <div className="overflow-hidden rounded-2xl bg-white shadow-card">
             {data.referrals.map((referral, index) => {
-              const copy = STATUS_COPY[referral.status] ?? {
+              const status = STATUS_COPY[referral.status] ?? {
                 label: referral.status,
                 tone: "bg-slate-100 text-slate-600",
                 note: "",
@@ -188,15 +338,14 @@ export default function ReferralsPage() {
               const name =
                 `${referral.referee?.firstName ?? ""} ${referral.referee?.lastName ?? ""}`.trim() ||
                 "Someone you referred";
+              const reward = rewardText(referral.reward);
 
               return (
                 <div
                   key={referral._id}
-                  // `data-status` carries the raw status the row is rendering,
-                  // alongside the customer-facing label. The e2e suite waits on
-                  // it: the labels are written for a reader and are free to
-                  // change, and a browser test that has to be edited every time
-                  // someone improves the wording stops being run.
+                  // `data-status` carries the raw status alongside the
+                  // customer-facing label, so the e2e suite does not break
+                  // every time the wording improves.
                   data-testid="referral-row"
                   data-status={referral.status}
                   className={`flex items-center gap-3 px-4 py-3.5 ${
@@ -204,28 +353,25 @@ export default function ReferralsPage() {
                   }`}
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[14px] font-bold text-bold">
-                      {name}
-                    </p>
+                    <p className="truncate text-[14px] font-bold text-bold">{name}</p>
                     <p className="text-[12px] text-slate-500">
-                      {copy.note ||
-                        new Date(referral.createdAt).toLocaleDateString()}
+                      {[
+                        referral.campaign?.name,
+                        status.note || fmtDate(referral.createdAt),
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
                     </p>
                   </div>
 
                   <div className="text-right">
-                    {referral.reward?.amountMinor != null && (
-                      <p className="text-[14px] font-bold text-bold">
-                        {formatMoney(
-                          referral.reward.amountMinor,
-                          referral.reward.currency,
-                        )}
-                      </p>
+                    {reward && (
+                      <p className="text-[14px] font-bold text-bold">{reward}</p>
                     )}
                     <span
-                      className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${copy.tone}`}
+                      className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${status.tone}`}
                     >
-                      {copy.label}
+                      {status.label}
                     </span>
                   </div>
                 </div>

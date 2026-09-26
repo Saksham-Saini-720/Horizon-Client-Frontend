@@ -2,6 +2,7 @@
 import { memo, useState, useCallback } from 'react';
 import ConfirmTourModal from './ConfirmTourModal';
 import useCheckPromoCode from '../../hooks/tours/useCheckPromoCode';
+import { getStoredPromo } from '../../utils/promo';
 
 
 const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
@@ -9,7 +10,11 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimes, setSelectedTimes] = useState([]);
   const [note, setNote] = useState('');
-  const [promoCode, setPromoCode] = useState('');
+  // Read once on open rather than on every render: a code captured from a
+  // link or a QR is settled by the time this form is reachable, and re-reading
+  // storage mid-form could change it under the user.
+  const [captured] = useState(() => getStoredPromo());
+  const [promoCode, setPromoCode] = useState(() => captured?.code ?? '');
   const [showConfirm, setShowConfirm] = useState(false);
   const [showTimeSlots, setShowTimeSlots] = useState(false);
 
@@ -96,6 +101,9 @@ const RequestTourModal = memo(({ isOpen, onClose, property, agent }) => {
         selectedTimes={selectedTimes}
         note={note}
         promoCode={promoCode}
+        promoSource={
+          captured && promoCode === captured.code ? captured.source : 'manual'
+        }
         promoPerk={promoState.status === 'valid' ? promoState.perkLabel : null}
       />
     );

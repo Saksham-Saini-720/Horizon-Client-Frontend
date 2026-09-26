@@ -8,7 +8,7 @@ import TourSuccessModal from './TourSuccessModal';
  * Step 2: Review and confirm tour details
  * FIXED: Sends correct format to match backend API
  */
-const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, selectedDate, selectedTimes, note, promoCode, promoPerk }) => {
+const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, selectedDate, selectedTimes, note, promoCode, promoSource, promoPerk }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const submitMutation = useSubmitTourRequest();
 
@@ -38,6 +38,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
         message: note || '',
         visitType: visitType,
         promoCode: promoCode || '',
+        promoSource: promoSource || 'manual',
         property: {
           id: property.id,
           title: property.title,
@@ -55,7 +56,7 @@ const ConfirmTourModal = memo(({ onClose, onBack, property, agent, visitType, se
         // Error is handled by the hook (toast)
       }
     );
-  }, [selectedDate, selectedTimes, visitType, note, promoCode, property, agent, submitMutation]);
+  }, [selectedDate, selectedTimes, visitType, note, promoCode, promoSource, property, agent, submitMutation]);
 
   if (showSuccess) {
     return (

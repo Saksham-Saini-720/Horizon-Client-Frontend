@@ -10,6 +10,7 @@ import {
 
 import { fetchMyReferrals } from "../../api/walletApi";
 import { buildReferralLink } from "../../utils/referral";
+import useReferralCampaign from "../../hooks/referrals/useReferralCampaign";
 
 /**
  * "Know someone who'd like this?" — on the property page.
@@ -29,22 +30,28 @@ import { buildReferralLink } from "../../utils/referral";
  *
  * Signed-out visitors get a short prompt instead of a code, because they do
  * not have one yet. Nothing here is shown to them as if it were theirs.
+ *
+ * Renders nothing while no referral campaign is running, and nothing for a
+ * signed-in person who has no usable code (not eligible, or code suspended).
  */
 export default function ReferPropertyCard({ propertyId, isAuthenticated }) {
   const [copied, setCopied] = useState(false);
+  const { data: campaign } = useReferralCampaign();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["my-referrals"],
     queryFn: fetchMyReferrals,
     // Only for people who have a code. An anonymous visitor would get a 401,
     // and asking is pointless when the answer cannot be used.
-    enabled: Boolean(isAuthenticated),
+    enabled: Boolean(isAuthenticated && campaign),
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
 
-  const code = data?.code ?? null;
-  const link = code ? buildReferralLink(code, `/property/${propertyId}`) : null;
+  const code = data?.code && !data?.codeSuspended ? data.code : null;
+  const link = code
+    ? buildReferralLink(code, `/property/${propertyId}`, "link")
+    : null;
 
   const copy = async () => {
     try {
@@ -76,6 +83,8 @@ export default function ReferPropertyCard({ propertyId, isAuthenticated }) {
     copy();
   };
 
+  if (!campaign) return null;
+
   if (!isAuthenticated) {
     return (
       <div className="mx-4 mb-4 rounded-2xl bg-white p-5 shadow-card-sm">
@@ -88,7 +97,8 @@ export default function ReferPropertyCard({ propertyId, isAuthenticated }) {
               Refer a friend, earn a reward
             </p>
             <p className="mt-1 font-myriad text-[13px] text-gray-500">
-              Sign in to get your referral code and share this property with it.
+              Sign in to get your referral code and share this property with it
+              {campaign.reward?.summary ? ` — earn ${campaign.reward.summary}.` : "."}
             </p>
             <Link
               to="/login"
@@ -104,11 +114,14 @@ export default function ReferPropertyCard({ propertyId, isAuthenticated }) {
 
   // Signed in, but the code has not arrived yet. A skeleton rather than an
   // empty card, so the section does not appear to pop in late.
-  if (!code) {
+  if (isLoading) {
     return (
       <div className="mx-4 mb-4 h-28 animate-pulse rounded-2xl bg-white shadow-card-sm" />
     );
   }
+
+  // Loaded, and there is nothing this person can share.
+  if (!code) return null;
 
   return (
     <div className="mx-4 mb-4 rounded-2xl bg-white p-5 shadow-card-sm">

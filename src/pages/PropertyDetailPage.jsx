@@ -14,7 +14,6 @@ import PropertyDescription from "../components/property/PropertyDescription";
 import PropertyAmenities from "../components/property/PropertyAmenities";
 import AgentCard from "../components/property/AgentCard";
 import ReferPropertyCard from "../components/property/ReferPropertyCard";
-import { REFERRALS_ENABLED } from "../config/features";
 import PropertyActions from "../components/property/PropertyActions";
 import PropertyDetailSkeleton from "../components/property/PropertyDetailSkeleton";
 
@@ -358,16 +357,10 @@ const PropertyDetailPage = () => {
             what someone came for, and the prompt to share lands better once
             they have decided they like it.
 
-            Hidden with the programme — the card always renders *something*
-            (a sign-in promo when signed out, the code when signed in), so
-            leaving it mounted would advertise a feature that no longer
-            exists. */}
-            {REFERRALS_ENABLED && (
-              <ReferPropertyCard
-                propertyId={id}
-                isAuthenticated={isAuthenticated}
-              />
-            )}
+            The card renders nothing unless the programme is switched on
+            (Settings → Business) and a referral campaign is running — see
+            useReferralCampaign. */}
+            <ReferPropertyCard propertyId={id} isAuthenticated={isAuthenticated} />
           </div>
         </Motion.div>
       </div>
